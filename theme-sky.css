@@ -1,0 +1,61 @@
+/* Sky theme: visual treatment only. References: language-app-studio.png and
+   language-app-progress.png. Layout and interactions remain in ui-studio.css. */
+html[data-app-theme="sky"]{
+ --studio-paper:#edf3fc;--studio-ink:#101e42;--studio-muted:#526b93;--studio-accent:#1766d5;--studio-line:#dce6f5;
+ --v52-bg:#edf3fc;--v52-surface:#fbfcff;--v52-surface-2:#e5eefb;--v52-ink:#101e42;--v52-muted:#526b93;--v52-line:#dce6f5;--v52-accent:#1766d5;--v52-accent-soft:#e1ecff;
+ --sky-blue:#2577ef;--sky-blue-dark:#1760ca;--sky-soft:#e5eefc;--sky-shadow:0 10px 32px #214a8710;
+}
+html[data-app-theme="sky"] body{background:linear-gradient(160deg,#f7faff,#e9f0fb)!important;color:#101e42!important}
+html[data-app-theme="sky"] :is(.app-shell,.v52-home-shell,.v27-home,.lesson-main,.v59-bottom-sheet){background:transparent!important}
+html[data-app-theme="sky"] :is(button,input,textarea,select){font-family:Inter,"Segoe UI",Arial,sans-serif}
+html[data-app-theme="sky"] :is(button,summary,a,input,textarea,select):focus-visible{outline-color:#1766d5!important}
+html[data-app-theme="sky"] .v52-topbar{background:#f7fafff2!important;border-color:#dce6f5!important;box-shadow:0 2px 14px #244b7910!important}
+html[data-app-theme="sky"] .v52-topbar :is(.v52-icon-btn,.v52-account-btn,.v52-category-chip),
+html[data-app-theme="sky"] .studio-lesson-menu>summary{background:#f8fbff!important;color:#234878!important;border-color:#dbe5f3!important;border-radius:15px!important}
+html[data-app-theme="sky"] .v52-scene-title :is(b,span){color:#101e42!important}
+html[data-app-theme="sky"] .studio-menu-body{background:#fbfcff!important;border-color:#e1e9f6!important;box-shadow:0 14px 40px #294d8724!important;border-radius:24px!important}
+html[data-app-theme="sky"] .studio-menu-body button:hover{background:#e5efff!important}
+html[data-app-theme="sky"] .v52-lesson-shell :is(.interaction-card,.v60-word-card,.v98-gold-journey,.overview-card,.evidence-accordion details,.grammar-hero,.confidence-card),
+html[data-app-theme="sky"] .v52-home-shell :is(.v27-section,.v27-mission-grid button),
+html[data-app-theme="sky"] :is(.studio-progress-drawer,.v52-home-more,.v52-coach-settings){background:#fbfcfff5!important;border:1px solid #e0e9f7!important;border-radius:25px!important;box-shadow:var(--sky-shadow)!important;color:#101e42!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v59-scene-viewport{background:#e8effa!important;border-color:#dce6f5!important;box-shadow:var(--sky-shadow)!important;border-radius:25px!important}
+html[data-app-theme="sky"] .v52-lesson-shell .scene-controls{background:#f8fbff!important;border-color:#e0e9f7!important}
+html[data-app-theme="sky"] .v52-lesson-shell .scene-controls .glass-btn,
+html[data-app-theme="sky"] .studio-category-slider>button{background:#e9f0fc!important;color:#325788!important;border-color:#dbe6f6!important;border-radius:14px!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v67-hotspot-category-scroll>button{background:#e8effa!important;color:#324e7a!important;border-color:transparent!important;border-radius:999px!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v67-hotspot-category-scroll>button.active{background:#2678ef!important;color:#fff!important;box-shadow:0 4px 12px #2678ef20!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v60-word-label{background:#1760ca!important;border-radius:14px!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v60-scene .hotspot.v60-micro-dot::before{border-color:#2274e7!important;background:#fff!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v60-scene .hotspot.v60-micro-dot.active::before{background:#2678ef!important;box-shadow:0 0 0 4px #ffffffa0!important}
+html[data-app-theme="sky"] .v52-lesson-shell .word-card-top h2{font-family:Georgia,"Times New Roman",serif!important;font-size:38px!important;font-weight:600!important;letter-spacing:-.035em!important;color:#101b40!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v60-scene-example{background:#f1f5fc!important;border-color:#e2eaf6!important;border-radius:20px!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v60-scene-example p{font-family:Georgia,"Times New Roman",serif!important;color:#20365c!important;line-height:1.65!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v60-phrase-card{background:#eaf2ff!important;border-color:#dce7f8!important;border-radius:20px!important}
+html[data-app-theme="sky"] .v52-lesson-shell :is(.v60-phrase-card b,.v60-phrase-card i,.studio-progress-drawer b,.lesson-heading h1){color:#101e42!important}
+html[data-app-theme="sky"] .v52-lesson-shell :is(.v52-mode-tabs,.v104-depth-toggle){background:#e3ecfa!important;border-color:transparent!important;border-radius:999px!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v52-mode-tabs button.active,
+html[data-app-theme="sky"] .v104-depth-toggle button.active{background:#2678ef!important;color:#fff!important;border-radius:999px!important}
+html[data-app-theme="sky"] .v52-bottom-nav{background:#fafcfff5!important;border-color:#e0e8f4!important;box-shadow:0 -5px 24px #254d8610!important;border-radius:22px 22px 0 0!important}
+html[data-app-theme="sky"] .v52-bottom-nav button{color:#61789a!important}
+html[data-app-theme="sky"] .v52-bottom-nav button.active{background:#e8f0ff!important;color:#1466e0!important}
+html[data-app-theme="sky"] .v52-lesson-shell :is(button.primary,.v98-stage-footer button.primary,.v98-attempt-first button),
+html[data-app-theme="sky"] .v52-home-shell .v27-hero-actions button:first-child{background:linear-gradient(110deg,#3288fa,#2271e8)!important;color:#fff!important;border:0!important;border-radius:999px!important;box-shadow:0 7px 20px #2877e924!important}
+html[data-app-theme="sky"] .v52-lesson-shell :is(.v96-scroll-cue,.v96-back-to-scene,button.secondary){background:#e7effd!important;border-color:#dbe6f5!important;color:#285387!important;border-radius:999px!important}
+html[data-app-theme="sky"] :is(.mastery-bar>i,.v52-progress em,.v98-stage-progress>i>em,.v27-hero-progress i>em){background:#2c7ef2!important}
+html[data-app-theme="sky"] :is(.orb-icon,.mission-icon,.v27-mission-grid button>i){background:#e0ebfe!important;color:#2678ef!important;box-shadow:none!important}
+html[data-app-theme="sky"] .v52-lesson-shell :is(.v104-learning-header,.v104-learning-summary,.v98-stage-contract,.review-facts){background:#eef4fd!important;border-color:#dae6f6!important;color:#28466e!important}
+html[data-app-theme="sky"] .v52-lesson-shell .confidence-card.medium{background:#fff8ea!important;border-color:#efe2c9!important}
+html[data-app-theme="sky"] .v52-lesson-shell .confidence-card.low{background:#f5f2fc!important;border-color:#e8e0f6!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v98-stage-footer{background:#fbfcff!important;border-color:#e0e9f7!important}
+html[data-app-theme="sky"] .v52-home-shell .v27-hero{box-shadow:0 15px 40px #24436d20!important;border-radius:28px!important}
+html[data-app-theme="sky"] .v52-home-shell .v27-mission-grid button:hover{background:#f1f6ff!important;border-color:#97bdf4!important}
+html[data-app-theme="sky"] .v52-home-shell .v33-course-strip{background:#f9fbff!important;border:1px solid #dce6f5!important;border-radius:25px!important;box-shadow:var(--sky-shadow)!important}
+html[data-app-theme="sky"] .v52-home-shell :is(.v33-course-strip,.v27-mission-grid,.v27-section-head) :is(h2,b){color:#101e42!important}
+html[data-app-theme="sky"] .v52-home-shell .v33-course-strip :is(p,span){color:#526b93!important}
+html[data-app-theme="sky"] .v52-home-shell .v33-course-strip-stats article{background:#eaf2ff!important;border-color:#dbe7fa!important}
+html[data-app-theme="sky"] .v52-home-shell .v27-mission-icon{background:#e0ebfe!important;color:#2678ef!important}
+html[data-app-theme="sky"] .v52-home-shell .v27-section-head>div>span,
+html[data-app-theme="sky"] .v52-lesson-shell .section-kicker{color:#1766d5!important}
+html[data-app-theme="sky"] .v52-lesson-shell .v59-photo-modal,
+html[data-app-theme="sky"] .v52-lesson-shell .v59-photo-modal .focus-toolbar{background:#f2f6fd!important;color:#101e42!important}
+@media(max-width:700px){html[data-app-theme="sky"] .v52-lesson-shell .v59-scene-viewport{border-radius:0!important}html[data-app-theme="sky"] .v52-lesson-shell .v59-bottom-sheet .interaction-card.v60-word-card{background:#fbfcff!important}}

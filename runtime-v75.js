@@ -1,0 +1,147 @@
+/* EngBook v0.75 — Lesson 04 complete truth-first living-room journey. */
+(function(root){
+  'use strict';
+  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const q=s=>String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ');
+  const PM=root.EngBookPersonalMarks;
+  const TAX=root.EngBookHotspotTaxonomy;
+  const peopleParents=new Set(['l04-left-girl','l04-adult-woman','l04-center-man','l04-right-girl','l04-young-man']);
+  const classifier=h=>{
+    if(h?.categoryKey)return h.categoryKey;
+    const id=String(h?.id||''),p=String(h?.parentId||''),g=String(h?.detailGroup||'').toLowerCase();
+    if(h?.level!=='detail'){
+      if(h?.type==='person')return 'people';
+      if(id==='l04-shared-moment')return 'interaction';
+      if(id==='l04-sofa')return 'sofa';
+      if(id==='l04-window')return 'window_light';
+      if(id==='l04-shelves'||id==='l04-fireplace')return 'decor';
+      if(id==='l04-floor-plant'||id==='l04-floor-rug')return 'plants_floor';
+      return 'overview';
+    }
+    if(peopleParents.has(p)){
+      if(g==='appearance')return 'people';
+      if(['shirt','sweater','lower-body'].includes(g))return 'clothing';
+      if(['gesture','posture'].includes(g))return 'interaction';
+      return 'people';
+    }
+    if(p==='l04-shared-moment')return 'interaction';
+    if(p==='l04-sofa')return 'sofa';
+    if(p==='l04-window')return 'window_light';
+    if(p==='l04-shelves'||p==='l04-fireplace')return 'decor';
+    if(p==='l04-floor-plant'||p==='l04-floor-rug')return 'plants_floor';
+    return 'overview';
+  };
+  const config={profile:'living-room-close-group',defaultCategory:'overview',categories:[
+    {key:'overview',label:'Overview'},
+    {key:'people',label:'People & Faces'},
+    {key:'clothing',label:'Clothing & Details'},
+    {key:'interaction',label:'Interaction & Posture'},
+    {key:'sofa',label:'Sofa & Textiles'},
+    {key:'window_light',label:'Window & Light'},
+    {key:'decor',label:'Shelves & Fireplace'},
+    {key:'plants_floor',label:'Plants & Floor'}
+  ],classifier};
+  const dataTax=root.EngBookContent?.getPack?.(4)?.presentation?.hotspotTaxonomy;if(dataTax?.categories?.length){config.profile=dataTax.profile||config.profile;config.defaultCategory=dataTax.defaultCategory||config.defaultCategory;config.categories=dataTax.categories;}
+  TAX?.register?.(4,config);
+  const categoryKey=()=>{const k=state.hotspotCategoryByLesson?.[4]||'overview';return config.categories.some(x=>x.key===k)?k:'overview';};
+  const catLabel=h=>config.categories.find(x=>x.key===classifier(h))?.label||'Detail';
+  const entries=(key=categoryKey())=>{const hs=state.lesson?.hotspots||[];if(key==='overview')return hs.map((h,index)=>({h,index})).filter(({h})=>h.level!=='detail');return hs.map((h,index)=>({h,index})).filter(({h})=>classifier(h)===key);};
+  function savedHotspot(h){if(!PM)return false;const t=PM.target({lessonId:4,type:'hotspot',id:h?.id||h?.en||'hotspot'}),x=PM.find(progress,t);return !!(x&&(x.marked||x.highlighted));}
+  const markedCount=()=> (state.lesson?.hotspots||[]).filter(savedHotspot).length;
+  function bar(){
+    const k=categoryKey(),marked=markedCount();
+    return `<nav class="v67-hotspot-categories v69-adaptive-categories v75-living-taxonomy" aria-label="Hotspot categories"><div class="v67-hotspot-category-scroll">${config.categories.map(c=>`<button class="${!state.personalMarkFilter&&k===c.key?'active':''}" data-eng-v52-click="event.stopPropagation();setAdaptiveHotspotCategory('${c.key}')"><b>${esc(c.label)}</b><span>${entries(c.key).length}</span></button>`).join('')}<button class="v70-my-marks ${state.personalMarkFilter?'active':''}" data-eng-v52-click="event.stopPropagation();showMarkedHotspots()"><b>My Marks</b><span>${marked}</span></button></div><small>${state.personalMarkFilter?`Showing ${marked} personal marked/highlighted hotspot${marked===1?'':'s'}.`:k==='overview'?'Choose a layer to reveal only related living-room details.':`Showing ${entries(k).length} ${esc(config.categories.find(x=>x.key===k)?.label||k)} anchors.`}</small></nav>`;
+  }
+
+  const _visible=v35VisibleHotspots;
+  v35VisibleHotspots=function(){if(activeLessonId()===4&&state.mode==='explore'&&!state.personalMarkFilter)return entries();return _visible();};
+  const _parent=v35DetailParent;
+  v35DetailParent=function(){if(activeLessonId()===4&&state.mode==='explore')return null;return _parent();};
+  const directCard=v60OpenHotspotCard;
+  root.v75OpenWordCard=i=>directCard(Number(i));
+  v60OpenHotspotCard=function(i){if(activeLessonId()===4&&state.mode==='explore')return v60SelectAnchor(Number(i));return directCard(Number(i));};
+
+  const _panel=v60MicroPanel;
+  v60MicroPanel=function(h){
+    let html=_panel(h);if(activeLessonId()!==4||!h)return html;
+    const label=catLabel(h).toUpperCase();
+    html=html.replace('SCENE WORD',`${esc(label)} HOTSPOT`).replace('<em class="v70-category-chip">Detail</em>',`<em class="v70-category-chip">${esc(catLabel(h))}</em>`);
+    if(!html.includes('v69-glass-tag'))html=html.replace('<span>EXAMPLE FROM THIS PHOTO</span>',`<span>EXAMPLE FROM THIS PHOTO</span><i class="v69-glass-tag">${esc(label)}</i>`);
+    html=html.replace('The example sentence is tied to the selected visual detail.','This sentence is directly tied to the selected part of the living-room image.');
+    return html;
+  };
+
+  const _stage=sceneStage;
+  sceneStage=function(modal=false){
+    let html=_stage(modal);if(activeLessonId()!==4||state.mode!=='explore')return html;
+    html=html.replace('<div class="photo-top-actions">',`${bar()}<div class="photo-top-actions">`);
+    const sel=state.lesson?.hotspots?.[Number(state.selected)];
+    if(sel){html=html.replaceAll(`data-eng-v52-click="event.stopPropagation();v60OpenHotspotCard(${state.selected})"`,`data-eng-v52-click="event.stopPropagation();v75OpenWordCard(${state.selected})"`);html=html.replace('<small>tap word</small>',`<small>${esc(catLabel(sel).toUpperCase())} • tap word</small>`);}
+    html=html.replace('<span>MICRO HOTSPOT MODE</span>',`<span>${esc((state.personalMarkFilter?'MY MARKS':categoryKey()).toUpperCase())} HOTSPOTS</span>`);
+    return html;
+  };
+
+  // Preserve lesson-aware category metadata in Personal Marks.
+  function hTarget(h){return PM?.target({lessonId:4,type:'hotspot',id:h?.id||h?.en||'hotspot'});}
+  function hMeta(h){const ex=(activeGold()?.hotspotDetailsById?.[h?.id]||activeGold()?.hotspotDetails?.[h?.en]||{});return {label:h?.en||'',text:h?.example||ex.grammar||'',category:catLabel(h)};}
+  const _toggleMark=root.toggleHotspotMark,_toggleHi=root.toggleHotspotHighlight;
+  root.toggleHotspotMark=function(){if(activeLessonId()!==4||!PM)return _toggleMark?.();const h=state.lesson?.hotspots?.[Number(state.selected)];if(!h)return;const t=hTarget(h),before=PM.isMarked(progress,t);PM.toggleMark(progress,t,hMeta(h));saveProgress();haptic(9);toast(before?'Removed from My Marks':'Added to My Marks');render();};
+  root.toggleHotspotHighlight=function(){if(activeLessonId()!==4||!PM)return _toggleHi?.();const h=state.lesson?.hotspots?.[Number(state.selected)];if(!h)return;const t=hTarget(h),before=PM.isHighlighted(progress,t);PM.toggleHighlight(progress,t,hMeta(h));saveProgress();haptic(8);toast(before?'Highlight removed':'Sentence highlighted');render();};
+
+  root.setL04JourneyStep=function(step){const valid=['overview','micro','build','scenario','meaning','story','language','grammar','speak'];state.l04JourneyStep=valid.includes(step)?step:'overview';render();};
+  const g=()=>activeGold();
+  const next=(step,label='Continue')=>`<button class="l01-next" data-eng-v52-click="setL04JourneyStep('${step}')">${esc(label)} ${icon('chevron')}</button>`;
+  const nav=()=>`<div class="l01-journey-nav">${[['overview','01','Scene'],['micro','02','Analyze'],['build','03','Build'],['scenario','04','Combine'],['meaning','05','Reason'],['story','06','Story'],['language','07','Language'],['grammar','08','Grammar'],['speak','09','Speak']].map(([k,n,t])=>`<button class="${state.l04JourneyStep===k?'active':''}" data-eng-v52-click="setL04JourneyStep('${k}')"><i>${n}</i><span>${t}</span></button>`).join('')}</div>`;
+  function status(type,id){if(!PM)return {marked:false,highlighted:false,key:''};const t=PM.target({lessonId:4,type,id}),x=PM.find(progress,t)||{};return {marked:!!x.marked,highlighted:!!x.highlighted,key:t.key};}
+  function tools(type,id,label,text,category){const s=status(type,id);return `<div class="v72-inline-tools"><button class="${s.marked?'active mark':''}" data-eng-v52-click="togglePersonalContentMark('${q(type)}','${q(id)}','${q(label)}','${q(text)}','${q(category)}')">${s.marked?'★':'☆'} <span>${s.marked?'Marked':'Mark'}</span></button><button class="${s.highlighted?'active highlight':''}" data-eng-v52-click="togglePersonalContentHighlight('${q(type)}','${q(id)}','${q(label)}','${q(text)}','${q(category)}')">▰ <span>${s.highlighted?'Highlighted':'Highlight'}</span></button></div>`;}
+  const cls=(type,id)=>{const s=status(type,id);return `${s.marked?' v72-is-marked':''}${s.highlighted?' v72-is-highlighted':''}`;};
+
+  function overview(c){return `<section class="l01-step l01-overview-step"><div class="l01-source-badge"><i>${icon('compass')}</i><div><b>VISUAL LEARNING PATH</b><span>Lesson 04 • Parents with Children</span></div></div><div class="l01-overview-grid"><article class="l01-overview-photo"><img src="${state.lesson.image}" alt="${esc(state.lesson.title)}"><div><span>OBSERVE FIRST</span><b>people • interaction • room • light</b></div></article><article class="l01-overview-copy"><span>01 • SCENE OVERVIEW</span><h2>Read the group first, then rebuild the living room around them.</h2><p>${esc(c.overview)}</p><div class="l01-overview-actions"><button data-eng-v52-click="speak('${q(c.overview)}',.88)">${icon('volume')} Listen</button><button data-eng-v52-click="setMode('explore')">Open full-screen scene ${icon('expand')}</button></div><div class="l01-scene-formula"><span><b>WHO</b>five people</span><i>→</i><span><b>ACTION</b>sitting + laughing</span><i>→</i><span><b>WHERE</b>bright living room</span><i>→</i><span><b>CLUES</b>sofa + fireplace + plants</span></div></article></div>${next('micro','Analyze the picture')}</section>`;}
+  function micro(c){const n=state.lesson?.hotspots?.length||0;return `<section class="l01-step"><div class="l01-step-head"><span>02 • VISUAL EVIDENCE & MICRO-ANALYSIS</span><h2>Move from the whole group to details you can point to.</h2><p>Separate people, clothing, contact, textiles, décor, floor details, and light into independent evidence layers.</p></div><div class="l01-analysis-grid"><div class="l01-evidence-stack">${(c.evidence||[]).map((r,i)=>`<details ${i<3?'open':''}><summary><i>${String(i+1).padStart(2,'0')}</i><b>${esc(r.label)}</b>${icon('chevron')}</summary><p>${esc(r.detail)}</p></details>`).join('')}</div><aside class="l01-micro-aside"><span>SUBJECT MICRO-ANALYSIS</span>${(c.micro||[]).map((m,i)=>`<article><i>${i+1}</i><p>${esc(m)}</p></article>`).join('')}<button data-eng-v52-click="setMode('explore')">Inspect ${n} truth-first hotspots ${icon('target')}</button><small>No target count is forced. Only visible, distinct, useful anchors remain.</small></aside></div>${next('build','Build sentences')}</section>`;}
+
+  const bSets=()=>Array.isArray(g()?.recall?.builderSentences)?g().recall.builderSentences:[];
+  const _initBuilder=initBuilder,_checkBuilder=checkBuilder,_nextBuilder=nextBuilder,_builderContent=builderContent;
+  initBuilder=function(){if(activeLessonId()!==4)return _initBuilder();const sets=bSets(),parts=sets[state.builderIndex%Math.max(1,sets.length)]||[];state.builderAvailable=shuffle(parts.map((_,i)=>i));state.builderChosen=[];state.builderResult='';};
+  checkBuilder=function(){if(activeLessonId()!==4)return _checkBuilder();const sets=bSets(),parts=sets[state.builderIndex%Math.max(1,sets.length)]||[],ok=state.builderChosen.length===parts.length&&state.builderChosen.every((id,i)=>id===i);state.builderResult=ok?'correct':'wrong';haptic(ok?[15,25,40]:25);if(ok){awardPoints(10,'builder');speak(parts.join(' '));}render();};
+  nextBuilder=function(){if(activeLessonId()!==4)return _nextBuilder();const sets=bSets();state.builderIndex=(state.builderIndex+1)%Math.max(1,sets.length);initBuilder();render();};
+  builderContent=function(){if(activeLessonId()!==4)return _builderContent();const sets=bSets(),parts=sets[state.builderIndex%Math.max(1,sets.length)]||[],text=parts.join(' '),id=`builder-${state.builderIndex}`,s=status('sentence',id);return `<div class="builder-card l01-inline-builder"><div class="builder-head"><div><span>SCENE SENTENCE ${state.builderIndex+1}/${sets.length}</span><h3>Build the sentence from meaning chunks</h3><p>Use visible living-room evidence before adding interpretation.</p></div><button data-eng-v52-click="builderReset()">${icon('reset')} Reset</button></div><div class="v72-builder-save${cls('sentence',id)}" data-personal-key="${esc(s.key)}"><div><span>PERSONAL NOTEBOOK</span><b>${esc(text)}</b></div>${tools('sentence',id,`Sentence Builder ${state.builderIndex+1}`,text,'Sentence Builder')}</div><div class="answer-zone ${state.builderResult}">${state.builderChosen.length?state.builderChosen.map(i=>`<button data-eng-v52-click="builderUndo()">${esc(parts[i])}</button>`).join(''):'<span>Tap the chunks below in the right order…</span>'}</div><div class="token-bank">${state.builderAvailable.map(i=>`<button data-eng-v52-click="builderPick(${i})">${esc(parts[i])}</button>`).join('')}</div><div class="builder-actions"><button class="secondary" data-eng-v52-click="builderUndo()" ${!state.builderChosen.length?'disabled':''}>Undo</button><button class="primary" data-eng-v52-click="checkBuilder()">Check sentence</button></div>${state.builderResult==='correct'?`<div class="builder-feedback good">${icon('check')} Correct. <button data-eng-v52-click="nextBuilder()">Next sentence →</button></div>`:state.builderResult==='wrong'?'<div class="builder-feedback try">Not quite. Rebuild the chunks in natural English order.</div>':''}</div>`;};
+  function build(c){if(!state.builderAvailable.length&&!state.builderChosen.length)initBuilder();const rows=c.recall?.builderSentences||[];return `<section class="l01-step"><div class="l01-step-head"><span>03 • SENTENCE BUILDING</span><h2>Connect people, interaction, room objects, and light.</h2><p>Start with visible facts. Keep exact relationships and emotional labels outside the factual layer.</p></div><div class="l01-sentence-ladder v72-sentence-ladder">${rows.map((parts,i)=>{const text=parts.join(' '),id=`builder-${i}`,s=status('sentence',id);return `<article class="${cls('sentence',id)}" data-personal-key="${esc(s.key)}"><i>S${i+1}</i><p>${esc(text)}</p><div class="v72-row-actions"><button data-eng-v52-click="speak('${q(text)}',.84)">${icon('volume')} Listen</button>${tools('sentence',id,`Sentence Builder ${i+1}`,text,'Sentence Builder')}</div></article>`;}).join('')}</div>${builderContent()}${next('scenario','Combine scene details')}</section>`;}
+  function scenario(c){return `<section class="l01-step v69-scenario-step"><div class="l01-step-head"><span>04 • SCENE COMBINATIONS</span><h2>Combine hotspot layers into natural living-room descriptions.</h2><p>Each card joins details from different categories without inventing exact kinship, an occasion, or a cause for the laughter.</p></div><div class="v69-scenario-grid">${(c.sceneCombinations||[]).map((x,i)=>{const id=`scenario-${i}`,s=status('scenario',id);return `<article class="${x.kind==='inference'?'inference':'fact'} ${cls('scenario',id)}" data-personal-key="${esc(s.key)}"><div class="v69-scenario-head"><i>${String(i+1).padStart(2,'0')}</i><div><b>${esc(x.title)}</b><div>${(x.categories||[]).map(k=>`<span>${esc(config.categories.find(v=>v.key===k)?.label||k)}</span>`).join('')}</div></div><em>${x.kind==='inference'?'CAUTIOUS INFERENCE':'VISIBLE FACTS'}</em></div><p>${esc(x.sentence)}</p><div class="v70-scenario-actions"><button data-eng-v52-click="speak('${q(x.sentence)}',.84)">${icon('volume')} Listen</button>${tools('scenario',id,x.title,x.sentence,'Scene Combination')}</div></article>`;}).join('')}</div><div class="v69-combine-rule"><b>Combination rule</b><p>Join people + visible action + room detail first. Add comfort or closeness only as a labeled inference supported by touch, posture, and laughter.</p></div>${next('meaning','Check fact vs inference')}</section>`;}
+
+  root.l04AnswerFact=function(kind){const items=g()?.recall?.factItems||[];if(!items.length)return;state.factIndex=state.factIndex%items.length;const item=items[state.factIndex],ok=kind===item.kind;state.factAnswered={ok,kind};if(ok)state.factScore++;haptic(ok?[15,25,30]:22);render();};
+  root.l04NextFact=function(){const items=g()?.recall?.factItems||[];if(state.factIndex<items.length-1){state.factIndex++;state.factAnswered=null;}else{toast(`Evidence check complete: ${state.factScore}/${items.length}`);state.factIndex=0;state.factAnswered=null;state.factScore=0;}render();};
+  function fact(c){const items=c.recall?.factItems||[];state.factIndex=state.factIndex%Math.max(1,items.length);const item=items[state.factIndex];if(!item)return '';return `<div class="fact-game l01-three-way-fact"><div class="fact-counter"><span>EVIDENCE CHECK ${state.factIndex+1}/${items.length}</span><b>${state.factScore} correct</b></div><article><div class="quote-mark">“</div><h3>${esc(item.text)}</h3><p>Classify the sentence by what this single living-room photograph can actually support.</p></article><div class="fact-actions three"><button data-eng-v52-click="l04AnswerFact('fact')" ${state.factAnswered?'disabled':''}>${icon('eye')} Visible fact</button><button data-eng-v52-click="l04AnswerFact('inference')" ${state.factAnswered?'disabled':''}>${icon('layers')} Supported inference</button><button data-eng-v52-click="l04AnswerFact('unsupported')" ${state.factAnswered?'disabled':''}>${icon('close')} Unsupported</button></div>${state.factAnswered?`<div class="fact-feedback ${state.factAnswered.ok?'good':'try'}"><b>${state.factAnswered.ok?'Correct':'Check the evidence again'}</b><p>${esc(item.note)}</p><button data-eng-v52-click="l04NextFact()">${state.factIndex===items.length-1?'Finish':'Next'} →</button></div>`:''}</div>`;}
+  function meaning(c){return `<section class="l01-step"><div class="l01-step-head"><span>05 • INTERPRETATION & EVIDENCE</span><h2>Keep visible closeness separate from exact relationship claims.</h2></div><div class="confidence-ladder l01-confidence"><article class="confidence-card high"><div><b>HIGH</b><span>Strongly supported</span></div><p>${esc(c.inference.high)}</p></article><article class="confidence-card medium"><div><b>MEDIUM</b><span>Plausible</span></div><p>${esc(c.inference.medium)}</p></article><article class="confidence-card low"><div><b>LOW</b><span>Weak / outside frame</span></div><p>${esc(c.inference.low)}</p></article></div><div class="timeline-pro l01-timeline"><article><span>BEFORE · HYPOTHESIS</span><p>${esc(c.timeline.before)}</p></article><i>${icon('chevron')}</i><article><span>NOW · VISIBLE</span><p>${esc(c.timeline.now)}</p></article><i>${icon('chevron')}</i><article><span>NEXT · POSSIBILITY</span><p>${esc(c.timeline.next)}</p></article></div><div class="accuracy-card l01-guardrail"><div>${icon('target')}<b>Accuracy guardrail</b></div><p>${esc(c.guardrail)}</p></div>${fact(c)}${next('story','Build a possible story')}</section>`;}
+  function story(c){const text=String(c.story||'').replace(/^CREATIVE EXTENSION — NOT A VISUAL FACT\.\s*/,'');return `<section class="l01-step"><div class="l01-step-head"><span>06 • STORY BUILDER</span><h2>Extend the moment while keeping imagination labeled.</h2></div><div class="l01-story-card"><div class="l01-story-warning">${icon('spark')}<span><b>CREATIVE EXTENSION — NOT A VISUAL FACT</b><small>Use may / might / could for events outside the frame.</small></span></div><p>${esc(text)}</p><button data-eng-v52-click="speak('${q(text)}',.86)">${icon('volume')} Listen</button></div><div class="l01-story-contrast"><article><span>PHOTO CAN SUPPORT</span><p>${esc(c.timeline.now)}</p></article><article><span>STORY CAN IMAGINE</span><p>${esc(c.timeline.before)} ${esc(c.timeline.next)}</p></article></div>${next('language','Collect useful language')}</section>`;}
+  function language(c){return `<section class="l01-step"><div class="l01-step-head"><span>07 • LANGUAGE BANK</span><h2>Collect phrases that rebuild the living room quickly.</h2></div><div class="l01-language-bank v72-language-bank">${(c.languageBank||[]).map((p,i)=>{const id=`language-${i}`,s=status('phrase',id);return `<article class="v72-language-item${cls('phrase',id)}" data-personal-key="${esc(s.key)}"><div><i>${String(i+1).padStart(2,'0')}</i><b>${esc(p)}</b></div><div class="v72-row-actions"><button data-eng-v52-click="speak('${q(p)}',.82)">${icon('volume')} Listen</button>${tools('phrase',id,p,p,'Language Bank')}</div></article>`;}).join('')}</div><div class="l01-memory-grid"><article><span>DESCRIPTION FRAMES</span>${(c.memoryFrames||[]).map(x=>`<p>${esc(x)}</p>`).join('')}</article><article><span>PERSONAL TRANSFER</span>${(c.personalQuestions||[]).map((x,i)=>`<p><i>${i+1}</i>${esc(x)}</p>`).join('')}</article></div>${next('grammar','Open grammar + model ladder')}</section>`;}
+  function grammar(c){const models=c.grammar?.models||{},level=state.level&&models[state.level]?state.level:(models['B1–B2']?'B1–B2':Object.keys(models)[0]);return `<section class="l01-step"><div class="l01-step-head"><span>08 • GRAMMAR & MODEL LADDER</span><h2>${esc(c.grammar.title)}</h2><p>${esc(c.grammar.explainer)}</p></div><div class="v73-memory-contrast"><article><span>PHOTO-SAFE</span><p>A group of five people is sitting on the sofa.</p></article><article><span>PLURAL SUBJECT</span><p>Five people are laughing together.</p></article><article><span>DO NOT INVENT</span><p>Use “family” as grammar practice only when relationship context is actually provided; the photograph alone does not prove exact kinship.</p></article></div><div class="l01-grammar-examples v72-grammar-examples">${(c.grammar.examples||[]).map((e,i)=>{const id=`example-${i}`,s=status('grammar',id);return `<article class="${cls('grammar',id)}" data-personal-key="${esc(s.key)}"><i>${i+1}</i><p>${highlightGrammar(e)}</p><div class="v72-row-actions"><button data-eng-v52-click="speak('${q(e)}',.82)">${icon('volume')} Listen</button>${tools('grammar',id,`Grammar example ${i+1}`,e,'Grammar Example')}</div></article>`;}).join('')}</div><div class="model-ladder l01-model-ladder"><div class="level-switch">${Object.keys(models).map(l=>`<button class="${level===l?'active':''}" data-eng-v52-click="state.level='${q(l)}';render()">${esc(l)}</button>`).join('')}</div><article><div><span>SCENE MODEL</span><button data-eng-v52-click="speak('${q(models[level])}',.88)">${icon('volume')} Listen</button></div><p>${esc(models[level])}</p></article></div><div class="l01-model-progression v72-model-progression">${Object.entries(models).map(([l,t])=>{const id=`model-${String(l).toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,s=status('grammar',id);return `<article class="${cls('grammar',id)}" data-personal-key="${esc(s.key)}"><span>${esc(l)}</span><p>${esc(t)}</p><div class="v72-row-actions"><button data-eng-v52-click="speak('${q(t)}',.86)">${icon('volume')} Listen</button>${tools('grammar',id,`${l} model`,t,'Grammar Model')}</div></article>`;}).join('')}</div>${next('speak','Describe it yourself')}</section>`;}
+  function speakStep(c){return `<section class="l01-step"><div class="l01-step-head"><span>09 • INDEPENDENT SPEAKING</span><h2>Rebuild the living-room scene in your own English.</h2><p>Start with pointable facts, then add at most one clearly labeled social inference.</p></div><div class="l01-speaking-stages">${[['30','30 SEC','Simple scene'],['60','60 SEC','Connected description'],['90','90 SEC','Full reconstruction']].map(([sec,label,title])=>`<article><i>${label}</i><h3>${title}</h3><p>${esc(c.speaking[sec])}</p><button data-eng-v52-click="launchTimedVoiceChallenge(${sec})">Record ${sec}s ${icon('mic')}</button></article>`).join('')}</div><div class="l01-selfcheck"><span>SELF-CHECK</span><div><i>${icon('check')} 5+ visible facts</i><i>${icon('check')} group described without exact kinship</i><i>${icon('check')} sofa + room objects included</i><i>${icon('check')} window light included</i><i>${icon('check')} max 1 labeled inference</i><i>${icon('check')} one unknown explicitly named</i></div></div><div class="l01-finish-row"><button data-eng-v52-click="setMode('talk')">Continue to scene conversation ${icon('spark')}</button><button class="secondary" data-eng-v52-click="setL04JourneyStep('overview')">Review lesson path</button></div></section>`;}
+  function body(c){if(state.l04JourneyStep==='overview')return overview(c);if(state.l04JourneyStep==='micro')return micro(c);if(state.l04JourneyStep==='build')return build(c);if(state.l04JourneyStep==='scenario')return scenario(c);if(state.l04JourneyStep==='meaning')return meaning(c);if(state.l04JourneyStep==='story')return story(c);if(state.l04JourneyStep==='language')return language(c);if(state.l04JourneyStep==='grammar')return grammar(c);return speakStep(c);}
+  function complete(){const c=g();if(!['overview','micro','build','scenario','meaning','story','language','grammar','speak'].includes(state.l04JourneyStep))state.l04JourneyStep='overview';const n=state.lesson?.hotspots?.length||0;return `<section class="l01-complete-path"><div class="panel-heading l01-path-heading"><div><span class="section-kicker">LESSON 04 • COMPLETE LEARNING JOURNEY</span><h2>See → separate → combine → reason → describe</h2><p>${n} truth-first image anchors connect people, clothing, interaction, room details, evidence control, grammar, and independent speaking.</p></div><div class="l01-path-count"><b>${n}</b><span>image anchors</span></div></div>${nav()}${body(c)}</section>`;}
+  const _learn=learnContent;
+  learnContent=function(){if(activeLessonId()===4)return complete();return _learn();};
+
+  const _openPersonal=root.openPersonalMark;
+  root.openPersonalMark=async function(key){
+    const item=PM?.list(progress).find(x=>x.key===key);
+    if(!item||Number(item.lessonId)!==4)return _openPersonal?.(key);
+    root.closeMyMarksLibrary?.();
+    if(item.type==='hotspot'){
+      const ok=await root.v27OpenLesson?.(4,'explore');if(ok===false)return;
+      const hs=state.lesson?.hotspots||[],index=hs.findIndex(h=>String(h.id||h.en)===String(item.id));
+      if(index<0){toast('This hotspot is no longer available in the lesson.');return;}
+      const h=hs[index];state.personalMarkFilter=false;state.hotspotCategoryByLesson=state.hotspotCategoryByLesson||{};state.hotspotCategoryByLesson[4]=classifier(h);state.selected=index;state.v60AnchorLabel=index;state.v60CardOpen=true;state.v60GrammarOpen=false;v59EnsureViewer().sheet='peek';render();return;
+    }
+    const ok=await root.v27OpenLesson?.(4,'learn');if(ok===false)return;
+    if(item.type==='scenario')state.l04JourneyStep='scenario';
+    if(item.type==='sentence')state.l04JourneyStep='build';
+    if(item.type==='phrase')state.l04JourneyStep='language';
+    if(item.type==='grammar')state.l04JourneyStep='grammar';
+    render();
+    setTimeout(()=>{const el=[...document.querySelectorAll('[data-personal-key]')].find(x=>x.dataset.personalKey===key);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('v72-focus-pulse');setTimeout(()=>el.classList.remove('v72-focus-pulse'),1800);}},120);
+  };
+
+  const _open=openLesson;
+  openLesson=function(id){if(Number(id)===4){state.l04JourneyStep='overview';state.hotspotCategoryByLesson=state.hotspotCategoryByLesson||{};state.hotspotCategoryByLesson[4]='overview';state.personalMarkFilter=false;}return _open(id);};
+  root.ENGBOOK_RUNTIME={...(root.ENGBOOK_RUNTIME||{}),build:'v0.75-lesson04-complete-truth-first',lesson04CompleteLearningJourney:true,lesson04TruthFirstHotspots:true,lesson04AdaptiveTaxonomy:config.categories.map(x=>x.key),lesson04ForcedTargetCount:false};
+})(window);

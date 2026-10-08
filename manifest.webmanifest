@@ -1,0 +1,111 @@
+{
+  "id": "./",
+  "name": "SceneSpeak — Visual English",
+  "short_name": "SceneSpeak",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "lang": "en-US",
+  "dir": "ltr",
+  "background_color": "#f7f9f7",
+  "theme_color": "#246c53",
+  "description": "See it. Say it. Learn English by describing pictures.",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/brand/scenespeak-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/brand/scenespeak-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Describe Lesson 01",
+      "short_name": "Describe",
+      "url": "./?lesson=1&mode=speak",
+      "icons": [
+        {
+          "src": "assets/brand/scenespeak-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Explore Lesson 01",
+      "short_name": "Explore",
+      "url": "./?lesson=1&mode=explore",
+      "icons": [
+        {
+          "src": "assets/brand/scenespeak-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Explore Lesson 02",
+      "short_name": "Lesson 02",
+      "url": "./?lesson=2&mode=explore",
+      "icons": [
+        {
+          "src": "assets/brand/scenespeak-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Explore Lesson 03",
+      "short_name": "Lesson 03",
+      "url": "./?lesson=3&mode=explore",
+      "icons": [
+        {
+          "src": "assets/brand/scenespeak-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Explore Lesson 04",
+      "short_name": "Lesson 04",
+      "url": "./?lesson=4&mode=explore",
+      "icons": [
+        {
+          "src": "assets/brand/scenespeak-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Explore Lesson 05",
+      "short_name": "Lesson 05",
+      "url": "./?lesson=5&mode=explore",
+      "icons": [
+        {
+          "src": "assets/brand/scenespeak-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}
