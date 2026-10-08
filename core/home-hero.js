@@ -6,7 +6,7 @@
   const scenes=Object.freeze([
     {id:5,label:'Garden',words:[['swing',27,43],['flowers',12,76],['garden',86,78]]},
     {id:3,label:'Park',words:[['running',31,73],['park',85,78]]},
-    {id:34,label:'Art studio',words:[['painting',78,77],['easel',47,57]]}
+    {id:2,label:'Café',words:[['window',9,47],['table',82,88]]}
   ]);
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const icon=name=>typeof root.icon==='function'?root.icon(name):'';
