@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#173f35"><title>Garden in 360° · 8K · SceneSpeak Picture Lab</title>
+ <link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="panorama.css?v=ffadc5e09388"><link rel="stylesheet" href="panorama-lesson.css?v=65939a052b4c"><link rel="stylesheet" href="panorama-camera.css?v=893dd5629672"><link rel="stylesheet" href="panorama-detail.css?v=96595fedf61a">
+ <link rel="stylesheet" href="ui-sounds.css?v=19601f279538"><script src="core/ui-sounds.js?v=7964c6816acb" defer></script>
+ <script src="core/panorama-museum-data.js?v=22b065ef7d00" defer></script><script src="core/panorama-math.js?v=2a5de8e2fa7a" defer></script><script src="core/panorama-home-manifest.js?v=17cedccab44b" defer></script><script src="core/panorama-home-granular.js?v=1f133eb192b5" defer></script><script src="core/panorama-home-data.js?v=4cde2463adc8" defer></script><script src="core/panorama-detail-math.js?v=23c668b75a2b" defer></script><script src="core/panorama-detail-renderer.js?v=724542f3870a" defer></script><script src="core/panorama-park-data.js?v=afd92d8f30f1" defer></script><script src="core/panorama-game.js?v=6b3db259505e" defer></script><script src="core/panorama-tree.js?v=d1f9682a1a66" defer></script><script src="core/panorama-reconstruction.js?v=eac663087ee2" defer></script><script src="core/panorama-lesson.js?v=ce2f59772560" defer></script><script src="core/panorama-hotspot-density.js?v=1353fcbbde91" defer></script><script src="core/panorama-course-model.js?v=8b519b765873" defer></script><script src="core/panorama-talk-tour.js?v=7771b3bc976d" defer></script><script src="core/panorama-discovery.js?v=d442e9a7aa8f" defer></script><script src="core/panorama-lab.js?v=96aaf1b9dd27" defer></script>
+ <link rel="stylesheet" href="panorama-hotspot-density.css?v=023f943625c0">
+ <link rel="stylesheet" href="panorama-core.css?v=d8734d7bc925">
+ <link rel="stylesheet" href="panorama-hospital.css?v=7fea53ec7af4">
+<link rel="stylesheet" href="panorama-discovery.css?v=4b420b4b0232"><link rel="stylesheet" href="panorama-talk-tour.css?v=1cd13281f568"></head>
+<body>
+ <main id="panorama" aria-label="Home in 360 degrees">
+  <div id="pano-view" tabindex="0" role="region" aria-busy="true" aria-label="Panorama. Drag to look around, scroll to turn, or use arrow keys. Home resets the view.">
+   <canvas id="pano-canvas" aria-hidden="true"></canvas><img id="pano-fallback" alt="A panoramic home with reading, cooking, dining, pet care, laundry and a garden." hidden>
+   <div id="pano-dots" aria-label="Picture hotspots"></div>
+  </div>
+  <div class="pano-shade" aria-hidden="true"></div>
+  <header class="pano-header">
+   <a class="pano-icon" href="./#lessons" aria-label="Back to picture worlds"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></a>
+   <div class="pano-title"><small>PICTURE LAB · CATEGORY 01</small><h1>Garden in 360° · 8K</h1></div>
+   <button class="pano-walk" id="pano-walk" hidden>Walk forward →</button>
+   <button class="pano-play" id="pano-play" aria-pressed="false" hidden>Play</button>
+   <button class="pano-icon" id="pano-map" aria-label="All panorama details"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="2"/><rect x="14" y="4" width="6" height="6" rx="2"/><rect x="4" y="14" width="6" height="6" rx="2"/><rect x="14" y="14" width="6" height="6" rx="2"/></svg></button>
+  </header>
+  <div id="pano-loading" role="status"><img src="assets/brand/scenespeak-192.png" width="48" height="48" alt=""><b>A whole world in one picture.</b><span>Opening your panorama…</span><button id="pano-retry" hidden>Try again</button><a href="./#lessons" id="pano-load-back" hidden>Back to lessons</a></div>
+  <p id="pano-hint">Drag to look around · Pinch to zoom<br><small>Scroll to turn · Tap a dot to discover</small></p>
+  <svg id="pano-line" aria-hidden="true"><path/></svg>
+  <article id="pano-card" aria-labelledby="pano-card-title" hidden></article>
+  <section id="pano-game" aria-label="Find it mission game" hidden></section>
+  <nav class="pano-controls" aria-label="Panorama areas">
+   <button id="pano-prev" class="pano-icon" aria-label="Previous area"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></button>
+   <button id="pano-area" aria-label="Choose a panorama area"><span id="pano-area-name">Kitchen</span><small><span id="pano-heading">0°</span> · Look around</small></button>
+   <button id="pano-next" class="pano-icon" aria-label="Next area"><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></button>
+   <button id="pano-camera-toggle" class="pano-icon" aria-label="Move and zoom" aria-controls="pano-camera" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M10 7v6M7 10h6"/></svg></button>
+   <button id="pano-reset" class="pano-icon" aria-label="Reset view"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></button>
+  </nav>
+  <section id="pano-camera" aria-label="Camera controls" hidden>
+   <header><b>Look & zoom</b><button id="pano-camera-close" aria-label="Close camera controls">×</button></header>
+   <div class="pano-look-pad"><button data-camera-action="left" aria-label="Look left">←</button><div><button data-camera-action="up" aria-label="Look up">↑</button><button data-camera-action="down" aria-label="Look down">↓</button></div><button data-camera-action="right" aria-label="Look right">→</button></div>
+   <div class="pano-zoom-row"><button data-camera-action="far" aria-label="Move back (zoom out)">−</button><label>Zoom <output id="pano-zoom-value">1.0×</output><input id="pano-zoom" type="range" min="0" max="81" step="1" value="35" aria-label="Panorama zoom"></label><button data-camera-action="near" aria-label="Move closer (zoom in)">+</button></div>
+   <p>One viewpoint. Move closer with zoom.<br><small>Keyboard: W / S · A / D · R / F</small></p>
+  </section>
+  <p class="pano-status sr-only" role="status" aria-live="polite"></p>
+  <dialog id="pano-details" aria-labelledby="pano-details-title"><header><div><small>ONE PICTURE · MANY MOMENTS</small><h2 id="pano-details-title">Choose where to look.</h2></div><button class="pano-icon" id="pano-map-close" aria-label="Close panorama details">×</button></header><div id="pano-detail-list"></div><footer><p id="pano-found"></p><p id="pano-source"></p><p id="pano-resolution"></p><label>Picture quality <select id="pano-quality"><option value="light">Light</option><option value="high">8K</option></select></label><p id="pano-quality-status" role="status"></p><button id="pano-detail-retry" hidden>Retry sharper detail</button><p id="pano-scenes"></p></footer></dialog>
+ </main>
+</body></html>

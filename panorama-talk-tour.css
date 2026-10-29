@@ -1,0 +1,10 @@
+/* A quiet overview before conversation; the resulting photograph stays still. */
+.talk-still-stage{position:absolute;inset:0;z-index:2;background:#173d34;pointer-events:auto}.talk-still-stage[hidden]{display:none}.talk-still-stage img{width:100%;height:100%;object-fit:contain;display:block}
+.talk-tour-controls{position:fixed;z-index:60;left:50%;top:104px;transform:translateX(-50%);display:flex;align-items:center;gap:16px;padding:9px 10px 9px 18px;border:1px solid #fff8;border-radius:999px;background:#edf4e7bd;backdrop-filter:blur(18px);color:#153f35;font:600 13px system-ui;box-shadow:0 8px 30px #123c3020;white-space:nowrap}.talk-tour-controls button{padding:10px 14px;border:1px solid #23554730;border-radius:999px;background:#ffffff90;color:#153f35;font:inherit;cursor:pointer}.talk-tour-controls button:focus-visible{outline:3px solid #286b5c;outline-offset:3px}
+.talk-touring .talk-page{opacity:0;pointer-events:none!important;visibility:hidden}.talk-touring #lesson1-panorama-viewport iframe,.talk-touring #panorama-core-viewport iframe{pointer-events:none}.talk-touring .canvas-detail-card{visibility:hidden}.talk-still .talk-page{animation:talk-page-arrive .45s ease-out both}@keyframes talk-page-arrive{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.talk-tour-controls{top:92px;gap:10px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.talk-still .talk-page{animation:none}}
+
+.talk-camera-active #garden-dots,.talk-camera-active #garden-branches,.talk-camera-active #garden-controls,.talk-camera-active #garden-caption,.talk-camera-active #pano-dots,.talk-camera-active #pano-trail,.talk-camera-active .pano-controls,.talk-camera-active .pano-tour-nav{visibility:hidden!important}
+
+@media(max-width:600px){.talk-still-stage{padding-top:85px}.talk-still-stage img{width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}}

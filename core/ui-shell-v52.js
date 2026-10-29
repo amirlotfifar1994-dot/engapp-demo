@@ -15,10 +15,10 @@
     modeTabs:root.modeTabs,
     bottomNav:root.bottomNav
   };
-  const PRIMARY_MODES=['explore','learn','practice','speak','talk'];
+  const PRIMARY_MODES=['explore','learn','practice','speak','talk','listening'];
   const runtime=()=>root.EngBookRuntimeState||root.state||{};
   const modeMeta={
-    explore:['compass','Explore'],learn:['eye','Learn'],practice:['target','Practice'],speak:['mic','Speak'],talk:['spark','Talk']
+    explore:['compass','Explore'],learn:['eye','Learn'],practice:['target','Practice'],speak:['mic','Speak'],talk:['spark','Talk'],listening:['sound','Listen']
   };
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const call=(name,...args)=>typeof root[name]==='function'?root[name](...args):undefined;
@@ -29,7 +29,7 @@
   const completionFor=id=>typeof root.v27LessonCompletion==='function'?root.v27LessonCompletion(Number(id)):0;
   const capOff=(id,mode)=>{
     if(Number(id)===1)return false;
-    const map={explore:'explore',learn:'learn',practice:'practice',speak:'describe',talk:'conversation'};
+    const map={explore:'explore',learn:'learn',practice:'practice',speak:'describe',talk:'conversation',listening:'learn'};
     try{return typeof root.v23Has==='function'?!root.v23Has(map[mode]):false;}catch(_){return false;}
   };
 
@@ -39,35 +39,60 @@
       <button class="v52-icon-btn" data-eng-action="home" aria-label="Back to home">${icon('back')}</button>
       <div class="v52-brand"><img class="scenespeak-brand-icon" src="assets/brand/scenespeak-192.png" alt="" width="40" height="40"><div><b>SceneSpeak</b><small>Visual Conversation</small></div></div>
       <button class="v52-category-chip" data-eng-action="course" data-category="${cat}" aria-label="Open course map"><small>CAT</small><b>${String(cat).padStart(2,'0')}</b></button>
-      <button type="button" class="v52-scene-title studio-lesson-picker" data-eng-action="pick-lesson" aria-label="Choose lesson"><span>LESSON ${lessonLabel(id)} <i aria-hidden="true">⌄</i></span><b>${esc(lesson?.title||'Lesson')}</b></button>
+      <button type="button" class="v52-scene-title studio-lesson-picker" data-eng-action="pick-lesson" aria-label="Choose lesson"><span>${root.EngBookCoursePath?.caption(id)||'LESSON '+lessonLabel(id)} <i aria-hidden="true">⌄</i></span><b>${esc(lesson?.title||'Lesson')}</b></button>
       <div class="v52-progress" aria-label="Lesson progress ${pct}%"><b>${pct}%</b><i><em style="width:${pct}%"></em></i></div>
       <button class="v52-icon-btn" data-eng-action="studio" aria-label="Open Studio tools">${icon('layers')}</button>
+      ${root.EngBookUISounds?.buttonMarkup()||''}
       ${!root.EngBookAccess?.freeMode?.()&&typeof root.v31OpenAccount==='function'?`<button class="v52-account-btn" data-eng-action="account" aria-label="Account and access">${icon('user')}</button>`:''}
     </div></header>`;
   }
 
-  function openLessonPicker(){
+  function openLessonPicker(trigger=document.activeElement){
+    if(root.EngBookJourney)return root.EngBookJourney.openPicker(trigger);
     if(document.querySelector('.studio-library'))return;
+    const opener=trigger;
     const content=root.EngBookContent,categories=content?.listCategories?.()||[];
     const lessons=categories.flatMap(c=>content.listLessons(c.id)).sort(root.EngBookCoursePath?.compare||((a,b)=>a.id-b.id)),current=lessonId(),index=lessons.findIndex(l=>Number(l.id)===current);
     const dialog=document.createElement('dialog');dialog.className='studio-library';dialog.setAttribute('aria-labelledby','studio-library-title');
     const neighbor=(l,label)=>`<button type="button" data-eng-action="switch-lesson" data-lesson="${l?.id||''}" ${!l?.ready?'disabled':''}>${label}${l?` · ${lessonLabel(l.id)}`:''}</button>`;
-    dialog.innerHTML=`<header><div><h2 id="studio-library-title">Lessons</h2><p>Choose your next scene.</p></div><button type="button" class="studio-library-close" aria-label="Close lessons">${icon('close')}</button></header><div class="studio-library-search"><input type="search" aria-label="Search lessons" placeholder="Search by title or number" autocomplete="off"><select aria-label="Lesson category"><option value="all">All categories</option>${categories.filter(c=>lessons.some(l=>Number(l.categoryId)===Number(c.id))).map(c=>`<option value="${c.id}">${esc(c.shortTitle||c.title)}</option>`).join('')}</select></div><div class="studio-library-neighbors">${neighbor(lessons[index-1],'Previous')}${neighbor(lessons[index+1],'Next')}</div><p class="studio-library-count" role="status"></p><div class="studio-library-list"></div>`;
+    dialog.innerHTML=`<header><div><h2 id="studio-library-title">Lessons</h2><p>Choose your next scene.</p></div><button type="button" class="studio-library-close" aria-label="Close lessons">${icon('close')}</button></header><div class="studio-library-search"><input type="search" aria-label="Search lessons" placeholder="Search by title or number" autocomplete="off"><select aria-label="Lesson category"><option value="all">All categories</option>${categories.filter(c=>lessons.some(l=>Number(l.categoryId)===Number(c.id))).map(c=>`<option value="${c.id}">${esc(c.shortTitle||c.title)}</option>`).join('')}</select></div><div class="studio-library-neighbors">${neighbor(lessons[index-1],'Previous')}${neighbor(lessons[index+1],'Next')}</div><p class="studio-library-count" role="status"></p><div class="studio-library-feedback"><p class="studio-library-load-status" role="status" hidden></p><button type="button" class="studio-library-retry" hidden>Retry lesson</button></div><div class="studio-library-list"></div>`;
+    let opening=false,attempt=0,failedId=null;
+    const status=dialog.querySelector('.studio-library-load-status'),retry=dialog.querySelector('.studio-library-retry');
+    const setBusy=value=>{for(const el of dialog.querySelectorAll('input,select,[data-eng-action="switch-lesson"]'))el.disabled=value||(el.dataset?.engAction==='switch-lesson'&&!lessons.some(l=>Number(l.id)===Number(el.dataset.lesson)&&l.ready));dialog.querySelector('.studio-library-list').setAttribute('aria-busy',String(value));};
+    dialog.chooseLesson=async id=>{
+      if(opening||!lessons.some(l=>Number(l.id)===id&&l.ready))return false;
+      if(id===current&&runtime().screen!=='home'){dialog.close();return true;}
+      opening=true;failedId=null;const token=++attempt,shouldOpen=()=>token===attempt&&dialog.isConnected&&dialog.open;
+      setBusy(true);status.hidden=false;status.setAttribute('role','status');status.textContent=`Opening lesson ${lessonLabel(id)}…`;retry.hidden=true;dialog.querySelector('.studio-library-close').focus({preventScroll:true});
+      let opened=false;
+      try{opened=typeof root.v28EnsureAndOpenLesson==='function'?await root.v28EnsureAndOpenLesson(id,'explore',{shouldOpen}):call('openLesson',id);}
+      catch(error){if(shouldOpen())root.v21PushError?.(error,'lesson-picker-open');opened=false;}
+      if(!shouldOpen())return false;
+      opening=false;setBusy(false);
+      if(opened!==false){dialog.close();return true;}
+      failedId=id;status.textContent=`Lesson ${lessonLabel(id)} could not open. Check your connection, retry, or choose another lesson.`;status.setAttribute('role','alert');retry.hidden=false;retry.focus({preventScroll:true});return false;
+    };
+    retry.addEventListener('click',()=>failedId?dialog.chooseLesson(failedId):false);
     const renderList=()=>{
+      if(opening)return;
+      failedId=null;status.textContent='';status.hidden=true;retry.hidden=true;
       const query=dialog.querySelector('input').value.trim().toLowerCase(),category=dialog.querySelector('select').value;
       const shown=lessons.filter(l=>(category==='all'||String(l.categoryId)===category)&&(root.EngBookCoursePath?.matches(l,query)??(!query||`${l.title} ${lessonLabel(l.id)}`.toLowerCase().includes(query))));
       dialog.querySelector('.studio-library-count').textContent=`${shown.length} lesson${shown.length===1?'':'s'}`;
-      dialog.querySelector('.studio-library-list').innerHTML=shown.length?shown.map(l=>{
+      const list=dialog.querySelector('.studio-library-list');
+      list.innerHTML=shown.length?shown.map(l=>{
         const active=Number(l.id)===current,badge=root.EngBookAccess?.lessonBadge?.(l.id)?.label||(l.ready?'Available':'Coming soon');
         return `<button type="button" data-eng-action="switch-lesson" data-lesson="${l.id}" ${!l.ready?'disabled':''} ${active?'aria-current="page"':''}><span class="studio-lesson-number">${lessonLabel(l.id)}</span><span><b>${esc(l.title)}</b><small>${active?'Current lesson':esc(badge)}</small></span><i aria-hidden="true">${active?'✓':'›'}</i></button>`;
-      }).join(''):'<p class="studio-library-empty">No lessons found. Try another title or number.</p>';
+      }).join(''):'<div class="studio-library-empty"><p>No lessons found. Try another title or number.</p><button type="button" class="studio-library-reset">Clear search and filters</button></div>';
+      list.scrollTop=0;
+      dialog.querySelector('.studio-library-reset')?.addEventListener('click',()=>{dialog.querySelector('input').value='';dialog.querySelector('select').value='all';renderList();dialog.querySelector('input').focus({preventScroll:true});});
     };
     dialog.querySelector('input').addEventListener('input',renderList);dialog.querySelector('select').addEventListener('change',renderList);
     dialog.querySelector('.studio-library-close').addEventListener('click',()=>dialog.close());
     dialog.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();dialog.close();}});
     dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
-    dialog.addEventListener('close',()=>{dialog.remove();document.body.classList.remove('studio-library-open');document.querySelector('.studio-lesson-picker, .studio-browse-lessons')?.focus({preventScroll:true});});
-    document.body.append(dialog);renderList();document.body.classList.add('studio-library-open');dialog.showModal();dialog.querySelector('input').focus();
+    dialog.addEventListener('close',()=>{attempt++;dialog.remove();document.body.classList.remove('studio-library-open');const target=opener?.isConnected&&!opener.disabled?opener:document.querySelector('[data-eng-action="pick-lesson"]');target?.focus({preventScroll:true});});
+    document.body.append(dialog);renderList();document.body.classList.add('studio-library-open');dialog.showModal();dialog.querySelector('input').focus({preventScroll:true});dialog.querySelector('.studio-library-list [aria-current="page"]')?.scrollIntoView({block:'nearest',inline:'nearest'});
   }
 
   function modeTabs(){
@@ -101,15 +126,16 @@
     const previewMarkup=previewImage?'<img class="path-preview" src="'+esc(previewImage)+'" alt="'+esc(current.title)+'" decoding="async" fetchpriority="high">':'';
     const layout=document.createElement('div');layout.className='path-home';
     const pct=Math.max(0,Math.min(100,Number(completionFor(current.id))||0));
-    layout.innerHTML='<header class="path-header"><a href="#app" class="path-brand" aria-label="SceneSpeak home"><img src="assets/brand/scenespeak-192.png" alt="" width="40" height="40"><span class="scenespeak-wordmark">SceneSpeak<small>See it. Say it.</small></span></a>'+(root.EngBookAccess?.freeMode?.()?'':'<button type="button" data-eng-action="account" class="path-profile" aria-label="Account and access">'+icon('user')+'</button>')+'</header>'+ 
-      '<nav class="path-nav" aria-label="Main navigation"><button type="button" aria-current="page" data-eng-action="path-top">'+icon('compass')+'<span>Home</span></button><button type="button" data-eng-action="how-it-works"><span>How it works</span></button><button type="button" class="studio-browse-lessons" data-eng-action="learning-path" title="Your learning path">'+icon('layers')+'<span>Lessons</span></button></nav>'+ 
-      '<section class="path-main" aria-label="Learning path"><section class="path-unit"><span>YOUR LEARNING PATH</span><h2><button type="button" class="gallery-category studio-browse-lessons" data-eng-action="pick-lesson" aria-label="Choose category and lesson">'+icon('layers')+'<span>'+esc(category?.shortTitle||category?.title||'Everyday English')+'</span>'+icon('chevron')+'</button></h2><p>One picture. A little more English.</p></section>'+ 
-      '<section class="path-current" aria-labelledby="path-current-title">'+previewMarkup+'<div class="gallery-current-copy"><div class="path-current-top"><span>LESSON '+lessonLabel(current.id)+'</span><span>'+pct+'% explored</span></div><h2 id="path-current-title">'+esc(current.title)+'</h2><div class="path-meter" role="progressbar" aria-label="Current lesson progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div><button type="button" class="path-start" data-eng-action="lesson" data-lesson="'+current.id+'" data-mode="explore">'+(pct>0?'Continue lesson':'Start lesson')+' '+icon('chevron')+'</button></div></section>'+ 
+    layout.innerHTML='<header class="path-header"><a href="#app" class="path-brand" aria-label="SceneSpeak home"><img src="assets/brand/scenespeak-192.png" alt="" width="40" height="40"><span class="scenespeak-wordmark">SceneSpeak<small>See it. Say it.</small></span></a>'+(root.EngBookAccess?.freeMode?.()?'':'<button type="button" data-eng-action="account" class="path-profile" aria-label="Account and access">'+icon('user')+'</button>')+'</header>'+
+      '<nav class="path-nav" aria-label="Main navigation">'+(root.EngBookUISounds?.buttonMarkup()||'')+'<button type="button" aria-current="page" data-eng-action="path-top">'+icon('compass')+'<span>Home</span></button><button type="button" data-eng-action="how-it-works" aria-label="How it works"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.45c-.5.2-.5.55-.5 1.55M12 16h.01"/></svg><span>How it works</span></button><button type="button" class="studio-browse-lessons" data-eng-action="learning-path" title="Your picture worlds">'+icon('layers')+'<span>Lessons</span></button></nav>'+
+      '<section class="path-main" aria-label="Learning path"><section class="path-unit"><span>YOUR LEARNING PATH</span><h2><button type="button" class="gallery-category studio-browse-lessons" data-eng-action="pick-lesson" aria-label="Choose category and lesson">'+icon('layers')+'<span>'+esc(category?.shortTitle||category?.title||'Everyday English')+'</span>'+icon('chevron')+'</button></h2><p>One picture. A little more English.</p></section>'+
+      '<section class="path-current" aria-labelledby="path-current-title">'+previewMarkup+'<div class="gallery-current-copy"><div class="path-current-top"><span>LESSON '+lessonLabel(current.id)+'</span><span>'+pct+'% explored</span></div><h2 id="path-current-title">'+esc(current.title)+'</h2><div class="path-meter" role="progressbar" aria-label="Current lesson progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div><button type="button" class="path-start" data-eng-action="lesson" data-lesson="'+current.id+'" data-mode="explore">'+(pct>0?'Continue lesson':'Start lesson')+' '+icon('chevron')+'</button></div></section>'+
       '<aside class="gallery-lessons" aria-labelledby="gallery-lessons-title"><div class="path-section-title"><h2 id="gallery-lessons-title">Your lessons</h2><button type="button" class="studio-browse-lessons" data-eng-action="pick-lesson">View all '+icon('chevron')+'</button></div><ol class="path-trail" aria-label="Nearby lessons">'+nearby.map(l=>{const selected=Number(l.id)===Number(current.id),done=completionFor(l.id)>=100,badge=root.EngBookAccess?.lessonBadge?.(l.id)?.label||(l.ready?'Available':'Coming soon');return '<li class="'+(selected?'is-current':done?'is-done':'')+'"><button type="button" data-eng-action="lesson" data-lesson="'+l.id+'" data-mode="explore" '+(!l.ready?'disabled':'')+' '+(selected?'aria-current="step"':'')+' aria-label="Lesson '+lessonLabel(l.id)+': '+esc(l.title)+'"><span class="gallery-thumbnail">'+(l.image?'<img src="'+esc(l.image)+'" alt="" loading="lazy" decoding="async">':'')+'<span class="gallery-lesson-number">'+lessonLabel(l.id)+'</span></span><span class="path-row-copy"><span class="path-node-caption">'+esc(l.title)+'</span><span class="path-access">'+(selected?'Current lesson':done?'Explored':esc(badge))+'</span></span><span class="path-row-arrow" aria-hidden="true">'+icon('chevron')+'</span></button></li>';}).join('')+'</ol></aside></section>';
     layout.querySelector('.path-unit h2').setAttribute('aria-label',category?.shortTitle||category?.title||'Everyday English');
     // Replace the former dashboard instead of retaining it in a hidden drawer.
     // Lesson progress is read above; removing these DOM nodes never clears it.
     oldHome.replaceChildren(layout);shell.classList.add('path-shell','gallery-shell');
+    root.EngBookJourney?.mount(layout);
     root.EngBookHomeHero?.mount(layout,{content});
   }
 
@@ -155,7 +181,7 @@
       const small=card.querySelector('small');
       if(small&&/NaN/i.test(small.textContent||'')){small.textContent='Not measured yet';const bar=card.querySelector('div > i');if(bar)bar.style.width='0%';}
     });
-    
+
   }
 
   function wrapNode(node,cls,title,sub,open){
@@ -218,7 +244,7 @@
     }
   }
   function simplifyLesson(shell){
-    const pathHeading=shell.querySelector('.v98-gold-heading h2');if(pathHeading)pathHeading.textContent='Your learning path';
+    const pathHeading=shell.querySelector('.v98-gold-heading h2');if(pathHeading)pathHeading.textContent='Your picture worlds';
     const pathCopy=shell.querySelector('.v98-gold-heading p');if(pathCopy)pathCopy.textContent='One step at a time: observe, practice, then describe the scene.';
     const layers=shell.querySelector('.v98-taxonomy-list');if(layers&&!layers.closest('.studio-layer-reference'))wrapNode(layers,'studio-layer-reference','Scene layers','Review the categories in this image.',false);
     const header=shell.querySelector('.v52-topbar'),inner=header?.querySelector('.topbar-inner');
@@ -358,7 +384,7 @@
     const ribbon=shell.querySelector('.v27-coach-ribbon');if(ribbon){ribbon.classList.add('v52-next-cue');const sm=ribbon.querySelector('small');if(sm)sm.textContent='NEXT';}
     if(runtime().mode==='speak')decorateSpeak();
     if(runtime().mode==='explore'){const map=shell.querySelector('.mastery-map');if(map)map.setAttribute('aria-label','Scene anchors and mastery');}
-    
+
   }
 
   function renderHome(){root.EngBookSceneCanvas?.cleanup();if(root.EngBookCoursePath?.prepareHome(runtime().progress))call('saveProgress');legacy.renderHome?.();decorateHome();}
@@ -368,10 +394,11 @@
     const action=el.dataset.engAction;
     if(action==='path-top'){if(root.EngBookHomeHero)root.EngBookHomeHero.show('welcome');else root.scrollTo({top:0,behavior:'auto'});return;}
     if(action==='learning-path')return root.EngBookHomeHero?.show('lessons');
-    if(action==='how-it-works'){root.EngBookHomeHero?.show('welcome',{focus:false});document.getElementById('how-it-works')?.scrollIntoView({block:'center',behavior:root.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return;}
-    if(action==='pick-lesson')return openLessonPicker();
+    if(action==='how-it-works')return root.EngBookHomeHero?.show('guide');
+    if(action==='pick-lesson')return openLessonPicker(el);
     if(action==='switch-lesson'){
       const id=Number(el.dataset.lesson);if(!id||el.disabled)return;
+      const picker=document.querySelector('.studio-library');if(picker?.chooseLesson)return picker.chooseLesson(id);
       document.querySelector('.studio-library')?.close();if(id===lessonId()&&runtime().screen!=='home')return;
       return typeof root.v28EnsureAndOpenLesson==='function'?root.v28EnsureAndOpenLesson(id,'explore'):call('openLesson',id);
     }

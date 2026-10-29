@@ -24,7 +24,7 @@
     const retry=doc.querySelector('[data-startup-retry]');if(retry)retry.hidden=true;
     try{
       const route=requested(),available=route.validLesson&&root.EngBookContent.canOpen(route.lesson);
-      message(available?`Opening lesson ${lessonLabel(route.lesson)}…`:'Loading SceneSpeak…');
+      message(available?`Opening ${root.EngBookCoursePath?.qualifiedLabel(route.lesson)||'your picture'}…`:'Loading SceneSpeak…');
       if(available){if(!await root.v49ApplyDeepLink())throw new Error('LESSON_STARTUP_FAILED');}
       else root.renderHome();
       root.render();

@@ -1,0 +1,69 @@
+/* Coaching is its own reading layer; the English canvas keeps its direction. */
+.guide-language-control{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:#2b544b;font-size:13px;line-height:1.5}
+.guide-language-control svg{width:19px;height:19px;flex:none}
+.guide-language-control select{min-height:42px;max-width:100%;border:1px solid #c4d8ce;border-radius:12px;padding:7px 30px 7px 11px;background:#fff;color:#173f34;font:inherit;cursor:pointer}
+.canvas-header .canvas-lesson{flex:1;min-width:0;max-width:290px}
+.moments-actions .guide-language-control{padding:3px 0 8px}
+.moments-actions .guide-language-control span{flex:1}
+.guide-word{display:inline!important;width:auto!important;min-width:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;border-radius:2px!important;background:transparent!important;box-shadow:none!important;color:inherit!important;font:inherit!important;letter-spacing:inherit!important;line-height:inherit!important;text-align:inherit!important;text-transform:none!important;text-decoration:underline dotted #548e7e;text-underline-offset:4px;cursor:help}
+.guide-word:hover{background:#d6efe070!important}
+.guide-word:focus-visible{outline:2px solid #248368;outline-offset:3px}
+.canvas-branch-tools{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}
+.scene-canvas .canvas-branch-nav .guide-detail-button,.scene-canvas .learn-topic-actions .guide-detail-button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;min-width:32px;height:32px;min-height:32px;max-width:none;padding:0;border:0;border-radius:50%;margin:0;background:transparent;color:#235943;cursor:pointer;box-shadow:none}
+.scene-canvas .learn-topic-actions .guide-detail-button{width:44px;height:44px;min-width:44px;min-height:44px}
+.guide-detail-button svg{width:16px;height:16px;pointer-events:none}
+.scene-canvas .guide-detail-button:hover,.scene-canvas .guide-detail-button[aria-expanded=true]{background:#ffffff90;color:#14523b}
+.guide-detail-copy{margin:12px 0;padding:12px;border-radius:13px;background:rgba(255,255,255,.85);border:1px solid #b6d3c5;color:#173e34;font-size:14px;line-height:1.85}
+.guide-detail-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.guide-detail-heading b{font-size:13px;font-weight:650}
+.scene-canvas .guide-detail-heading button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;min-height:28px;min-width:28px;padding:0;border:0;border-radius:50%;background:transparent;color:#235943;font:21px/1 sans-serif;cursor:pointer}
+.guide-detail-copy p{font-size:14px!important;line-height:1.85!important;margin:8px 0!important;color:#173e34!important}
+.guide-detail-copy small{display:block;font-size:12px;line-height:1.8;color:#426255;margin-top:7px}
+.guide-detail-copy[dir=rtl],.guide-panel-copy[dir=rtl]{font-family:Tahoma,"Segoe UI",sans-serif;letter-spacing:0;text-align:right}
+.guide-detail-button:focus-visible,.guide-detail-heading button:focus-visible{outline:2px solid #21836b;outline-offset:2px}
+.guide-panel{position:absolute;box-sizing:border-box;z-index:30;top:calc(env(safe-area-inset-top) + 80px);right:16px;width:min(340px,calc(100% - 32px));max-height:calc(100dvh - 190px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain;padding:19px;border-radius:22px;background:rgba(250,253,249,.95);border:1px solid #fff9;box-shadow:0 14px 50px #0a30283d;backdrop-filter:blur(16px);color:#173e34}
+.guide-panel header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.guide-panel h2{font-size:18px;line-height:1.5;margin:0}
+.guide-panel h3{font-size:14px;line-height:1.7;margin:20px 0 7px}
+.guide-panel p,.guide-panel li{font-size:14px;line-height:1.85;margin:6px 0}
+.guide-panel ol{padding-inline-start:22px}
+.guide-panel small{font-size:12px;line-height:1.8;display:block;color:#46665b}
+.guide-panel .guide-language-control{border-bottom:1px solid #c9dacf;padding-bottom:14px}
+.guide-targets{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.guide-targets button{padding:8px 10px;min-height:40px;border:1px solid #b7d5c6;border-radius:10px;background:#e9f4ed;color:#174a39;font:600 12px/1.4 "Segoe UI",sans-serif;cursor:pointer}
+.guide-frame{background:#e7f2e9;border-radius:14px;padding:12px 14px;margin:15px 0}
+.guide-frame b{font-size:12px}
+.guide-frame p{font-family:"Segoe UI",sans-serif}
+.guide-steps{display:flex;gap:5px;border-bottom:1px solid #214f3521;padding-bottom:10px}
+.guide-steps button{flex:1;min-width:0;min-height:44px;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 5px;border:0;border-radius:11px;background:transparent;color:#426255;font:600 13px/1.5 "Segoe UI",Tahoma,sans-serif;cursor:pointer}
+.guide-steps button[aria-current=step]{background:#1e6653;color:#fff}
+.guide-steps button span{font-size:11px;opacity:.8}
+.guide-path{max-height:58px;overflow:auto;font-size:12px!important;line-height:1.6!important;color:#426255;margin-top:12px!important}
+.guide-path span{padding:0 3px}
+.guide-panel-copy h3{font-size:17px;margin:14px 0 8px}
+.guide-step-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:17px;padding-top:12px;border-top:1px solid #214f3521}
+.guide-step-actions button{min-height:44px;min-width:64px;padding:8px 12px;border:1px solid #b7d5c6;border-radius:11px;background:#e9f4ed;color:#174a39;font:600 13px/1.5 "Segoe UI",Tahoma,sans-serif;cursor:pointer}
+.guide-step-actions button:last-child{background:#1e6653;color:white;border-color:transparent}
+.guide-step-actions button:disabled{opacity:.4;cursor:default}
+.guide-settings,.guide-controls,.guide-model{margin-top:14px;font-size:13px;line-height:1.8}
+.guide-settings summary,.guide-controls summary,.guide-model summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:7px;font-weight:600;list-style:none}
+.guide-settings summary:before,.guide-controls summary:before,.guide-model summary:before{content:'+';font-size:18px;font-weight:400}
+.guide-settings[open] summary:before,.guide-controls[open] summary:before,.guide-model[open] summary:before{content:'−'}
+.guide-settings .guide-language-control{padding-top:8px;border-bottom:0}
+.guide-panel .guide-settings small{margin-top:9px}
+.guide-boundary{border-inline-start:2px solid #7eaa96;padding-inline-start:10px}
+.guide-task{margin-top:14px;padding:12px;border-radius:12px;background:#e7f2e9;font-size:14px;line-height:1.85}
+/* One reading card at a time, with the selected dots and photo still visible. */
+.scene-canvas:has(.guide-panel) .scene-glass-card{visibility:hidden;pointer-events:none}
+.scene-canvas:has(.guide-panel) .learn-workspace{visibility:hidden;pointer-events:none}
+.guide-panel summary:focus-visible{outline:2px solid #21836b;outline-offset:2px;border-radius:8px}
+.guide-word-popover{position:fixed;z-index:10001;box-sizing:border-box;max-width:calc(100vw - 24px);width:260px;padding:17px;border-radius:16px;background:#fbfff9;color:#173e34;border:1px solid #a7cabb;box-shadow:0 12px 36px #102e3540}
+.guide-word-popover>b{display:block;padding-right:23px;font-size:16px}
+.guide-word-popover p{font:15px/1.9 Tahoma,"Segoe UI",sans-serif;margin:11px 0 0}
+.guide-word-popover{max-height:calc(100dvh - 24px);overflow:auto}
+.guide-word-popover small{font:12px/1.8 Tahoma,"Segoe UI",sans-serif;display:block;margin-top:6px}
+.guide-word-popover>button{position:absolute;right:5px;top:5px;border:0;background:transparent;border-radius:10px;color:#245b45;width:36px;height:36px;font:24px/1 sans-serif;cursor:pointer}
+.guide-word-popover button:focus-visible,.guide-panel button:focus-visible,.guide-language-control select:focus-visible{outline:2px solid #21836b;outline-offset:2px}
+@media(max-width:600px){.guide-panel{right:12px;width:calc(100% - 24px);max-width:340px;padding:17px}.canvas-header .guide-hint-button{flex-shrink:0;width:36px;height:40px}.guide-language-control select{font-size:16px}}
+@media(max-height:520px){.guide-panel{top:72px;max-height:calc(100dvh - 154px);padding:14px}.guide-panel h3{margin-top:14px}}
+@media(prefers-reduced-transparency:reduce){.guide-panel{background:#fafff8;backdrop-filter:none}}

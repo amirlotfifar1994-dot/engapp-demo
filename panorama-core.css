@@ -1,0 +1,14 @@
+#panorama-core-viewport{position:fixed;inset:0;z-index:0;background:#173f35 center/cover no-repeat}#panorama-core-viewport iframe{width:100%;height:100%;border:0;display:block}.panorama-core #app{position:relative;z-index:1}.panorama-core .scene-canvas{background:transparent;pointer-events:none}.panorama-core .canvas-backdrop,.panorama-core .canvas-photo,.panorama-core .canvas-preview-replay,.panorama-core .canvas-connector,.panorama-core .canvas-spotlight,.panorama-core .canvas-branch-link{display:none!important}.panorama-core .canvas-header,.panorama-core .canvas-bottom,.panorama-core .canvas-panel,.panorama-core .canvas-map,.panorama-core .scene-glass-card,.panorama-core .scenario-studio,.panorama-core .scenario-picker,.panorama-core .canvas-recall,.panorama-core .canvas-activity,.panorama-core .learn-studio,.panorama-core .learn-panel{pointer-events:auto}.panorama-core .scene-glass-card{position:fixed!important;left:24px!important;top:100px!important;right:auto!important;bottom:auto!important;max-height:calc(100dvh - 200px)!important;transform:none!important}.pano-core-embedded .pano-header,.pano-core-embedded #pano-game,.pano-core-embedded #pano-lesson,.pano-core-embedded #pano-hint{display:none!important}.pano-core-embedded .pano-controls{bottom:92px}.pano-core-embedded #pano-camera{bottom:158px}.pano-core-embedded.is-core-practice .pano-controls{display:none}.pano-core-entry{position:fixed;right:16px;top:94px;z-index:5;border:1px solid #fff8;border-radius:24px;background:#edf2e6;color:#173f35;font:600 12px system-ui;padding:12px;text-decoration:none}
+@media(max-width:820px){.panorama-core .scene-glass-card{left:12px!important;right:12px!important;top:auto!important;bottom:94px!important;width:calc(100% - 24px)!important;max-height:50dvh!important}.pano-core-entry{font-size:10px;padding:9px}.pano-core-embedded .pano-controls{bottom:86px}}
+
+.panorama-core #app{pointer-events:none}
+.panorama-core.panorama-camera-open .scene-glass-card{visibility:hidden!important;pointer-events:none!important}
+.panorama-core .canvas-header,.panorama-core .canvas-bottom{pointer-events:none}
+.panorama-core .canvas-header>*,.panorama-core .canvas-bottom .canvas-dock{pointer-events:auto}
+.pano-core-embedded #pano-details,.pano-core-embedded .pano-cluster{max-height:calc(100dvh - 190px)}
+@media(max-width:820px){.panorama-core .scene-glass-card{bottom:166px!important;max-height:min(50dvh,calc(100dvh - 270px))!important}}
+.panorama-core .immersive-learn .learn-workspace,.panorama-core .canvas-practice-picker,.panorama-core .canvas-guide{pointer-events:auto}
+
+.panorama-core .canvas-caption,.panorama-core .canvas-card-move,.pano-core-embedded.is-core-practice #pano-trail{display:none!important}
+
+.pano-core-embedded #pano-scenes,.pano-core-embedded #pano-found{display:none!important}

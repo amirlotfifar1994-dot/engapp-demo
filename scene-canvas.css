@@ -1,4 +1,16 @@
 /* The picture is the page. Only optional learning panels scroll internally. */
+.scene-canvas .canvas-preview-replay{position:absolute;right:max(18px,env(safe-area-inset-right));top:88px;z-index:5;width:36px;height:36px;min-width:36px;opacity:.8}
+.scene-canvas.is-scene-preview :is(.canvas-bottom,.canvas-preview-replay){visibility:hidden;pointer-events:none}
+.scene-preview-hud{position:absolute;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;display:flex;align-items:center;gap:20px;max-width:calc(100% - 28px);padding:10px 12px 10px 18px;border:1px solid #ffffff55;border-radius:22px;background:#163b31ed;color:#fff;box-shadow:0 6px 28px #071c1833}
+.scene-preview-hud div{display:grid;gap:3px;min-width:0}.scene-preview-hud small{font-size:9px;letter-spacing:.14em;color:#c0e4d6;font-weight:650}.scene-preview-hud span{font-size:13px;line-height:1.4}
+.scene-preview-hud button{display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;border-radius:50%;border:1px solid #ffffff38;background:#ffffff10;color:white;padding:9px;box-shadow:none}
+.scene-preview-touch{position:absolute;z-index:13;pointer-events:none;width:48px;height:48px;border:2px solid #eafff6;border-radius:50%;background:#d6ffed44;box-shadow:0 0 0 10px #c1ffe91a;animation:scene-preview-press .52s ease-out both}
+@keyframes scene-preview-press{0%{opacity:0;transform:translate(-50%,-50%) scale(1.2)}30%{opacity:1;transform:translate(-50%,-50%) scale(.65)}65%{opacity:1;transform:translate(-50%,-50%) scale(.9)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.45)}}
+@media(max-width:700px){.scene-canvas .canvas-preview-replay{top:80px;right:14px}.scene-preview-hud{width:max-content;gap:12px}}
+@media(prefers-reduced-motion:reduce){.scene-preview-touch{display:none}}
+.canvas-group-region{position:absolute;z-index:2;pointer-events:none;background:#dbffed06;border-radius:8px}
+.canvas-group-region svg{width:100%;height:100%;overflow:visible;display:block}
+.canvas-group-region path{fill:none;stroke:#e4fff3;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px #061b16)}
 html.canvas-open,body.canvas-open{height:100%;overflow:hidden!important;overscroll-behavior:none;background:#15231f}
 body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 .scene-canvas.app-shell{position:fixed!important;inset:0!important;width:100%!important;max-width:none!important;height:100dvh!important;min-height:0!important;padding:0!important;margin:0!important;overflow:hidden;isolation:isolate;background:#15231f;color:#173a30;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -30,14 +42,27 @@ body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 .scene-canvas .hotspot.canvas-dot{position:absolute!important;display:grid!important;place-items:center;width:44px!important;height:44px!important;min-width:0!important;min-height:0!important;border:0!important;padding:0!important;border-radius:50%!important;background:transparent!important;opacity:1!important;box-shadow:none!important;z-index:3;transform:translate(-50%,-50%) scale(var(--v59-inverse-scale,1))!important;cursor:pointer;transition:none!important}
 .scene-canvas .hotspot.canvas-dot:before{content:"";display:block;position:absolute;inset:auto;width:12px;height:12px;border-radius:50%;border:2px solid white;background:#ffffffa6;box-shadow:0 0 0 5px #ffffff20,0 2px 10px #102e4260;transform:none;transition:background .2s,box-shadow .2s}
 .scene-canvas .hotspot.canvas-dot.is-detail:before{width:9px;height:9px;background:#c4f1df}
+.scene-canvas .hotspot.canvas-dot.is-member:before{width:12px;height:12px;background:#bce9d6}
 .scene-canvas .hotspot.canvas-dot.discovered:before{background:#69c5a3}
 .scene-canvas .hotspot.canvas-dot:hover:before,.scene-canvas .hotspot.canvas-dot:focus-visible:before{background:#fff;box-shadow:0 0 0 8px #ffffff40,0 0 35px 14px #ccffdc70}
 .scene-canvas .hotspot.canvas-dot.active:before{background:#b8f5d7;border-color:white;box-shadow:0 0 0 7px #bcf8da50,0 0 38px 15px #a7f5d56b}
+/* Collective cues remain tiny dots; a fine second ring also distinguishes them
+   without relying on colour. The invisible touch target stays 44px at any zoom. */
+.scene-canvas .hotspot.canvas-dot.scope-region:before{width:13px;height:13px;background:#f2ca7c;border-color:#fff7e4;box-shadow:0 0 0 2px #583e2980,0 0 0 3px #ffe6ae90,0 2px 10px #172a3260}
+.scene-canvas .hotspot.canvas-dot.scope-region.active:before,.scene-canvas .hotspot.canvas-dot.scope-region:hover:before,.scene-canvas .hotspot.canvas-dot.scope-region:focus-visible:before{background:#ffe3a1;box-shadow:0 0 0 2px #583e2980,0 0 0 3px #fff0c4,0 0 0 7px #f2ca7c35}
+.scene-canvas .hotspot.canvas-dot.scope-scene:before{background:#a9d9f2;border-color:#effaff;box-shadow:0 0 0 2px #24485c80,0 0 0 3px #c9eaff80,0 2px 10px #172a3260}
+.scene-canvas .hotspot.canvas-dot.scope-scene.active:before,.scene-canvas .hotspot.canvas-dot.scope-scene:hover:before,.scene-canvas .hotspot.canvas-dot.scope-scene:focus-visible:before{background:#d7f0ff;box-shadow:0 0 0 2px #24485c80,0 0 0 3px #d7f0ff,0 0 0 7px #a9d9f235}
 .scene-canvas .hotspot.canvas-dot:after{display:none!important}
 .scene-canvas .hotspot.canvas-dot.memory-dot:not(:focus-visible):before{opacity:0}
 .canvas-spotlight{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle 130px at var(--anchor-x) var(--anchor-y),transparent 25%,rgba(8,28,21,.08) 60%,rgba(8,28,21,.32) 150%);animation:canvas-fade .25s ease-out}
 .scene-canvas .scene-glass-card{position:absolute;z-index:6;width:min(340px,calc(100vw - 24px));max-height:calc(100dvh - 190px);overflow:auto;overscroll-behavior:contain;padding:20px;border:1px solid rgba(255,255,255,.78);border-radius:24px;background:rgba(246,252,248,.85);color:#163b2e;box-shadow:0 18px 65px #09291e38,inset 0 1px 0 white;backdrop-filter:blur(26px) saturate(135%);-webkit-backdrop-filter:blur(26px) saturate(135%);outline:none;animation:canvas-card-in .2s ease-out;text-align:left}
 .scene-glass-card header,.canvas-panel>header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin:0;padding:0}
+.canvas-branch-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding-bottom:9px;border-bottom:1px solid #214b3920;min-width:0}
+.scene-canvas .canvas-branch-nav button{display:flex;align-items:center;gap:4px;min-width:0;min-height:32px;max-width:65%;padding:2px 4px 2px 0;border:0;border-radius:7px;background:transparent;color:#234d3d;font-size:11px;text-align:left}
+.canvas-branch-nav button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scene-canvas .canvas-branch-nav button svg{width:15px;height:15px}
+.canvas-branch-nav small{font-size:10px;line-height:1.4;color:#365b49;text-align:right}
+.scene-canvas .canvas-branch-nav button:hover{background:#ffffff45}
 .scene-glass-card header>div{min-width:0}
 .scene-canvas .canvas-eyebrow{display:block;font-size:9px;line-height:1.6;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:#45725f}
 .scene-canvas .scene-glass-card h2{font-size:22px;line-height:1.15;letter-spacing:-.035em;font-weight:600;margin:5px 0 7px;color:#153a2c;overflow-wrap:anywhere}
@@ -83,6 +108,17 @@ body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 .canvas-map-dot{width:26px;height:26px;border-radius:50%;border:1px solid #50705a40;display:grid;place-items:center;flex-shrink:0}
 .canvas-map-dot.done{background:#246c53;color:white;border-color:#246c53}
 .canvas-map-dot.done svg{width:15px;height:15px}
+.canvas-map-search{position:relative;flex-shrink:0;margin:14px 18px 0}
+.scene-canvas .canvas-map-search .canvas-search{width:100%;margin:0;padding-right:48px}
+.canvas-map-search .canvas-search::-webkit-search-cancel-button{display:none}
+.scene-canvas .canvas-map-search .canvas-icon{position:absolute;right:3px;top:3px;width:38px;min-width:38px;height:38px;min-height:38px;background:transparent;color:#315a42}
+.canvas-map-count{flex-shrink:0;margin:9px 22px 5px;font-size:12px;color:#486650;line-height:1.5}
+.canvas-map-review-note{flex-shrink:0;margin:0 22px 8px;font-size:12px;color:#24523d;line-height:1.5}
+.canvas-map-empty{padding:16px 22px;color:#315a42}
+.canvas-map-empty p{font-size:15px;font-weight:600;margin:0 0 6px}
+.canvas-map-empty small{font-size:12px;line-height:1.5}
+.canvas-map-list{min-height:0;flex:1}
+.canvas-map-list button>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
 .scene-canvas .canvas-activity-body{position:relative!important;overflow:auto;overscroll-behavior:contain;min-height:0;flex:1;padding:16px;margin:0!important;width:100%!important;max-width:none!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
 .canvas-activity-body .v52-mode-tabs,.canvas-activity-body .panel-heading,.canvas-activity-body .v96-back-to-scene{display:none!important}
 .canvas-activity-body .panel-heading h2{font-size:18px}
@@ -239,6 +275,9 @@ body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 .scene-canvas .canvas-recall h2{font-size:24px;line-height:1.25;letter-spacing:-.025em;margin:12px 0 7px;color:#173e2b;overflow-wrap:anywhere}
 .scene-canvas .canvas-recall p{font-size:14px;line-height:1.55;color:#395b47;margin:0 0 10px}
 .canvas-recall-meta{font-size:12px;line-height:1.5;display:block;color:#526c5b}
+.canvas-recall-audio.is-error{color:#804525}
+.scene-canvas .canvas-recall-text-help{display:block;margin:3px 0 0;padding:8px 0;min-height:40px;border:0;background:transparent;color:#285a3f;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+.canvas-recall [tabindex="-1"]:focus-visible{outline:2px solid #246c53;outline-offset:4px;border-radius:4px}
 .canvas-recall footer{display:flex;gap:8px;align-items:center;margin-top:14px}
 .scene-canvas .canvas-recall footer button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #c9d9cf;border-radius:12px;background:#fff;color:#285a3f;font-size:13px;font-weight:600;min-height:44px;padding:10px 14px;flex:1}
 .scene-canvas .canvas-recall footer .canvas-recall-primary{background:#246c53;color:#fff;border-color:#246c53}
@@ -279,6 +318,27 @@ body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 .scene-canvas .practice-worksheet .builder-feedback button{float:none;display:block;margin-top:8px}
 .scene-canvas .practice-worksheet :is(small,.practice-complete>span){font-size:12px;line-height:1.5;color:#526c5b}
 .scene-canvas .practice-worksheet button:disabled{opacity:1;color:#526c5b;background:#edf3ee;cursor:default}
+.scene-canvas .practice-worksheet .drill-summary{padding:18px;margin-top:12px;color:#214431;background:#f8fcf9;border:1px solid #d2e0d6;border-radius:16px}
+.drill-summary h3{margin:8px 0 14px;outline-offset:4px}
+.drill-result-count{display:grid;gap:3px;margin:16px 0;color:#246c53}
+.drill-result-count strong{font-size:48px;line-height:1.1;font-variant-numeric:tabular-nums}
+.scene-canvas .practice-worksheet .drill-result-count small{font-size:24px;color:#526c5b}
+.drill-result-count>span{font-size:14px}
+.drill-result-actions{display:grid;gap:8px;margin-top:18px}
+.scene-canvas .practice-worksheet .drill-result-actions button{width:100%;margin:0;justify-content:center;padding:12px;white-space:normal}
+.scene-canvas .practice-worksheet .drill-result-actions .drill-result-secondary{background:#edf4ef;color:#28583c;border:1px solid #c6d8cc}
+.scene-canvas .practice-worksheet .drill-result-actions .drill-result-link{background:transparent;color:#28583c;text-decoration:underline;text-underline-offset:3px}
+.drill-result-note{padding:10px;border:1px solid #d2e0d6;border-radius:10px}
+.scene-canvas .practice-worksheet .repair-list{display:grid;gap:12px}
+.scene-canvas .practice-worksheet .repair-card{padding:16px;border:1px solid #d2e0d6}
+.scene-canvas .practice-worksheet .repair-card h4{font-size:18px;line-height:1.45;color:#214431;overflow-wrap:anywhere}
+.scene-canvas .practice-worksheet .repair-actions{display:flex;flex-wrap:wrap;gap:8px}
+.scene-canvas .practice-worksheet .repair-actions small{flex-basis:100%}
+.scene-canvas .practice-library article{padding:16px 0;border-top:1px solid #d2e0d6;overflow-wrap:anywhere}
+.scene-canvas .practice-library article>p{font-size:16px;line-height:1.6;color:#214431;margin:0 0 12px}
+.scene-canvas .practice-library article>div{display:flex;gap:8px;flex-wrap:wrap}
+.scene-canvas .practice-library article button{border:1px solid #c6d8cc;border-radius:10px;background:#fff;padding:9px 12px;flex:1;display:flex;align-items:center;justify-content:center;gap:6px}
+.scene-canvas .practice-library article button:last-child{flex-basis:100%;background:#edf4ef;white-space:nowrap}
 @media(min-width:900px){.scene-canvas.recall-active .canvas-photo{right:420px;bottom:110px}.scene-canvas.recall-active .canvas-zoom{right:440px}.scene-canvas .canvas-recall{bottom:110px}}
 @media(max-width:899px){.scene-canvas .canvas-recall{left:12px;right:12px;bottom:90px;width:auto;padding:14px 17px}.scene-canvas .canvas-recall h2{font-size:22px;margin-top:9px}.scene-canvas .canvas-recall footer{margin-top:11px}}
 @media(max-width:899px) and (min-height:521px){.scene-canvas .canvas-recall{max-height:min(360px,calc(100dvh - 315px))}}
@@ -385,6 +445,9 @@ body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 /* Compact picture annotations follow their anchor while the photo pans. */
 .scene-canvas .canvas-connector{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;overflow:visible;filter:drop-shadow(0 1px 2px #15362955)}
 .canvas-connector path{fill:none;stroke:#d7ece1;stroke-width:.9;opacity:.72;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.scene-canvas .canvas-branch-link{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:hidden;filter:drop-shadow(0 .5px 1px #16392d70)}
+.canvas-branch-link path{fill:none;stroke:#e0f5e9;stroke-width:.8;opacity:.65;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.scene-canvas .canvas-dot.is-branch-parent:before{box-shadow:0 0 0 4px #e5fff015,0 1px 7px #102e4240}
 .scene-canvas .canvas-detail-card{width:min(320px,calc(100vw - 28px));padding:16px 18px;border-radius:21px;background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,253,244,.7) 56%,rgba(245,250,247,.74));color:#092117;border-color:rgba(255,255,255,.78);backdrop-filter:none;-webkit-backdrop-filter:none;animation:canvas-fade .18s ease-out;box-shadow:0 8px 32px #082b2226,inset 0 1px 0 #ffffffb3,inset 0 -1px 0 #ffffff38}
 .scene-canvas .canvas-detail-card :is(h2,.canvas-compact-copy,.canvas-card-copy p){color:#092117;text-shadow:none}
 .scene-canvas .canvas-detail-card :is(.canvas-eyebrow,.canvas-ipa,.canvas-expand-detail,.canvas-card-copy>small){color:#092117}
@@ -471,6 +534,7 @@ body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 .scene-canvas .learn-topic-actions button,.scene-canvas .learn-reader-footer button{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #214c3826;border-radius:15px;min-height:44px;padding:10px 15px;background:rgba(255,253,246,.76);color:#23503a;font-size:12px;font-weight:600;box-shadow:none}
 .scene-canvas .learn-topic-actions button:first-child{background:#185340;border-color:#185340;color:#fff}
 .learn-topic-actions svg{width:17px!important;height:17px!important}
+.learn-audio-status{margin:7px 0;font-size:12px;line-height:1.5;color:#274c3a}
 .learn-reader-footer{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-shrink:0;pointer-events:auto}
 .scene-canvas .learn-reader-footer button:first-child,.scene-canvas .learn-reader-footer button:last-child{border-radius:50%;width:44px;padding:10px;flex-shrink:0}
 .scene-canvas .learn-reader-footer button:nth-child(2){padding-inline:20px;border-radius:30px}
@@ -583,3 +647,25 @@ body.canvas-open #app{height:100dvh;min-height:0;padding:0;overflow:hidden}
 @media(hover:none) and (pointer:coarse){
  .scene-canvas :is(select,input:not([type=checkbox]),textarea){font-size:16px!important}
 }
+
+/* Keep reader controls reachable while only its text scrolls. */
+.scene-canvas .scenario-reading{display:flex;flex-direction:column;overflow:hidden}
+.scenario-reading>header,.scenario-reading>footer,.scenario-reading>.scenario-handle,.scenario-audio-status{flex-shrink:0}
+.scenario-reading-body{min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#60877555 transparent}
+.scenario-reading-body:focus-visible{outline:2px solid #246c53;outline-offset:-2px;border-radius:8px}
+.scenario-audio-status{font-size:11px;line-height:1.45;margin:0 0 8px;color:#315e45}
+.scenario-controls [aria-pressed=true]{background:#246c53!important;color:#fff!important}
+@media(max-width:899px) and (orientation:portrait){
+  .scene-canvas .scenario-reading{max-height:min(46dvh,calc(100dvh - var(--scenario-top,82px) - var(--scenario-rail-height,54px) - var(--scenario-bottom,102px) - 112px))}
+  .scene-canvas .scenario-reading.is-expanded{max-height:min(58dvh,calc(100dvh - var(--scenario-top,82px) - var(--scenario-rail-height,54px) - var(--scenario-bottom,102px) - 112px))}
+}
+@media(max-height:650px) and (orientation:portrait){
+  .scenario-reading>.scenario-handle{display:none}
+  .scene-canvas .scenario-reading h2{font-size:17px;margin:3px 0 7px}
+  .scenario-reading>footer{padding-top:7px;margin-top:7px}
+}
+
+.scene-canvas .canvas-branch-nav .canvas-scenario-return{flex-shrink:0;justify-content:center;max-width:none;min-width:32px;width:32px;padding:4px}
+/* The compact level shortcut opens the same lesson setup, without another settings panel. */
+.canvas-level-shortcut{display:inline-flex;align-items:center;justify-content:center;min-width:34px;min-height:32px;border:1px solid #446c5540;border-radius:10px;background:#ffffffb8;color:#234c3b;font-size:11px;font-weight:650;padding:4px 6px;flex-shrink:0}
+.canvas-tense:has(>button:disabled){grid-template-columns:1fr;justify-content:center}.canvas-tense>button:disabled{display:none}

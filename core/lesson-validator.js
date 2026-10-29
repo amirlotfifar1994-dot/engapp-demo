@@ -34,6 +34,35 @@
     const gold=p?.quality?.goldReferenceReady===true;if(gold){if(String(p?.quality?.goldReferenceContract||'')!=='engapp-six-lesson-gold-freeze-v1.03')errors.push('gold reference contract must be engapp-six-lesson-gold-freeze-v1.03.');const forbiddenFa=/\b(?:مادر|پدر|خواهر|برادر|پدربزرگ|مادربزرگ|همسر|زوج)\b|خانوادگی/;for(const h of hs){if(String(h?.claimClass||'')==='visible-fact'&&forbiddenFa.test(String(h?.fa||'')))errors.push(`visible-fact Persian label must not assert an unverified relationship: ${h.id||h.en}`);}const malformed=/\bmay have (?:they|she|he|we|i)\b/i;function scanStrings(v,path=''){if(Array.isArray(v)){v.forEach((x,i)=>scanStrings(x,`${path}[${i}]`));return;}if(v&&typeof v==='object'){for(const [k,x] of Object.entries(v)){if(k===('source'+'Trace'))continue;scanStrings(x,`${path}/${k}`);}return;}if(typeof v==='string'&&malformed.test(v))errors.push(`malformed level/scenario language at ${path}`);}scanStrings(c,'content');const metaPhrases=['The description remains limited to visible evidence','It helps establish the setting','The environmental details frame the main action'];for(const row of arr(obj(c.levelAware).sentenceLadders)){const vals=['A1','A2','B1','B2','C1'].map(l=>String(obj(row.levels)[l]||'').trim());if(new Set(vals).size!==5)errors.push(`gold sentence ladder ${row.id||'?'} must have five distinct level realizations.`);for(const s of vals)if(metaPhrases.some(q=>s.includes(q)))errors.push(`gold sentence ladder ${row.id||'?'} contains QA/meta prose instead of learner language.`);}if(obj(c.memoryLayer).audit?.sceneSpecificSupportBanks!==true)errors.push('gold memory layer must confirm scene-specific support banks.');} 
     if(p?.quality?.imaginationMemoryReady===true||String(c?.imaginationLayer?.contract||'')==='engapp-imagination-memory-dna-v1.00')validateImaginationLayer(c.imaginationLayer,ids,errors);
     arr(p.coverageAnchors).forEach(a=>{if(a?.reviewed!==true)warnings.push(`coverage anchor ${a?.key||'?'} is not marked reviewed`);});
+    if(c.lessonEntry)for(const key of ['goal','notice'])if(typeof c.lessonEntry[key]!=='string'||c.lessonEntry[key].trim().length<12)errors.push(`lessonEntry.${key} requires a useful introduction.`);
+    if(c.hotspotLanguage){
+      const layer=c.hotspotLanguage,levels=arr(layer.levels),allowed=['A1','A2','B1','B2','C1'],filled=v=>typeof v==='string'&&v.trim().length>0,normalize=v=>String(v||'').toLowerCase().replace(/’/g,"'").replace(/\s+/g,' ').trim();
+      if(layer.schemaVersion!==1)errors.push('hotspotLanguage schemaVersion must be 1.');
+      if(!levels.length||new Set(levels).size!==levels.length||levels.some(l=>!allowed.includes(l)))errors.push('hotspotLanguage levels must be unique supported English levels.');
+      if(layer.overviewByLevel!==undefined)for(const level of levels)if(!filled(obj(layer.overviewByLevel)[level]))errors.push(`hotspotLanguage overviewByLevel.${level} requires a reviewed overview.`);
+      if(layer.talkPromptHintsByLevel!==undefined)for(const level of levels){
+        const hints=obj(layer.talkPromptHintsByLevel)[level];if(!hints||typeof hints!=='object'||Array.isArray(hints)){errors.push(`hotspotLanguage talkPromptHintsByLevel.${level} requires reviewed hints.`);continue;}
+        for(const [mission,items] of Object.entries(hints))for(const [index,hint] of Object.entries(obj(items))){
+          if(!/^\d+$/.test(index)||!c.conversation?.missions?.[mission]?.prompts?.[Number(index)])errors.push(`hotspotLanguage conversation target does not exist: ${mission}/${index}.`);
+          if(!filled(hint?.hint)||!Array.isArray(hint?.hotspotIds))errors.push(`hotspotLanguage conversation hint is incomplete: ${mission}/${index}/${level}.`);
+          for(const id of arr(hint?.hotspotIds))if(!ids.has(id))errors.push(`hotspotLanguage conversation hint references unknown hotspot ${id}.`);
+        }
+      }
+      for(const [id,row] of Object.entries(obj(layer.hotspotsById))){
+        if(!ids.has(id))errors.push(`hotspotLanguage references unknown hotspot ${id}.`);
+        if(row?.reviewed!==true)errors.push(`hotspotLanguage ${id} must be reviewed before publication.`);
+        for(const level of levels){const variant=row?.levels?.[level];
+          if(typeof variant?.description!=='string'||variant.description.trim().length<8)errors.push(`hotspotLanguage ${id}/${level} requires a description.`);
+          if(!arr(variant?.phrases).length||arr(variant?.phrases).some(p=>!filled(p?.text)||!filled(p?.example)||!filled(p?.task)))errors.push(`hotspotLanguage ${id}/${level} requires useful phrases and tasks.`);
+          if(arr(variant?.phrases).some(p=>filled(p?.text)&&filled(p?.example)&&!normalize(p.example).includes(normalize(p.text))))errors.push(`hotspotLanguage ${id}/${level} phrase must occur in its example.`);
+          const now=arr(variant?.grammar).find(g=>g?.key==='now');
+          if(!now||now.evidence!=='visible'||now.sentence!==variant?.description||!filled(now.pattern)||!filled(now.note))errors.push(`hotspotLanguage ${id}/${level} requires matching visible grammar.`);
+          if(arr(variant?.grammar).some(g=>!filled(g?.key)||!filled(g?.sentence)||!filled(g?.pattern)||!filled(g?.note)||!filled(g?.task)))errors.push(`hotspotLanguage ${id}/${level} contains an incomplete grammar form.`);
+          if(now?.focusPhrase&&(!filled(now.focusPhrase)||!normalize(now.sentence).includes(normalize(now.focusPhrase))))errors.push(`hotspotLanguage ${id}/${level} grammar focus must occur in its sentence.`);
+        }
+      }
+      for(const h of hs)if(!layer.hotspotsById?.[h.id])warnings.push(`hotspotLanguage ${h.id} uses shared wording; no reviewed level variant.`);
+    }
     const stats={hotspots:hs.length,cards:Object.keys(byId).length||Object.keys(legacy).length,tenseLadders:hs.filter(h=>arr(cardFor(c,h)?.tenseLadder).length).length,sceneCombinations:arr(c.sceneCombinations).length,evidence:er.length,languageBank:arr(c.languageBank).length,orphanCards:orphanLegacy.length+orphanIds.length};
     const qa={sentenceCoverage:hs.length?hs.filter(h=>text(h?.example,1800).trim()).length/hs.length:1,cardCoverage:hs.length?hs.filter(h=>cardFor(c,h)).length/hs.length:1,grammarCoverage:hs.length?hs.filter(h=>arr(cardFor(c,h)?.tenseLadder).length).length/hs.length:1};
     return {ok:errors.length===0,errors,warnings,stats,qa};

@@ -33,7 +33,7 @@
     const p=safeJson(value)||{};
     const strings=(v,maxItems,maxLen)=>Array.isArray(v)?v.slice(0,maxItems).map(x=>text(x,maxLen)).filter(Boolean):[];
     p.savedWords=strings(p.savedWords,500,120);
-    p.savedLines=strings(p.savedLines,500,700);
+    p.savedLines=strings(p.savedLines,500,2000);
     if(Array.isArray(p.personalMarks))p.personalMarks=p.personalMarks.slice(0,1500).map(x=>safeJson(x)||{}).filter(x=>x&&typeof x==='object'&&typeof x.key==='string');
     else p.personalMarks=[];
     if(Array.isArray(p.mistakes))p.mistakes=p.mistakes.slice(0,500).map(x=>safeJson(x)||{});

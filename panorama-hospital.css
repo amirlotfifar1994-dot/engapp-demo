@@ -1,0 +1,7 @@
+.hospital-tour{position:absolute;z-index:24;left:50%;bottom:100px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:8px;border:1px solid #ffffff80;border-radius:18px;background:#fffffff0;box-shadow:0 8px 32px #14362a24;max-width:calc(100% - 24px);overflow-x:auto;backdrop-filter:blur(14px)}
+.hospital-tour>span{font-size:11px;color:#577065;white-space:nowrap;padding:0 8px}.hospital-tour button{font:inherit;font-size:12px;border:0;border-radius:11px;padding:10px 13px;background:#edf3ef;color:#234f41;white-space:nowrap;cursor:pointer}.hospital-tour button[aria-current=location]{background:#235d48;color:white;opacity:1}.hospital-tour button:focus-visible{outline:3px solid #ca933b;outline-offset:2px}.hospital-tour button:disabled{cursor:default}.hospital-tour button:disabled:not([aria-current=location]){opacity:.45}
+.pano-core-embedded .hospital-tour{bottom:168px}
+@media(max-width:600px){.hospital-tour{bottom:94px;gap:4px;padding:6px}.hospital-tour>span{display:none}.hospital-tour button{font-size:11px;padding:10px}}
+
+.hospital-tour[hidden]{display:none}
+.pano-core-embedded.is-core-practice .hospital-tour{top:90px;bottom:auto}

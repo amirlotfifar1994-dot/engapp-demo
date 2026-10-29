@@ -18,7 +18,7 @@
     if(state.recording){try{state.recorder?.stop?.();}catch(e){}}
     resetRecordingState({keepAudio:false});state.speakingSeconds=state.speakingDuration;clearTimer();haptic?.(8);render();
   };
-  window.replaySpeakingRecording=function(){const a=document.querySelector('.v76-audio-review audio');if(!a)return;try{a.currentTime=0;a.play();}catch(e){}};
+  window.replaySpeakingRecording=function(){if(window.EngBookUISounds?.isEnabled?.()===false)return;const a=document.querySelector('.v76-audio-review audio');if(!a)return;try{a.currentTime=0;a.play();}catch(e){}};
   window.stopTimedVoiceChallenge=function(){
     clearTimer();
     if(state.recording&&state.recorder&&state.recorder.state!=='inactive'){R.stopping=true;try{state.recorder.stop();}catch(e){resetRecordingState({keepAudio:true});render();}}

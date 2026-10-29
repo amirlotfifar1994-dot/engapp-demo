@@ -1,0 +1,51 @@
+{
+  "release": "demo-five-20261029-babcbc24cf",
+  "updated": "2026-10-29",
+  "sourceCommit": "efab9ff",
+  "lessonIds": [
+    5,
+    2,
+    10003,
+    10004,
+    10010
+  ],
+  "displayOrder": [
+    5,
+    2,
+    10003,
+    10004,
+    10010
+  ],
+  "lessons": [
+    {
+      "id": 5,
+      "title": "Garden Gathering in 360°",
+      "anchors": 324,
+      "image": "assets/images/panorama-garden-lesson1.webp"
+    },
+    {
+      "id": 2,
+      "title": "Two Women Laughing at a Café Table",
+      "anchors": 46,
+      "image": "assets/images/lesson_02.jpg"
+    },
+    {
+      "id": 10003,
+      "title": "Park in 360°",
+      "anchors": 116,
+      "image": "assets/images/panorama-park.png"
+    },
+    {
+      "id": 10004,
+      "title": "Home in 360°",
+      "anchors": 258,
+      "image": "assets/images/panorama-home.webp"
+    },
+    {
+      "id": 10010,
+      "title": "Museum in 360°",
+      "anchors": 211,
+      "image": "assets/images/panorama-museum.webp"
+    }
+  ]
+}

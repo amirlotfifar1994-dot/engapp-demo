@@ -236,6 +236,10 @@ html,body{background:var(--studio-paper)!important;color:var(--studio-ink);font-
 .studio-library-list>button[aria-current]{background:#e4eeff;border-color:#abcaf8}.studio-library-list>button:hover:not(:disabled){border-color:var(--studio-accent)}
 .studio-lesson-number{font-size:13px;font-weight:700;color:var(--studio-accent)}.studio-library-list b{display:block;font-size:13px;line-height:1.4;overflow-wrap:anywhere}.studio-library-list small{display:block;font-size:11px;color:var(--studio-muted);margin-top:5px}.studio-library-list i{font-style:normal}.studio-library-empty{padding:16px 4px;font-size:14px;color:var(--studio-muted)}
 .studio-library :focus-visible{outline:2px solid var(--studio-accent);outline-offset:2px}
+.studio-library-reset{min-height:44px;padding:9px 13px;border:1px solid var(--studio-line);border-radius:12px;background:#fff;color:var(--studio-accent);cursor:pointer}
+.studio-library-feedback{flex:none;font-size:13px;line-height:1.5}.studio-library-load-status{margin:0 0 8px;overflow-wrap:anywhere}
+.studio-library-retry{min-height:44px;padding:9px 14px;border:1px solid var(--studio-line);border-radius:12px;background:#fff;color:var(--studio-accent);cursor:pointer}
+.studio-library-feedback:has(.studio-library-load-status[hidden]){display:none}
 @media(max-height:500px){.studio-library{padding:12px}.studio-library[open]{gap:8px}.studio-library header p{display:none}.studio-library-search{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.studio-library-neighbors{display:none}}
 /* Clear entry point and progressive lesson navigation — 2026-09-20 */
 html[data-app-theme="sky"] .v52-home-shell .v27-hero-scene{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;overflow:hidden!important;position:relative!important;background:#fff!important;border:1px solid #dde7f1;border-radius:24px!important}

@@ -1,7 +1,6 @@
 /* Moments into words: light, photographic landing page, separate from lesson UI. */
 .gallery-shell .moments-home{background:#fcfdfb!important}
 .moments-home :is(.moments-hero,.path-main,.path-nav button)[hidden]{display:none!important}
-.moments-home[data-home-view='lessons'] .path-nav [data-eng-action='how-it-works']{display:none}
 .moments-home .moments-hero{max-width:1228px;margin:0 auto;padding:44px 24px 32px;color:#153d34}
 .moments-layout{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:44px;align-items:center}
 .moments-copy,.moments-visual{min-width:0}
@@ -82,7 +81,6 @@
   .moments-steps h2{font-size:11px!important;line-height:1.5;margin:0}
   .moments-steps h2 small{display:block;font-size:8px;margin:0 0 2px}
   .moments-steps p{display:none}
-  .moments-home .path-nav [data-eng-action='how-it-works']{display:none}
   .moments-home #learning-path{padding-top:0;scroll-margin-top:16px}
 }
 @media(max-width:359px){
