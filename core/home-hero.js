@@ -3,7 +3,7 @@
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const arrow='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
  const names={5:['The garden','People, gestures & a sunny afternoon.'],2:['The café','Five connected places. Everyday conversation.'],10003:['The park','Movement, nature & little moments.'],10004:['The home','Familiar rooms. A world of details.'],10010:['The museum','Art, visitors & four connected viewpoints.']};
- let view=root.location.hash==='#lessons'?'lessons':'welcome';
+ let view=root.location.hash==='#lessons'?'lessons':root.location.hash==='#how-it-works'?'guide':'welcome';
  function show(next,{navigate=true,focus=true}={}){view=next;if(navigate)root.EngBookDeepLinks?.syncHome?.(next);const el=document.querySelector(next==='lessons'?'.demo-library':next==='guide'?'.demo-method':'.demo-showcase');if(el&&focus)el.scrollIntoView({behavior:root.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
  function mount(home){
   const lessons=root.SceneSpeakDemo?.lessons||[],garden=lessons.find(l=>l.id===5);if(!garden||home.querySelector('.demo-showcase'))return;
@@ -13,5 +13,5 @@
   root.requestAnimationFrame(()=>{if(view!=='welcome')show(view,{navigate:false});});
  }
  root.EngBookHomeHero=Object.freeze({mount,show});
- root.addEventListener('popstate',()=>{if(root.location.search.includes('lesson='))return;view=root.location.hash==='#lessons'?'lessons':'welcome';if(!document.querySelector('.demo-showcase'))root.goHome?.();show(view,{navigate:false});});
+ root.addEventListener('popstate',()=>{if(root.location.search.includes('lesson='))return;view=root.location.hash==='#lessons'?'lessons':root.location.hash==='#how-it-works'?'guide':'welcome';if(!document.querySelector('.demo-showcase'))root.goHome?.();show(view,{navigate:false});});
 })(window);

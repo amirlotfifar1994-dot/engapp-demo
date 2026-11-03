@@ -1,8 +1,8 @@
 {
   "date": "2026-11-03",
-  "release": "demo-five-20261103-008bf8490db3",
+  "release": "demo-five-20261103-2c0909bca6cc",
   "sourceCommit": "1394fe5810e7beb847a0ac304a28a89672839961",
-  "automatedTests": 8,
+  "automatedTests": 9,
   "browser": {
     "results": [
       {
@@ -79,5 +79,7 @@
     "Speech mocked for activity-flow checks; device voice and microphone quality are not certified.",
     "Offline acceptance covers a previously visited Garden with all six detail faces and its Listening interface. Other scene assets cache when visited.",
     "These checks do not certify every individual anchor pixel or all content in the private application."
-  ]
+  ],
+  "matrixRelease": "demo-five-20261103-008bf8490db3",
+  "navigationFollowup": "Guide hash/history restoration fixed after the 12-flow matrix; dedicated regression passes. Activity surfaces and offline worker logic unchanged."
 }

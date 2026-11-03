@@ -41,3 +41,8 @@ test('all HTML cache references match the current projected bytes',()=>{
 test('the public catalog, release record and worker agree on one content-derived release',()=>{
  const c=vm.createContext({window:{}});vm.runInContext(read('core/demo-catalog.js'),c);const release=json('demo-release.json');assert.equal(c.window.SceneSpeakDemo.release,release.release);assert.ok(read('sw.js').includes("const PUBLISH_STAMP='"+release.release+"'"));assert.equal(release.lessons.reduce((sum,l)=>sum+l.anchors,0),1036);
 });
+
+
+test('Back and direct guide routes restore the guide section instead of jumping to the hero',()=>{
+ const handlers={},scroll=[];const doc={querySelector:selector=>({scrollIntoView:()=>scroll.push(selector)})};const root={location:{hash:'#how-it-works',search:''},addEventListener:(name,fn)=>handlers[name]=fn,matchMedia:()=>({matches:true})};const ctx=vm.createContext({window:root,document:doc});vm.runInContext(read('core/home-hero.js'),ctx);handlers.popstate();assert.equal(scroll.at(-1),'.demo-method');root.location.hash='#lessons';handlers.popstate();assert.equal(scroll.at(-1),'.demo-library');root.location.hash='#app';handlers.popstate();assert.equal(scroll.at(-1),'.demo-showcase');
+});

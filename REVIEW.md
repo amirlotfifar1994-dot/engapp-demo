@@ -9,9 +9,9 @@ Other scene datasets, server code and source books are absent.
 
 ## Verified
 
-- Eight Node tests pass: the real registry and category counts, five-level
+- Nine Node tests pass: the real registry and category counts, five-level
   Listening coverage, pack/image/cache dependencies, selected panorama assets,
-  absence of unselected scene datasets and one consistent content-derived release.
+  absence of unselected scene datasets, one consistent content-derived release and guide-route restoration.
 - The public-text audit checks169 runtime files: no detected source-book metadata,
   private provenance markers or credential-shaped secrets.
 - Twelve actual Chrome/Playwright flows at1440×1000 and390×844: all five lessons
