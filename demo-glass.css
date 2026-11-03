@@ -1,0 +1,33 @@
+/* Translucent surfaces use background alpha, never opacity on readable content. */
+:root{--demo-glass:linear-gradient(135deg,rgba(248,254,249,.69),rgba(226,241,232,.57));--demo-glass-edge:rgba(255,255,255,.65);--demo-glass-shadow:0 12px 36px rgba(15,49,35,.12),inset 0 1px 0 rgba(255,255,255,.55);--demo-glass-blur:blur(12px) saturate(112%)}
+.scene-canvas :is(.canvas-detail-card,.canvas-panel,.canvas-activity,.canvas-recall,.canvas-practice-picker,.scenario-studio),.scene-canvas .immersive-learn .learn-workspace,.lesson-connections-panel,.journey-dialog{
+ background:var(--demo-glass)!important;border:1px solid var(--demo-glass-edge)!important;backdrop-filter:var(--demo-glass-blur)!important;-webkit-backdrop-filter:var(--demo-glass-blur)!important;box-shadow:var(--demo-glass-shadow)!important;color:#173c2e;--lesson-ink:#173c2e;--lesson-muted:#3d5d4e}
+/* One frosted layer is enough; nested learning surfaces stay light. */
+.scene-canvas .canvas-activity :is(.speaking-studio,.talk-studio),.scene-canvas .learn-studio{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}
+.scene-canvas :is(.canvas-activity>header,.listening-toolbar,.learn-header),.journey-dialog .journey-dialog-header{background:rgba(247,253,248,.25)!important}
+.scene-canvas .canvas-dock{background:rgba(244,253,247,.66)!important;border:1px solid rgba(255,255,255,.7)!important;backdrop-filter:blur(14px) saturate(115%)!important;-webkit-backdrop-filter:blur(14px) saturate(115%)!important;box-shadow:0 8px 30px #153f3024!important}
+.scene-canvas .canvas-dark-glass{background:rgba(18,43,34,.56)!important;border-color:rgba(255,255,255,.32)!important;backdrop-filter:blur(12px) saturate(110%)!important;-webkit-backdrop-filter:blur(12px) saturate(110%)!important;color:#fff!important}
+.scene-canvas :is(.canvas-card-copy,.canvas-detail-panel,.listening-question-card,.listening-preferences){background:transparent!important}
+.scene-canvas :is(.listening-transcript,.listening-model-answer),.lesson-connections-panel [data-lesson-destination]{background:rgba(255,255,255,.24)!important;border-color:rgba(255,255,255,.45)!important}
+.scene-canvas :is(textarea,select),.scene-canvas .canvas-detail-children button{background:rgba(251,255,252,.42)!important;border-color:rgba(255,255,255,.65)!important;color:#183f30}
+.scene-canvas .canvas-detail-children button:hover,.lesson-connections-panel [data-lesson-destination]:hover{background:rgba(255,255,255,.6)!important}
+.scene-canvas :is(textarea,select):focus-visible{outline:2px solid #326d51;outline-offset:2px;background:rgba(250,255,251,.73)!important}
+.journey-dialog::backdrop,.cafe-detail-dialog::backdrop{background:rgba(12,33,25,.24);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.journey-dialog .journey-list-toolbar{background:rgba(248,253,249,.45)!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.journey-dialog .island-lesson-board{background:color-mix(in srgb,var(--world-tint,#e6eedf) 68%,transparent)}
+.garden-viewer :is(#garden-photo-dialog,#garden-help-dialog),.cafe-detail-dialog,#pano-card,#pano-details,#pano-camera{background:var(--demo-glass)!important;border:1px solid var(--demo-glass-edge)!important;backdrop-filter:var(--demo-glass-blur)!important;-webkit-backdrop-filter:var(--demo-glass-blur)!important;box-shadow:var(--demo-glass-shadow)!important;color:#173c2e}
+.cafe-detail-dialog header{background:rgba(243,251,245,.48)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+/* The entrance photo also stays visible through its caption. */
+.demo-home .demo-picture-note{background:rgba(16,49,35,.42);border-color:rgba(255,255,255,.55);backdrop-filter:blur(8px) saturate(110%);-webkit-backdrop-filter:blur(8px) saturate(110%)}
+.demo-home .demo-method{background:rgba(224,231,208,.55);border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ .scene-canvas :is(.canvas-detail-card,.canvas-panel,.canvas-activity,.canvas-recall,.canvas-practice-picker,.scenario-studio),.scene-canvas .immersive-learn .learn-workspace,.lesson-connections-panel,.journey-dialog,.garden-viewer :is(#garden-photo-dialog,#garden-help-dialog),.cafe-detail-dialog,#pano-card,#pano-details,#pano-camera{background:rgba(243,250,244,.95)!important}
+ .scene-canvas .canvas-dock{background:rgba(244,251,246,.94)!important}.scene-canvas .canvas-dark-glass{background:rgba(18,43,34,.88)!important}.demo-home .demo-picture-note{background:rgba(16,49,35,.82)}
+}
+@media(prefers-reduced-transparency:reduce){
+ .scene-canvas :is(.canvas-detail-card,.canvas-panel,.canvas-activity,.canvas-recall,.canvas-practice-picker,.scenario-studio),.scene-canvas .immersive-learn .learn-workspace,.lesson-connections-panel,.journey-dialog,.garden-viewer :is(#garden-photo-dialog,#garden-help-dialog),.cafe-detail-dialog,#pano-card,#pano-details,#pano-camera{background:rgba(243,250,244,.97)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+ .scene-canvas .canvas-dock{background:rgba(244,251,246,.97)!important}.scene-canvas .canvas-dark-glass{background:rgba(18,43,34,.94)!important}.demo-home .demo-picture-note{background:rgba(16,49,35,.94);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
+/* Mobile Talk keeps its clear overview above; the stationary native photo also stays behind the glass below. */
+.talk-still-stage{background:transparent}

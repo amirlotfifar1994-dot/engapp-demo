@@ -41,3 +41,20 @@ all lesson quality gates in the private project are complete.
 Reproduce with Node24, the repository test commands and the portable Playwright
 scripts documented in README. The static server supports both root and the GitHub
 Pages project subpath; no fake accounts or purchases are created.
+
+
+## Translucent-surface follow-up
+
+`demo-glass.css` applies a 57–69% light fill and12px background blur to the lesson
+cards, activity panels and readers. The dock and dark controls have separate fills
+to retain their existing text colours. Inner panels avoid stacking opaque layers.
+Mobile Talk retains its overview and the stationary native photograph remains
+visible behind the glass below. Layout, lesson data and activity logic are unchanged.
+
+24 initial browser views covered six modes across Garden desktop/mobile, Cafe
+mobile and Museum desktop. Twelve final views rechecked Practice and Talk refinements
+on Cafe mobile and Museum desktop; no page errors or horizontal overflow. The real
+Chrome reduced-transparency media preference was emulated: the detail card became
+97% opaque with no blur, and foreground opacity remained1. Readable-background
+fallback is implemented for unsupported blur, but older engines were not certified.
+Evidence: [glass surfaces](tests/evidence/glass-surfaces-20261103.json).

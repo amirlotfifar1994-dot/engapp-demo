@@ -23,6 +23,7 @@ const selected=new Map(packs.map(p=>[p.lessonId,p]));
 const stubFiles=new Set(['current-content-overrides.js','content-v69.js','content-v74-audit.js']);
 while(queue.length){const f=queue.shift();if(copied.has(f))continue;copied.add(f);let s;try{s=await read(f);}catch(e){if(e.code==='ENOENT')continue;throw e;}
  if(stubFiles.has(f))s='/* Demo content is supplied only by the selected lesson packs. */\n';
+ if(f.endsWith('.html')&&!s.includes('demo-glass.css'))s=s.replace('</head>','<link rel="stylesheet" href="demo-glass.css">\n</head>');
  if(f==='panorama.html')s=s.replace(/<script\b[^>]*src="([^"]+)"[^>]*>\s*<\/script>/g,(tag,url)=>excluded.test(url.split('?')[0])?'':tag);
  if(f==='core/content-engine.js')s=s.replace("appStatus:'active',totalLessons:28,lessonStart:1","appStatus:'active',totalLessons:CAT01.lessons.length,lessonStart:1");
  if(f==='core/user-access-config.js')s=s.replace(/(productCatalogEndpoint|permanentBillingEndpoint):'[^']*'/g,"$1:''");
@@ -55,7 +56,7 @@ for(const f of assetPaths){if(!/^assets\/(?:brand\/|fonts\/|images\/(?:panorama-
 const sourceCommit=execFileSync('git',['-c','safe.directory='+source,'rev-parse','HEAD'],{cwd:source,encoding:'utf8'}).trim();
 const lessons=ids.map((id,index)=>{const p=selected.get(id);return {id,number:index+1,title:p.title,anchors:p.hotspots.length,image:p.image,levels:['A1','A2','B1','B2','C1']};});
 const release='demo-five-20261103-'+sha(sourceCommit+JSON.stringify(lessons)).slice(0,10);await write('demo-release.json',JSON.stringify({release,updated:'2026-11-03',sourceCommit,lessonIds:ids,displayOrder:ids,lessons},null,2)+'\n');await write('core/demo-catalog.js',`window.SceneSpeakDemo=Object.freeze(${JSON.stringify({release,lessons})});\n`);
-let index=await fs.readFile(path.join(root,'index.html'),'utf8');index=index.replace('<title>','<title>');index=index.replace(/<title>[^<]*<\/title>/,'<title>SceneSpeak — Five worlds. Your words.</title>');index=index.replace('<head>','<head>\n<script src="core/demo-catalog.js"></script>');index=index.replace('</head>','<link rel="stylesheet" href="demo-showcase.css">\n</head>');await write('index.html',index);
+let index=(await fs.readFile(path.join(root,'index.html'),'utf8')).replace(/<link\b[^>]*href="demo-glass\.css(?:\?[^"]*)?"[^>]*>\s*/g,'');index=index.replace('<title>','<title>');index=index.replace(/<title>[^<]*<\/title>/,'<title>SceneSpeak — Five worlds. Your words.</title>');index=index.replace('<head>','<head>\n<script src="core/demo-catalog.js"></script>');index=index.replace('</head>','<link rel="stylesheet" href="demo-showcase.css">\n<link rel="stylesheet" href="demo-glass.css">\n</head>');await write('index.html',index);
 const web=JSON.parse(await fs.readFile(path.join(root,'manifest.webmanifest'),'utf8'));Object.assign(web,{name:'SceneSpeak — Five picture worlds',description:'Explore five immersive English lessons. See details, learn phrases and find your voice.'});web.shortcuts=[{name:'Explore the garden',url:'./?lesson=5&mode=explore'},{name:'Listen in the garden',url:'./?lesson=5&mode=listening'},{name:'Five picture worlds',url:'./#lessons'}];await write('manifest.webmanifest',JSON.stringify(web,null,2)+'\n');
 await write('.nojekyll','');
 for(const f of await fs.readdir(path.join(root,'core')))if(excluded.test('core/'+f))await fs.unlink(path.join(root,'core',f));

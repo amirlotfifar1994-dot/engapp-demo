@@ -38,3 +38,5 @@ node scripts/finalize.mjs ../engapp
 The export selects five packs, projects their catalog, preserves the demo entrance, removes unselected scene datasets and regenerates public hashes. Review before publishing; do not copy the private repository wholesale. Browser review scripts accept `PLAYWRIGHT_MODULE`, `CHROME_EXECUTABLE` and `DEMO_BASE_URL`.
 
 © Amirmohammad Lotfifar. All rights reserved. Published for demonstration only; no license to copy, reuse or redistribute is granted.
+
+The demo uses `demo-glass.css` for translucent lesson surfaces: the photograph remains visible behind a softly blurred background, while text and icons stay fully opaque. A reduced-transparency preference and a fallback for browsers without background blur are included.

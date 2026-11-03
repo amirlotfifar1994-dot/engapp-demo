@@ -1,0 +1,227 @@
+{
+  "date": "2026-11-03",
+  "scope": "Public demo frosted surfaces across six activity modes; no lesson, progress or scoring changes",
+  "initialViews": 24,
+  "finalViews": {
+    "results": [
+      {
+        "name": "mobile-cafe",
+        "mode": "explore",
+        "surfaces": [
+          {
+            "class": "scene-glass-card canvas-detail-card canvas-pano-sheet canvas-progressive-sheet is-compact ",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "mobile-cafe",
+        "mode": "learn",
+        "surfaces": [
+          {
+            "class": "learn-workspace",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "mobile-cafe",
+        "mode": "practice",
+        "surfaces": [
+          {
+            "class": "canvas-recall",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "mobile-cafe",
+        "mode": "speak",
+        "surfaces": [
+          {
+            "class": "canvas-activity canvas-panel ",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "mobile-cafe",
+        "mode": "talk",
+        "surfaces": [
+          {
+            "class": "canvas-activity canvas-panel ",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "mobile-cafe",
+        "mode": "listening",
+        "surfaces": [
+          {
+            "class": "learn-workspace",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "desktop-museum",
+        "mode": "explore",
+        "surfaces": [
+          {
+            "class": "scene-glass-card canvas-detail-card canvas-pano-sheet canvas-progressive-sheet is-compact ",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "desktop-museum",
+        "mode": "learn",
+        "surfaces": [
+          {
+            "class": "learn-workspace",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "desktop-museum",
+        "mode": "practice",
+        "surfaces": [
+          {
+            "class": "canvas-recall",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "desktop-museum",
+        "mode": "speak",
+        "surfaces": [
+          {
+            "class": "canvas-activity canvas-panel ",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "desktop-museum",
+        "mode": "talk",
+        "surfaces": [
+          {
+            "class": "canvas-activity canvas-panel ",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      },
+      {
+        "name": "desktop-museum",
+        "mode": "listening",
+        "surfaces": [
+          {
+            "class": "learn-workspace",
+            "background": "linear-gradient(135deg, rgba(248, 254, 249, 0.69), rgba(226, 241, 232, 0.57))",
+            "blur": "blur(12px) saturate(1.12)",
+            "opacity": "1"
+          },
+          {
+            "class": "canvas-dock",
+            "background": "rgba(244, 253, 247, 0.66)",
+            "blur": "blur(14px) saturate(1.15)",
+            "opacity": "1"
+          }
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "reducedTransparency": {
+    "preference": true,
+    "background": "rgba(243, 250, 244, 0.97)",
+    "blur": "none",
+    "opacity": "1"
+  },
+  "cssSha256": "865ee1d73009ab2ec37c662dee7f78314b2f2168433ead4c51dc22ad9a6b556f",
+  "notes": [
+    "Visual screenshots reviewed on bright Garden, Cafe and Museum backgrounds; mobile and desktop.",
+    "Practice and mobile Talk layering were refined after the initial 24-view pass.",
+    "Foreground opacity stays 1; only backgrounds are translucent.",
+    "Unsupported-backdrop fallback provided; no older-browser certification."
+  ]
+}
