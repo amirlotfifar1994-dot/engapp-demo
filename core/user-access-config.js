@@ -11,17 +11,17 @@
     showSubscriptions:false,
     showPermanentLessonStore:false,
     permanentCheckoutEndpoint:'/api/v2/commerce/checkout',
-    permanentBillingEndpoint:'/api/v2/commerce/permanent',
+    permanentBillingEndpoint:'',
     requireCurrentSessionEntitlements:false,
     offlinePaidAccessMode:'time-limited-verified',
     offlineLicenseDays:7,
-    productCatalogEndpoint:'/api/v2/commerce/permanent',
+    productCatalogEndpoint:'',
     subscriptionCheckoutEndpoint:'',
     billingPortalEndpoint:''
   });
   root.ENGBOOK_COMMERCIAL_CONFIG=Object.freeze({
     authEndpoint:'',checkoutEndpoint:'',billingEndpoint:'',syncEndpoint:'',analyticsEndpoint:'',crashEndpoint:'',dataEndpoint:'',flagsEndpoint:'',
-    productCatalogEndpoint:'/api/v2/commerce/permanent',adminProductCatalogEndpoint:'',featurePolicyEndpoint:'',adminFeatureEndpoint:'',adminUsersEndpoint:'',
-    permanentCheckoutEndpoint:'/api/v2/commerce/checkout',permanentBillingEndpoint:'/api/v2/commerce/permanent',fetchCredentials:'same-origin',headers:Object.freeze({}),allowLocalPlanOverride:false,allowLocalAdminPreview:false
+    productCatalogEndpoint:'',adminProductCatalogEndpoint:'',featurePolicyEndpoint:'',adminFeatureEndpoint:'',adminUsersEndpoint:'',
+    permanentCheckoutEndpoint:'/api/v2/commerce/checkout',permanentBillingEndpoint:'',fetchCredentials:'same-origin',headers:Object.freeze({}),allowLocalPlanOverride:false,allowLocalAdminPreview:false
   });
 })(typeof window!=='undefined'?window:globalThis);

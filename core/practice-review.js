@@ -361,6 +361,8 @@
   }
   function matches(hit,target){return Boolean(hit&&target&&(hit.id&&target.id?hit.id===target.id:hit.en===target.en));}
   function locationHint(h){
+    const authored=h?.presentation?.locationHint;
+    if(typeof authored==='string'&&authored.trim())return authored.trim();
     const x=Number(h?.x),y=Number(h?.y);
     if(!Number.isFinite(x)||!Number.isFinite(y))return 'Look carefully at the whole picture.';
     const column=x<33?'left':x>67?'right':'center',row=y<33?'upper':y>67?'lower':'middle';

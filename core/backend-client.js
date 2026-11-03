@@ -7,6 +7,7 @@
   const jsonHeaders={'Accept':'application/json','Content-Type':'application/json'};
   class BackendError extends Error{constructor(code,message,status=0,details=null){super(message||code);this.name='EngBookBackendError';this.code=code;this.status=status;this.details=details;}}
   async function request(path,{method='GET',body,base=API}={}){
+    if(root.SceneSpeakDemo)throw new BackendError('DEMO_STATIC','Online accounts are outside this static demo.');
     const res=await fetch(`${base}${path}`,{method,headers:body===undefined?{'Accept':'application/json'}:jsonHeaders,credentials:'same-origin',body:body===undefined?undefined:JSON.stringify(body)});
     let data=null;try{data=await res.json();}catch(_){data=null;}
     if(!res.ok){const err=new BackendError(data?.code||`HTTP_${res.status}`,data?.message||`Request failed with HTTP ${res.status}.`,res.status,data);if(err.code==='AUTH_REQUIRED'){session=null;try{root.dispatchEvent?.(new CustomEvent('engbook:auth-expired'));}catch(_){}}throw err;}

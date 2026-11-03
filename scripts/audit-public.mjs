@@ -1,0 +1,4 @@
+import fs from 'node:fs/promises';import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..'),patterns=[new RegExp('CAT'+'\\d{2}[-_]v?(?:1\\d{2}|2\\d{2}|3\\d{2})','i'),new RegExp('\\.'+'docx\\b','i'),new RegExp('WORD_'+'SAFE','i'),...['source'+'Alignment','source'+'Document','source'+'Trace','source'+'Ref','proven'+'ance','book'+'Source'].map(s=>new RegExp(s,'i'))],leaks=[];let files=0;
+for(const dir of ['', 'core','lesson-packs'])for(const name of await fs.readdir(path.join(root,dir))){if(!/\.(?:js|html|css|json|webmanifest)$/.test(name))continue;const rel=path.join(dir,name),text=await fs.readFile(path.join(root,rel),'utf8');files++;for(const rx of patterns)if(rx.test(text)){leaks.push({file:rel,pattern:rx.source});break;}if(/(?:sk-[A-Za-z0-9]{35}|gh[pousr]_[A-Za-z0-9]{30})/.test(text))leaks.push({file:rel,pattern:'credential'});}
+console.log(JSON.stringify({files,leaks},null,2));if(leaks.length)process.exitCode=1;

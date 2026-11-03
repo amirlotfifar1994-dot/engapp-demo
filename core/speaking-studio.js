@@ -7,6 +7,23 @@
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const durations=[30,60,90],checks=['I described visible details.','I placed details in the picture.','I kept guesses separate from facts.'];
   let current=null,generation=0,interval=null,stream=null,recorder=null,recognition=null;
+  let viewReturn=null;
+  function viewKey(){const s=state(),p=root.EngBookContent?.getPack?.(s.lesson?.id)||{lessonId:s.lesson?.id,content:root.activeGold?.()||{}};return JSON.stringify([Number(s.lesson?.id),root.EngAppLevelAware?.levelFor(p,'global')||'A2',current]);}
+  function rememberView(){
+    const s=state();if(s?.screen!=='lesson'||s.mode!=='speak')return false;
+    viewReturn=null;if(!current||['requesting','recording','timing','saving'].includes(current.status))return false;
+    const section=document.querySelector?.('.speaking-studio'),body=document.querySelector?.('.speaking-page');
+    if(!body||section?.dataset.speakingStep!==current.step)return false;
+    viewReturn={session:current,lesson:s.lesson,key:viewKey(),scroll:Math.max(0,Number(body.scrollTop)||0)};return true;
+  }
+  function onModeRendered(mode){
+    const s=state();if(mode!=='speak'||s?.mode!=='speak'||s.screen!=='lesson')return false;
+    const back=viewReturn;if(!back)return false;viewReturn=null;
+    if(current!==back.session||s.lesson!==back.lesson||back.key!==viewKey())return false;
+    const section=document.querySelector?.('.speaking-studio'),body=document.querySelector?.('.speaking-page');
+    if(!body||section?.dataset.speakingStep!==current.step)return false;
+    body.scrollTop=back.scroll;body.focus?.({preventScroll:true});return true;
+  }
   const fresh=id=>({lesson:id,step:'plan',duration:30,seconds:30,status:'idle',kind:null,elapsed:0,transcript:'',transcriptEdited:false,audio:null,checks:[],supportOpen:[],credited:false,attemptCounted:false,live:false,example:0,model:0,error:''});
   function session(){const id=Number(state().lesson?.id);if(current?.lesson!==id){cancel(true);current=fresh(id);}return current;}
   const active=token=>token===generation&&current?.lesson===Number(state().lesson?.id)&&state().screen==='lesson'&&state().mode==='speak';
@@ -26,7 +43,7 @@
   function tracks(){stream?.getTracks().forEach(t=>t.stop());stream=null;}
   function revoke(){if(current?.audio)root.URL.revokeObjectURL(current.audio);if(current)current.audio=null;state().recordedUrl=null;}
   function cancel(remove=false){generation++;stopClock();const rec=recorder;recorder=null;try{if(rec?.state!=='inactive')rec?.stop();}catch{}tracks();const speech=recognition;recognition=null;speech?.stop?.('mode-change');state().recording=false;state().listening=false;state().recorder=null;if(current&&['requesting','recording','timing','saving'].includes(current.status))current.status='idle';if(remove)revoke();}
-  function reset(duration){const a=session();cancel(true);Object.assign(a,fresh(a.lesson),{duration:durations.includes(Number(duration))?Number(duration):30});a.seconds=a.duration;state().transcript='';state().speakingDuration=a.duration;state().speakingSeconds=a.seconds;render();}
+  function reset(duration){viewReturn=null;const a=session(),focusId=a.focusId;cancel(true);Object.assign(a,fresh(a.lesson),{focusId,duration:durations.includes(Number(duration))?Number(duration):30});a.seconds=a.duration;state().transcript='';state().speakingDuration=a.duration;state().speakingSeconds=a.seconds;render();}
   function feedback(text){
     const words=String(text||'').trim().match(/\b[a-z]+(?:'[a-z]+)?\b/gi)||[];
     const spatial=/\b(on the (left|right)|in the (foreground|background|center|centre)|behind|beside|between|next to|near|in front of)\b/i.test(text);
@@ -34,6 +51,8 @@
     const cautious=/\b(may|might|could|seems?|appears?|perhaps|possibly)\b/i.test(text);
     return {words:words.length,spatial,ongoing,cautious};
   }
+  function setFocus(id){const s=state(),h=s.lesson?.hotspots?.find(h=>h.id===id),a=session();if(id&&!h||['requesting','recording','timing','saving'].includes(a.status)||(a.focusId!==id&&(a.audio||a.transcript?.trim()||a.step!=='plan')))return false;if(a.focusId!==(h?.id||null))viewReturn=null;a.focusId=h?.id||null;if(!h)root.EngBookLessonLinks?.remember(null);return true;}
+
   function data(){
     const s=state(),g=root.activeGold?.()||{};
     const p={lessonId:s.lesson.id,content:g},level=root.EngAppLevelAware?.levelFor(p,'global')||'A2',band={A1:'A1–A2',A2:'A1–A2',B1:'B1–B2',B2:'B1–B2',C1:'C1–C2'}[level];
@@ -41,7 +60,8 @@
     const models=Object.entries(g.grammar?.models||{}).filter(([,v])=>typeof v==='string'&&v.trim());models.sort((a,b)=>Number(b[0]===band)-Number(a[0]===band));
     const support=g.hotspotLanguage?.speakingByLevel?.[level];
     if(support?.model)models.unshift([`${level} · Picture model`,support.model]);
-    return {facts,level,levelScoped:Boolean(support),grammar:support?.grammar||g.grammar||{},mission:support?.missions?.[session().duration]||g.levelAware?.speakingLadder?.[level]?.[session().duration]||g.speaking?.[session().duration]||'Describe the main subject, then place two visible details in the picture.',models};
+    const focus=s.lesson.hotspots?.find(h=>h.id===session().focusId);if(focus){const example=root.EngBookPictureLanguage?.hotspot(focus,{},g,{lessonId:s.lesson.id,level}).description||focus.example;if(example){const existing=facts.findIndex(h=>h.id===focus.id);if(existing>=0)facts.splice(existing,1);facts.unshift({...focus,example});models.unshift([level+' · Selected detail',example]);}}
+    return {focus,facts,level,levelScoped:Boolean(support),grammar:support?.grammar||g.grammar||{},mission:(focus?'Start with '+focus.en+'. ':'')+(support?.missions?.[session().duration]||g.levelAware?.speakingLadder?.[level]?.[session().duration]||g.speaking?.[session().duration]||'Describe the main subject, then place two visible details in the picture.'),models};
   }
   function clock(token,started){
     const a=current;a.elapsed=Math.min(a.duration,Math.max(0,(Date.now()-started)/1000));a.seconds=Math.max(0,Math.ceil(a.duration-a.elapsed));state().speakingSeconds=a.seconds;
@@ -106,12 +126,14 @@
   }
   function markup(){
     const a=session(),d=data(),busy=['requesting','recording','timing','saving'].includes(a.status),hasAttempt=canReview(a),f=feedback(a.transcript);
-    const button=(action,text,extra='')=>`<button type="button" data-speaking-action="${action}" ${extra}>${text}</button>`;
+    const primaryIcons={"practice":"<path d=\"m9 5 7 7-7 7\"/>","record":"<rect x=\"8\" y=\"2\" width=\"8\" height=\"13\" rx=\"4\"/><path d=\"M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8\"/>","cancel":"<path d=\"m6 6 12 12M6 18 18 6\"/>","stop":"<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"2\"/>","finish":"<path d=\"m5 12 4 4L19 6\"/>"};
+  const primaryLabel=(action,text,extra)=>extra.includes('speaking-primary')?`<svg class="studio-primary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${primaryIcons[action]||primaryIcons.finish}</svg><span>${text}</span>`:text;
+  const button=(action,text,extra='')=>`<button type="button" data-speaking-action="${action}" ${extra} ${extra.includes('speaking-primary')?`title="${esc(text)}"`:''}>${primaryLabel(action,text,extra)}</button>`;
     const error=a.error?`<p class="speaking-notice" role="status">${esc(a.error)}</p>`:'';
     const steps=`<nav class="speaking-steps" aria-label="Speaking steps">${['plan','practice','review'].map((k,i)=>button(k,`<span>${i+1}</span>${['Prepare','Speak','Review'][i]}`,`aria-current="${a.step===k?'step':'false'}" ${busy||k==='review'&&a.status!=='done'?'disabled':''}`)).join('')}</nav>`;
     const reviewCopy=a.kind==='timer'?`${Math.round(a.elapsed)} seconds of timer practice · Review what you said; timer practice is self-reported.`:a.audio?`${Math.round(a.elapsed)} seconds captured · Listen to your take before checking below.`:'No audio was captured. Record again or use timer practice.';
     let body='';
-    if(a.step==='plan')body=`<div class="speaking-intro"><span class="speaking-kicker">YOUR PICTURE, YOUR WORDS</span><h3 tabindex="-1">Build a clear description</h3><p>Look at the picture. Start with what you can see.</p></div><div class="speaking-durations" role="group" aria-label="Speaking duration">${durations.map(n=>button('duration',`${n}s`,`data-duration="${n}" aria-pressed="${a.duration===n}"`)).join('')}</div><p class="speaking-mission">${esc(d.mission)}</p><ol class="speaking-route"><li><b>Set the scene</b><span>“This picture shows…”</span></li><li><b>Place visible details</b><span>“On the left… In the background…”</span></li>${a.duration>=60&&(!d.levelScoped||!['A1','A2'].includes(d.level))?'<li><b>Add a careful interpretation</b><span>“They might… because…” Only if a visible clue supports it.</span></li>':''}</ol><details class="speaking-support" data-speaking-support="starters" ${a.supportOpen.includes('starters')?'open':''}><summary>Picture starters</summary>${d.facts.length?`<p class="speaking-example">${esc(d.facts[a.example%d.facts.length].example)}</p><div class="speaking-inline">${button('example-hear','Hear example')}${button('example-next','Another detail')}</div>`:'<p>Choose a visible subject and describe where it is.</p>'}</details>`;
+    if(a.step==='plan')body=`<div class="speaking-intro"><span class="speaking-kicker">YOUR PICTURE, YOUR WORDS</span><h3 tabindex="-1">Build a clear description</h3><p>Look at the picture. Start with what you can see.</p></div><div class="speaking-durations" role="group" aria-label="Speaking duration">${durations.map(n=>button('duration',`${n}s`,`data-duration="${n}" aria-pressed="${a.duration===n}"`)).join('')}</div>${d.focus?`<div class="speaking-focus"><span>FOCUS · ${esc(d.focus.en)}</span>${button('clear-focus','Whole picture')}</div>`:''}<details class="speaking-support speaking-plan-guide" data-speaking-support="route" ${a.supportOpen.includes('route')?'open':''}><summary>What to describe</summary><p class="speaking-mission">${esc(d.mission)}</p><ol class="speaking-route"><li><b>Set the scene</b><span>“This picture shows…”</span></li><li><b>Place visible details</b><span>“On the left… In the background…”</span></li>${a.duration>=60&&(!d.levelScoped||!['A1','A2'].includes(d.level))?'<li><b>Add a careful interpretation</b><span>“They might… because…” Only if a visible clue supports it.</span></li>':''}</ol></details><details class="speaking-support" data-speaking-support="starters" ${a.supportOpen.includes('starters')?'open':''}><summary>Picture starters</summary>${d.facts.length?`<p class="speaking-example">${esc(d.facts[a.example%d.facts.length].example)}</p><div class="speaking-inline">${button('example-hear','Hear example')}${button('example-next','Another detail')}</div>`:'<p>Choose a visible subject and describe where it is.</p>'}</details>`;
     else if(a.step==='practice')body=`<div class="speaking-intro"><span class="speaking-kicker">${a.status==='recording'?'RECORDING':a.status==='timing'?'TIMER PRACTICE':'SPEAK IN YOUR OWN WORDS'}</span><h3 tabindex="-1">${busy?'Describe the picture':'Your '+a.duration+'-second practice'}</h3></div><div class="speaking-clock" id="speaking-clock" role="timer" aria-label="Time remaining">${esc(root.formatTime(a.seconds))}</div><p class="speaking-mission">${esc(d.mission)}</p>${busy?'':`<label class="speaking-option"><input type="checkbox" data-speaking-live ${a.live?'checked':''} ${root.EngBookSpeech?.capabilities?.().recognition?'':'disabled'}> Add live transcript <small>${root.EngBookSpeech?.capabilities?.().recognition?'Optional · browser speech service':'Unavailable in this browser'}</small></label>${button('timer','Practice without recording','class="speaking-secondary"')}<small class="speaking-note">Audio stays in this browser session. Microphone access is requested when you record.</small>`}${a.live&&busy?`<p id="speaking-transcript-live" class="speaking-live" aria-live="off">${esc(a.transcript||'Speak when you are ready…')}</p>`:''}`;
     else body=`<div class="speaking-intro"><span class="speaking-kicker">LISTEN, NOTICE, TRY AGAIN</span><h3 tabindex="-1">${a.credited?'Practice reviewed':'Review your description'}</h3><p>${esc(reviewCopy)}</p></div>${a.audio?`<audio class="speaking-audio" controls preload="metadata" src="${esc(a.audio)}" aria-label="Your speaking recording"></audio>`:''}<details class="speaking-support" data-speaking-support="transcript" ${a.supportOpen.includes('transcript')?'open':''}><summary>Your words & language clues</summary><label for="speaking-transcript">Edit the transcript, or type what you said</label><textarea id="speaking-transcript" rows="3" maxlength="5000" placeholder="Write your description here…">${esc(a.transcript)}</textarea>${button('feedback','Check language clues')}<div class="speaking-feedback" aria-live="polite"><b>${f.words} words in the text</b>${[['Spatial language',f.spatial],['An ongoing-action pattern',f.ongoing],['Cautious wording',f.cautious]].map(([label,found])=>`<span>${found?'✓':'○'} ${label}: ${found?'detected':'not detected'}</span>`).join('')}<small>Text clues only. Check them against the picture; they do not establish accuracy or pronunciation.</small></div></details><div class="speaking-checks" role="group" aria-label="Speaking self-review">${checks.map((text,i)=>`<label><input type="checkbox" data-speaking-check="${i}" ${a.checks.includes(i)?'checked':''} ${a.credited?'disabled':''}>${text}</label>`).join('')}</div><div class="speaking-inline">${button('retry','Try again')}${button('plan','Change goal')}</div>${hasAttempt&&d.models.length?`<details class="speaking-support" data-speaking-support="model" ${a.supportOpen.includes('model')?'open':''}><summary>Compare with a model</summary><p>Compare the order and wording. Other accurate descriptions are possible.</p><p class="speaking-example">${esc(d.models[a.model%d.models.length][1])}</p><div class="speaking-inline">${button('model-hear','Hear model')}${button('model-next',esc(d.models[a.model%d.models.length][0])+' · Another model')}</div></details>`:''}`;
     const grammarHelp=a.step==='plan'&&d.grammar.explainer?`<details class="speaking-support" data-speaking-support="grammar" ${a.supportOpen.includes('grammar')?'open':''}><summary>${esc(d.grammar.title||'Lesson language')}</summary><p>${esc(d.grammar.explainer)}</p>${d.grammar.examples?.length?`<p class="speaking-example">${esc(d.grammar.examples[0])}</p>`:''}</details>`:'';
@@ -119,9 +141,9 @@
       a.step==='practice'?(busy?button(a.status==='requesting'?'cancel':'stop',a.status==='requesting'?'Cancel microphone request':a.status==='saving'?'Saving…':'Finish this take',`class="speaking-primary" ${a.status==='saving'?'disabled':''}`):button('record','Record & start timer','class="speaking-primary"')):
       button('finish',a.credited?'Reviewed ✓':'Finish review',`class="speaking-primary" ${!hasAttempt||a.checks.length!==checks.length||a.credited?'disabled':''}`);
     const footer=`<div class="speaking-footer">${primary}</div>`;
-    return `<section class="speaking-studio" data-speaking-step="${a.step}" aria-label="Picture speaking practice">${steps}<div class="speaking-page">${a.step==='plan'?`<p class="speaking-level-note">${esc(d.level)} practice · Change your level in Learn.</p>`:''}${body}${grammarHelp}${error}</div>${footer}</section>`;
+    return `<section class="speaking-studio" data-speaking-step="${a.step}" aria-label="Picture speaking practice">${steps}<div class="speaking-page" role="region" tabindex="0" aria-label="Speaking practice text">${a.step==='plan'?`<p class="speaking-level-note">${esc(d.level)} practice · Change your level in Learn.</p>`:''}${body}${grammarHelp}${error}</div>${footer}</section>`;
   }
-  function act(action,el){const a=session(),busy=['requesting','recording','timing','saving'].includes(a.status);if(busy&&!['stop','cancel'].includes(action))return;
+  function act(action,el){if(action==='clear-focus'){if(setFocus(null))render();return;}const a=session(),busy=['requesting','recording','timing','saving'].includes(a.status);if(busy&&!['stop','cancel'].includes(action))return;
     if(action==='record')return start(true);if(action==='timer')return start(false);if(action==='stop')return stop();if(action==='cancel'){cancel();render();return;}
     if(action==='duration')return reset(Number(el.dataset.duration));if(action==='finish')return finish();
     if(action==='retry'){reset(a.duration);session().step='practice';render();return;}
@@ -133,14 +155,15 @@
   }
   document.addEventListener('click',e=>{const el=e.target.closest?.('[data-speaking-action]');if(!el||el.disabled)return;e.preventDefault();act(el.dataset.speakingAction,el);});
   document.addEventListener('input',e=>{if(e.target.id==='speaking-transcript'){const a=session();a.transcript=e.target.value.slice(0,5000);a.transcriptEdited=true;state().transcript=a.transcript;}});
-  document.addEventListener('toggle',e=>{const key=e.target.dataset?.speakingSupport;if(!key||!['starters','grammar','transcript','model'].includes(key))return;const a=session();a.supportOpen=a.supportOpen.filter(x=>x!==key);if(e.target.open)a.supportOpen.push(key);},true);
+  document.addEventListener('toggle',e=>{const key=e.target.dataset?.speakingSupport;if(!key||!['route','starters','grammar','transcript','model'].includes(key))return;const a=session();a.supportOpen=a.supportOpen.filter(x=>x!==key);if(e.target.open)a.supportOpen.push(key);},true);
   document.addEventListener('change',e=>{const el=e.target,a=session();if(el.matches?.('[data-speaking-live]'))a.live=el.checked;if(el.matches?.('[data-speaking-check]')){const n=Number(el.dataset.speakingCheck);a.checks=a.checks.filter(x=>x!==n);if(el.checked)a.checks.push(n);render();}});
   root.prepareSpeaking=reset;root.startTimedVoiceChallenge=sec=>{reset(sec);return start(true);};root.stopTimedVoiceChallenge=stop;root.toggleRecording=()=>current?.status==='recording'?stop():start(true);
   root.toggleTimer=()=>current?.status==='timing'?stop():start(false);root.resetTimer=()=>reset(session().duration);
   root.launchTimedVoiceChallenge=sec=>{root.setMode('speak');return root.startTimedVoiceChallenge(sec);};
   root.deleteSpeakingRecording=()=>{cancel(true);reset(session().duration);};
   root.speakContent=markup;
-  for(const name of ['setMode','openLesson','goHome']){const old=root[name];root[name]=function(...args){if(name!=='setMode'||args[0]!=='speak')cancel(name!=='setMode');return old.apply(this,args);};}
-  root.addEventListener?.('pagehide',()=>cancel(true));
-  root.EngBookSpeaking=Object.freeze({markup,feedback,data,session,start,stop,reset,cancel,finish,act,busy:()=>Boolean(current&&['requesting','recording','timing','saving'].includes(current.status))});
+  for(const name of ['setMode','openLesson','goHome']){const old=root[name];root[name]=function(...args){if(name==='setMode')rememberView();else viewReturn=null;if(name!=='setMode'||args[0]!=='speak')cancel(name!=='setMode');return old.apply(this,args);};}
+  root.addEventListener?.('pagehide',()=>{viewReturn=null;cancel(true);});
+  root.addEventListener?.('engapp:local-data-cleared',()=>{viewReturn=null;});
+  root.EngBookSpeaking=Object.freeze({onModeRendered,markup,feedback,data,session,setFocus,start,stop,reset,cancel,finish,act,busy:()=>Boolean(current&&['requesting','recording','timing','saving'].includes(current.status))});
 })(typeof window!=='undefined'?window:globalThis);

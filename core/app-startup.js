@@ -3,7 +3,8 @@
 (function(root){
   'use strict';
   const lessonLabel=id=>root.EngBookCoursePath?.label(id)||String(id).padStart(2,'0');
-  let phase='loading',job=null;
+  const elapsed=root.performance?.now?.(),enteredAt=Date.now()-(Number.isFinite(elapsed)?elapsed:0);
+  let phase='loading',job=null,firstAttempt=true;
   const doc=root.document,app=()=>doc.getElementById('app'),panel=()=>doc.getElementById('app-startup');
   function message(text){const el=doc.querySelector('[data-startup-message]');if(el)el.textContent=text;}
   function requested(){const ready=root.EngBookContent?.snapshot?.().readyLessons||[];return root.EngBookDeepLinks?.parse(root.location.search,{maxLesson:Math.max(60,...ready)})||{validLesson:false};}
@@ -17,7 +18,7 @@
     await new Promise(resolve=>root.requestAnimationFrame(resolve));
   }
   async function boot(){
-    const started=Date.now();
+    const started=firstAttempt?enteredAt:Date.now();firstAttempt=false;
     phase='loading';doc.documentElement.classList.add('app-starting');
     app()?.setAttribute('inert','');app()?.setAttribute('aria-busy','true');
     if(panel()){panel().hidden=false;panel().setAttribute?.('data-state','loading');}
@@ -28,9 +29,10 @@
       if(available){if(!await root.v49ApplyDeepLink())throw new Error('LESSON_STARTUP_FAILED');}
       else root.renderHome();
       root.render();
+      message(available?'Bringing the picture into focus…':'Getting your learning space ready…');
       await preparePicture();
       // A brief, bounded splash prevents an unreadable flash on cached reloads.
-      // Actual lesson/image loading counts toward this time; slow loads add no delay.
+      // Initial navigation and ordered-script loading count too; slow loads add no delay.
       const remaining=900-(Date.now()-started);
       if(remaining>0)await new Promise(resolve=>root.setTimeout(resolve,remaining));
       phase='ready';app()?.removeAttribute('inert');app()?.removeAttribute('aria-busy');

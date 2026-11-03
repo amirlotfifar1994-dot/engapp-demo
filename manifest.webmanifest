@@ -1,6 +1,6 @@
 {
   "id": "./",
-  "name": "SceneSpeak — Visual English",
+  "name": "SceneSpeak — Five picture worlds",
   "short_name": "SceneSpeak",
   "start_url": "./",
   "scope": "./",
@@ -15,7 +15,7 @@
   "dir": "ltr",
   "background_color": "#f7f9f7",
   "theme_color": "#246c53",
-  "description": "See it. Say it. Learn English by describing pictures.",
+  "description": "Explore five immersive English lessons. See details, learn phrases and find your voice.",
   "categories": [
     "education",
     "productivity"
@@ -36,76 +36,16 @@
   ],
   "shortcuts": [
     {
-      "name": "Describe Lesson 01",
-      "short_name": "Describe",
-      "url": "./?lesson=1&mode=speak",
-      "icons": [
-        {
-          "src": "assets/brand/scenespeak-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "name": "Explore the garden",
+      "url": "./?lesson=5&mode=explore"
     },
     {
-      "name": "Explore Lesson 01",
-      "short_name": "Explore",
-      "url": "./?lesson=1&mode=explore",
-      "icons": [
-        {
-          "src": "assets/brand/scenespeak-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "name": "Listen in the garden",
+      "url": "./?lesson=5&mode=listening"
     },
     {
-      "name": "Explore Lesson 02",
-      "short_name": "Lesson 02",
-      "url": "./?lesson=2&mode=explore",
-      "icons": [
-        {
-          "src": "assets/brand/scenespeak-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Explore Lesson 03",
-      "short_name": "Lesson 03",
-      "url": "./?lesson=3&mode=explore",
-      "icons": [
-        {
-          "src": "assets/brand/scenespeak-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Explore Lesson 04",
-      "short_name": "Lesson 04",
-      "url": "./?lesson=4&mode=explore",
-      "icons": [
-        {
-          "src": "assets/brand/scenespeak-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Explore Lesson 05",
-      "short_name": "Lesson 05",
-      "url": "./?lesson=5&mode=explore",
-      "icons": [
-        {
-          "src": "assets/brand/scenespeak-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
+      "name": "Five picture worlds",
+      "url": "./#lessons"
     }
   ]
 }

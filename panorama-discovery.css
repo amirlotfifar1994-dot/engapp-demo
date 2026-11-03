@@ -41,3 +41,48 @@
 
 /* Listening owns audio controls; camera controls stay available in Explore. */
 body.is-core-listening :is(#garden-controls,#garden-caption,#garden-branches,.pano-controls,#pano-hint){display:none!important}
+
+body.is-core-study :is(#garden-controls,#garden-caption,#garden-branches,.pano-controls,#pano-hint){display:none!important}
+
+/* Shared progressive detail cards: photo lessons and all registered panoramas. */
+.scene-canvas .canvas-progressive-sheet{width:min(360px,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important;padding:12px 14px!important;border-radius:22px!important}
+.scene-canvas .canvas-progressive-sheet .canvas-branch-nav{padding:0 0 6px;margin:0 0 8px;min-height:28px}
+.scene-canvas .canvas-progressive-sheet .canvas-branch-tools>small{display:none}
+.scene-canvas .canvas-progressive-sheet .canvas-branch-nav>button{min-height:28px;font-size:11px}
+.scene-canvas .canvas-progressive-sheet .canvas-branch-nav>button span{max-width:190px}
+.scene-canvas .canvas-progressive-sheet header{display:flex;gap:8px;align-items:flex-start}
+.scene-canvas .canvas-progressive-sheet header h2{flex:1;min-width:0;font-size:18px!important;margin:2px 0!important;line-height:1.3!important}
+.scene-canvas .canvas-progressive-sheet .canvas-card-controls{display:flex;flex:0 0 auto;gap:3px}
+.scene-canvas .canvas-progressive-sheet .canvas-card-controls button{width:32px!important;min-width:32px!important;height:32px!important;min-height:32px!important;border-radius:50%}
+.scene-canvas .canvas-progressive-sheet>footer.canvas-detail-choices{display:flex;gap:6px;padding:10px 0 0!important;margin:0!important;border:0!important}
+.scene-canvas .canvas-detail-choices button{display:flex;align-items:center;justify-content:center;gap:5px;min-height:38px!important;padding:6px 10px!important;border-radius:13px!important;font-size:12px!important}
+.scene-canvas .canvas-detail-choices button[aria-expanded=true]{background:#205e4d!important;color:#fff!important}
+.scene-canvas .canvas-detail-choices .canvas-detail-save{margin-left:auto;width:38px;padding:8px!important}
+.scene-canvas .canvas-detail-save[aria-pressed=true]{background:#d8e9d4!important}
+.scene-canvas .canvas-detail-panel{margin-top:10px;padding-top:10px;border-top:1px solid #355d4a19}
+.scene-canvas .canvas-detail-panel .canvas-learning-pages{border:0;margin:0;padding:0}
+.scene-canvas .canvas-detail-panel .canvas-learning-pages output b{display:inline;margin-right:8px}
+.scene-canvas .canvas-detail-panel .canvas-card-copy{padding:12px 0 0;min-height:0}
+.scene-canvas .canvas-detail-children{display:flex;flex-direction:column;gap:5px;max-height:180px;overflow-y:auto;overscroll-behavior:contain}
+.scene-canvas .canvas-detail-children button{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:0 0 auto;min-height:42px;text-align:left;padding:8px 10px;border-radius:12px;border:1px solid #fff8;background:#ffffff38;color:inherit;font:inherit;font-size:12px}
+.scene-canvas .canvas-detail-children svg{width:16px;height:16px;flex-shrink:0}
+.scene-canvas .canvas-progressive-sheet button:focus-visible{outline:2px solid #245f4d;outline-offset:2px}
+
+.scene-canvas .canvas-progressive-sheet [hidden]{display:none!important}
+.scene-canvas .canvas-progressive-sheet.is-compact{max-height:calc(100dvh - 150px)!important}
+.scene-canvas .canvas-progressive-sheet .canvas-detail-panel .canvas-card-copy p{font-size:14px!important;line-height:1.55!important}
+.scene-canvas .canvas-progressive-sheet .canvas-card-controls svg{width:16px;height:16px}
+.scene-canvas .canvas-progressive-sheet .canvas-voice-note{font-size:10px;margin-top:8px}
+:is(.lesson1-panorama,.panorama-core) .canvas-progressive-sheet{transform:none!important}
+@media(max-width:820px){:is(.lesson1-panorama,.panorama-core) .canvas-progressive-sheet{left:12px!important;right:auto!important;bottom:100px!important;top:auto!important;width:min(360px,calc(100vw - 24px))!important;max-height:calc(100dvh - 200px)!important;transform:none!important}}
+@media(max-width:820px) and (max-height:480px){:is(.lesson1-panorama,.panorama-core) .canvas-progressive-sheet{top:76px!important;bottom:auto!important;right:auto!important;width:min(360px,calc(100vw - 104px))!important;max-height:calc(100dvh - 90px)!important}}
+/* The host owns branch browsing. Keep standalone viewers and cafe Walk/gallery navigation. */
+body.garden-embedded :is(#garden-controls,#garden-caption,#garden-branches),body.pano-core-embedded #pano-trail{display:none!important}
+/* Multi-area panoramas still need their area chooser and optional camera pad. */
+body.pano-core-embedded .pano-controls{left:auto;right:14px;bottom:100px;transform:none;display:flex;flex-direction:column;gap:6px;padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none}
+body.pano-core-embedded .pano-controls>:not(#pano-area):not(#pano-camera-toggle){display:none!important}
+body.pano-core-embedded .pano-controls :is(#pano-area,#pano-camera-toggle){display:grid;place-items:center;width:44px;min-width:44px;height:44px;min-height:44px;padding:10px;border:1px solid #ffffff85;border-radius:50%;background:#174638ce;color:#f5fff8;backdrop-filter:blur(16px)}
+body.pano-core-embedded #pano-area>span,body.pano-core-embedded #pano-area>small{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+body.pano-core-embedded #pano-area::before{content:'⌖';font-size:24px;line-height:1}
+body.pano-core-embedded .pano-controls button:focus-visible{outline:2px solid #f1dca0;outline-offset:3px}
+body.pano-core-embedded #pano-camera{right:68px;left:auto;bottom:100px;max-width:calc(100vw - 90px)}

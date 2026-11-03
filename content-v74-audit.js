@@ -1,1 +1,1 @@
-/* Demo uses the current canonical embedded lesson packs. */
+/* Demo content is supplied only by the selected lesson packs. */

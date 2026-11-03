@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" data-app-theme="sky" class="app-starting">
 <head>
+<script src="core/demo-catalog.js?v=794c52f35bbc"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#246c53" />
@@ -8,153 +9,175 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content="SceneSpeak helps you learn English by exploring pictures, building useful phrases and describing what you see." />
-  <title>SceneSpeak — Five Updated Demo Lessons</title>
+  <title>SceneSpeak — Five worlds. Your words.</title>
   <style>
     .app-starting #app,.app-starting .skip-link{visibility:hidden}
     .app-starting body{overflow:hidden}
-    #app-startup{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;gap:0;padding:max(24px,env(safe-area-inset-top)) 24px max(24px,env(safe-area-inset-bottom));overflow:auto;text-align:center;background:#fafcfb;color:#174b3e;font:16px/1.5 system-ui,sans-serif}
+    #app-startup{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;gap:0;padding:max(24px,env(safe-area-inset-top)) 24px max(24px,env(safe-area-inset-bottom));overflow:auto;text-align:center;background:radial-gradient(ellipse at 50% 35%,#e8f1e7 0,transparent 56%),#fafcfb;color:#174b3e;font:16px/1.5 system-ui,sans-serif}
     #app-startup[hidden]{display:none}
-    #app-startup .startup-art{display:block;width:min(390px,82vw,47svh);height:auto;aspect-ratio:1;object-fit:contain;animation:startup-float 4s ease-in-out infinite}
-    #app-startup strong{margin-top:4px;font-size:clamp(32px,5vw,42px);font-weight:750;line-height:1.2;letter-spacing:-1.6px}
-    #app-startup .startup-tagline{margin:8px 0 28px;font-size:15px;color:#577067;letter-spacing:.3px}
-    #app-startup .startup-dots{display:flex;gap:7px;align-items:center;height:16px;margin-bottom:12px}
-    #app-startup .startup-dots i{width:6px;height:6px;border-radius:50%;background:#246c53;animation:startup-pulse 1.4s ease-in-out infinite}
-    #app-startup .startup-dots i:nth-child(2){animation-delay:.16s}
-    #app-startup .startup-dots i:nth-child(3){animation-delay:.32s}
-    #app-startup [data-startup-message]{margin:0;max-width:32ch;font-size:13px;color:#577067}
-    #app-startup button{margin-top:18px;padding:11px 24px;border:0;border-radius:999px;background:#174b3e;color:white;font:inherit;cursor:pointer}
+    .startup-scene{position:relative;isolation:isolate;width:min(390px,82vw,47svh);aspect-ratio:1;margin-bottom:12px}
+    .startup-halo{position:absolute;inset:12%;z-index:-1;border-radius:50%;background:radial-gradient(circle,#eed5a35c,transparent 68%);animation:startup-breathe 9s ease-in-out infinite}
+    .startup-orbit{position:absolute;inset:9% 2%;z-index:-1;border:1px solid #396c4920;border-radius:50%;transform:rotate(-24deg);animation:startup-orbit 24s linear infinite}
+    .startup-orbit::before{content:"";position:absolute;width:7px;height:7px;border:4px solid #fafcfb;border-radius:50%;background:#b79650;left:15%;top:9%;box-shadow:0 0 18px #b7965055}
+    #app-startup .startup-art{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:contain;animation:startup-float 7s ease-in-out infinite;will-change:transform}
+    .startup-sparks{position:absolute;inset:0;pointer-events:none}
+    .startup-sparks i{position:absolute;left:28%;top:29%;width:28px;height:28px;margin:-14px;border:1px solid #fff9;border-radius:50%;background:#ffedba30;box-shadow:0 0 24px #ffe4a955;opacity:0;animation:startup-discover 7.2s ease-in-out infinite}
+    .startup-sparks i:nth-child(2){left:43%;top:43%;animation-delay:2.4s}.startup-sparks i:nth-child(3){left:57%;top:56%;animation-delay:4.8s}
+    .startup-moments{position:absolute;bottom:0;left:0;right:0;height:34px;display:grid;place-items:center;pointer-events:none}
+    .startup-moments span{grid-area:1/1;display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid #fff;border-radius:999px;background:#ffffffb8;box-shadow:0 4px 22px #264c3110;color:#3b6450;font-size:11px;font-weight:500;opacity:0;animation:startup-moment 10.8s ease-in-out infinite}
+    .startup-moments span:nth-child(2){animation-delay:3.6s}.startup-moments span:nth-child(3){animation-delay:7.2s}.startup-moments svg{width:15px;height:15px}
+    #app-startup strong{margin-top:8px;font-size:clamp(32px,5vw,42px);font-weight:750;line-height:1.2;letter-spacing:-1.6px}
+    #app-startup .startup-tagline{margin:8px 0 24px;font-size:14px;color:#577067;letter-spacing:.15px}
+    .startup-track{width:112px;height:3px;border-radius:99px;background:#246c5312;overflow:hidden;margin-bottom:14px}
+    .startup-track i{display:block;width:36px;height:100%;border-radius:inherit;background:#548568;animation:startup-travel 2.8s ease-in-out infinite;will-change:transform}
+    #app-startup [data-startup-message]{margin:0;max-width:32ch;font-size:12px;color:#577067}
+    #app-startup button{margin-top:18px;min-height:44px;padding:11px 24px;border:0;border-radius:999px;background:#174b3e;color:white;font:inherit;cursor:pointer}
     #app-startup button:focus-visible{outline:3px solid #b29048;outline-offset:4px}
-    #app-startup[data-state="error"] .startup-dots{visibility:hidden}
-    #app-startup[data-state="error"] .startup-art{animation:none}
-    @keyframes startup-float{50%{transform:translateY(-6px)}}
-    @keyframes startup-pulse{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.1)}}
-    @media(prefers-reduced-motion:reduce){#app-startup .startup-art,#app-startup .startup-dots i{animation:none}#app-startup .startup-dots i{opacity:.65}}
-    @media(max-height:480px){#app-startup .startup-art{width:160px}#app-startup strong{font-size:28px}#app-startup .startup-tagline{margin-bottom:14px}}
+    #app-startup[data-state="error"] :is(.startup-art,.startup-halo,.startup-orbit,.startup-sparks i,.startup-moments span,.startup-track i){animation:none}
+    #app-startup[data-state="error"] :is(.startup-sparks,.startup-moments,.startup-track){display:none}
+    @keyframes startup-float{0%,100%{transform:translateY(0) rotate(-.4deg)}50%{transform:translateY(-7px) rotate(.4deg)}}
+    @keyframes startup-breathe{0%,100%{opacity:.45;transform:scale(.95)}50%{opacity:.9;transform:scale(1.08)}}
+    @keyframes startup-orbit{from{transform:rotate(-24deg)}to{transform:rotate(336deg)}}
+    @keyframes startup-discover{0%,34%,100%{opacity:0;transform:scale(.65)}10%{opacity:.8;transform:scale(1)}28%{opacity:0;transform:scale(1.7)}}
+    @keyframes startup-moment{0%,29%,100%{opacity:0;transform:translateY(4px)}4%,25%{opacity:1;transform:translateY(0)}}
+    @keyframes startup-travel{0%,100%{transform:translateX(-36px);opacity:.35}50%{transform:translateX(112px);opacity:.85}}
+    @media(prefers-reduced-motion:reduce){#app-startup :is(.startup-art,.startup-halo,.startup-orbit,.startup-sparks i,.startup-moments span,.startup-track i){animation:none;will-change:auto}.startup-sparks{display:none}.startup-moments span:first-child{opacity:1}.startup-track i{transform:translateX(38px);opacity:.65}}
+    @media(max-height:480px){.startup-scene{width:150px;margin-bottom:4px}.startup-moments{bottom:-3px}.startup-moments span{font-size:9px;padding:4px 10px}#app-startup strong{font-size:28px}#app-startup .startup-tagline{margin-bottom:14px}}
   </style>
   <link rel="preload" as="image" href="assets/brand/scenespeak-loading-v2.webp" fetchpriority="high" />
   <link rel="icon" type="image/png" href="assets/brand/scenespeak-32.png" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="assets/brand/scenespeak-192.png" />
-  <link rel="stylesheet" href="styles.css?v=e7f37715b326" />
-  <link rel="stylesheet" href="ui-current.css?v=9fdf16a73ba0" />
-  <link rel="stylesheet" href="ui-v69.css?v=eab2ead57e41" />
-  <link rel="stylesheet" href="ui-v70.css?v=b3a060a74555" />
-  <link rel="stylesheet" href="ui-v71.css?v=51cc2b2156c6" />
-  <link rel="stylesheet" href="ui-v72.css?v=d24091e28b16" />
-  <link rel="stylesheet" href="ui-v73.css?v=15b34c80e019" />
-  <link rel="stylesheet" href="ui-v76.css?v=8b865cb2a2d8" />
-  <link rel="stylesheet" href="ui-v82.css?v=972449b8dde4" />
-  <link rel="stylesheet" href="ui-v84.css?v=379203077f45" />
-  <link rel="stylesheet" href="ui-studio.css?v=42ea0a79cbeb" />
-  <link rel="stylesheet" href="theme-sky.css?v=98572c865e69" />
-  <link rel="stylesheet" href="theme-path.css?v=e6351fd37bc7" />
-  <link rel="stylesheet" href="theme-light-gallery.css?v=43ce43f7cd2a" />
-  <link rel="stylesheet" href="home-hero.css?v=433610b8ef3a" />
-  <link rel="stylesheet" href="learning-journey.css?v=11afd4d63277" />
-  <link rel="stylesheet" href="lesson-media.css?v=f2573e4f4fe3" />
-  <link rel="stylesheet" href="how-it-works.css?v=e417890383a8" />
-  <link rel="stylesheet" href="scene-canvas.css?v=aba9099252a8" />
-  <link rel="stylesheet" href="listening.css?v=66e8e4bcabab" />
-  <link rel="stylesheet" href="learning-guide.css?v=9eb61eb98759" />
-  <link rel="stylesheet" href="ui-sounds.css?v=19601f279538" />
-  <link rel="stylesheet" href="panorama-core.css?v=d8734d7bc925">
-  <link rel="stylesheet" href="lesson1-panorama.css?v=051b9032b213">
-<link rel="stylesheet" href="panorama-discovery.css?v=4b420b4b0232">
-<link rel="stylesheet" href="panorama-talk-tour.css?v=1cd13281f568"><link rel="stylesheet" href="panorama-listening.css?v=9c42d6c55e50"></head>
+  <link rel="stylesheet" href="styles.css?v=d8064ea2ca4e" />
+  <link rel="stylesheet" href="ui-current.css?v=e289105e738a" />
+  <link rel="stylesheet" href="ui-v69.css?v=560e4bd39823" />
+  <link rel="stylesheet" href="ui-v70.css?v=8ae7074efafd" />
+  <link rel="stylesheet" href="ui-v71.css?v=baf062262e4c" />
+  <link rel="stylesheet" href="ui-v72.css?v=de9419dce064" />
+  <link rel="stylesheet" href="ui-v73.css?v=f81f4c81bbf5" />
+  <link rel="stylesheet" href="ui-v76.css?v=5e9b72ae49cc" />
+  <link rel="stylesheet" href="ui-v82.css?v=e0d029277a05" />
+  <link rel="stylesheet" href="ui-v84.css?v=cf8eddf61118" />
+  <link rel="stylesheet" href="ui-studio.css?v=57562e6b0b18" />
+  <link rel="stylesheet" href="theme-sky.css?v=649253490af2" />
+  <link rel="stylesheet" href="theme-path.css?v=3b301f2d015f" />
+  <link rel="stylesheet" href="theme-light-gallery.css?v=0b012449668c" />
+  <link rel="stylesheet" href="home-hero.css?v=a0ffd7b0c20a" />
+  <link rel="stylesheet" href="learning-journey.css?v=afed2816cd9e" />
+  <link rel="stylesheet" href="lesson-media.css?v=e6c6efb151d9" />
+  <link rel="stylesheet" href="how-it-works.css?v=2d0a6ebfe3cd" />
+  <link rel="stylesheet" href="scene-canvas.css?v=b5abc2ecbeac" />
+  <link rel="stylesheet" href="listening.css?v=f727c4430ff1" />
+  <link rel="stylesheet" href="lesson-studio.css?v=7515e6fcb1ef">
+  <link rel="stylesheet" href="learning-guide.css?v=3a945bac436c" />
+  <link rel="stylesheet" href="ui-sounds.css?v=45cc6ba51d48" />
+  <link rel="stylesheet" href="panorama-core.css?v=f94a244cf81b">
+  <link rel="stylesheet" href="lesson1-panorama.css?v=953fffa56aa7">
+<link rel="stylesheet" href="panorama-discovery.css?v=2796113b11ba">
+<link rel="stylesheet" href="panorama-talk-tour.css?v=9b987abd512b"><link rel="stylesheet" href="panorama-listening.css?v=fb8505b4da74"><link rel="stylesheet" href="lesson2-panorama-host.css?v=6fbeef755df6">
+<link rel="stylesheet" href="demo-showcase.css?v=6394a07e016f">
+</head>
 <body>
   <a class="skip-link" href="#app">Skip to learning content</a>
   <div id="a11y-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   <div id="app-startup" role="status" aria-live="polite" aria-atomic="true" data-state="loading">
+    <div class="startup-scene" aria-hidden="true"><div class="startup-halo"></div><div class="startup-orbit"></div>
     <img class="startup-art" src="assets/brand/scenespeak-loading-v2.webp" alt="" width="840" height="840" fetchpriority="high" decoding="async" />
+      <div class="startup-sparks"><i></i><i></i><i></i></div><div class="startup-moments"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>Look closer</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13V11a8 8 0 0 1 16 0v2M4 12H3v7h4v-7H4Zm16 0h1v7h-4v-7h3Z"/></svg>Listen to the scene</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11a8 8 0 0 1-8 8H7l-5 3 2-6a8 8 0 1 1 17-5Z"/></svg>Make it your own</span></div>
+    </div>
     <strong>SceneSpeak</strong>
     <p class="startup-tagline">Every picture starts a conversation.</p>
-    <div class="startup-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-    <p data-startup-message>Loading your scene…</p>
+    <div class="startup-track" aria-hidden="true"><i></i></div>
+    <p data-startup-message>Opening your learning space…</p>
     <button data-startup-retry hidden>Try again</button>
     <noscript>Enable JavaScript to open the lessons.</noscript>
   </div>
   <div id="app" tabindex="-1" inert aria-busy="true"></div>
-  <script src="core/app-startup.js?v=bd5b87fb1e0e"></script>
-  <script src="core/content-revision.js?v=3bc3806c85b2"></script>
-  <script src="core/build-info.js?v=9fa14899fab6"></script>
-  <script src="core/course-catalog.js?v=d8385ab6231d"></script>
-  <script src="core/course-path.js?v=427eb5ecdf4e"></script>
-  <script src="data.js?v=307e53e9b06f"></script>
-  <script src="lesson-pack-index.generated.js?v=006819aa9bcf"></script>
-  <script src="current-content-overrides.js?v=5cc74e1fce96"></script>
-  <script src="content-v69.js?v=5cc74e1fce96"></script>
-  <script src="content-v74-audit.js?v=5cc74e1fce96"></script>
-  <script src="lesson-packs.generated.js?v=1f5e84ff9fc3"></script>
-  <script src="core/hotspot-engine.js?v=0d5a81eb5dc6"></script>
-  <script src="core/adaptive-taxonomy-contract.js?v=f6fae911d8c2"></script>
-  <script src="core/lesson-validator.js?v=0ccd34b12bc7"></script>
-  <script src="core/lesson-repository.js?v=77aca8151dfa"></script>
-  <script src="core/content-engine.js?v=e1f7e139dde1"></script>
-  <script src="core/panorama-course.generated.js?v=d9529c49cbbb"></script>
-  <script src="core/scene-evidence.js?v=4fdc6a17dee8"></script>
-  <script src="core/scene-intelligence.js?v=692e982c522b"></script>
-  <script src="core/privacy-store.js?v=52e0ac4d5d61"></script>
-  <script src="core/learner-model.js?v=d8bf44370f42"></script>
-  <script src="core/action-router.js?v=b93dbc1543b9"></script>
-  <script src="core/speech-core.js?v=c8c5c091f525"></script>
-  <script src="core/ui-sounds.js?v=7964c6816acb"></script>
-  <script src="core/practice-review.js?v=3e467076a4d8"></script>
-  <script src="core/ai-adapter.js?v=064fd6ad9dd5"></script>
-  <script src="core/learning-orchestrator.js?v=1ae58459ec99"></script>
-  <script src="core/user-access-config.js?v=0ac02090537f"></script>
-  <script src="core/commercial-shell.js?v=ed12c0c5aae3"></script>
-  <script src="core/sync-tombstones.js?v=c3ef3947b44c"></script>
-  <script src="core/local-data-store.js?v=6e7c0aab8850"></script>
-  <script src="core/offline-downloads.js?v=153e696cb147"></script>
-  <script src="core/backend-client.js?v=8af45341082b"></script>
-  <script src="core/store-catalog-v82.js?v=e81de1eb7e1d"></script>
-  <script src="core/admin-feature-policy-v83.js?v=089ec2695646"></script>
-  <script src="core/purchase-entitlements-v82.js?v=ae6d0d21828c"></script>
-  <script src="core/access-model-v82.js?v=a656d7a96163"></script>
-  <script src="core/activity-client.js?v=0305212aa998"></script>
-  <script src="core/progress-sync.js?v=bac324bff10e"></script>
-  <script src="core/device-readiness.js?v=2feb7ec991df"></script>
-  <script src="core/security.js?v=e12e8fea76a4"></script>
-  <script src="core/personal-marks.js?v=a7b890df64b0"></script>
-  <script src="core/deep-link-router.js?v=2884d61ba8e4"></script>
-  <script src="core/lesson-media-gate.js?v=f4e1bda5cbc7"></script>
-  <script src="app.js?v=04290ee01368"></script>
-  <script src="runtime-v69.js?v=9a2fce50b812"></script>
-  <script src="runtime-v70.js?v=bc94bb4e360d"></script>
-  <script src="runtime-v71.js?v=3f6b4df981ed"></script>
-  <script src="runtime-v72.js?v=2e056d364219"></script>
-  <script src="runtime-v73.js?v=315661ad4f4a"></script>
-  <script src="runtime-v75.js?v=d540d6023ff5"></script>
-  <script src="runtime-v77.js?v=cfc6d447c4fe"></script>
-  <script src="patch-v76.js?v=8671756c11c0"></script>
-  <script src="runtime-v78.js?v=ad84d789c8ef"></script>
-  <script src="core/level-aware-language.js?v=e0d07689a2c7"></script>
-  <script src="core/imagination-memory-dna.generated.js?v=4ea223d0e053"></script>
-  <script src="core/gold-journey.js?v=f6b78175643e"></script>
-  <script src="core/published-overrides.generated.js?v=6f804d559817"></script>
-  <script src="core/published-overrides.js?v=4688c32fdd0b"></script>
-  <script src="core/user-panel-v84.js?v=f50b612bddcb"></script>
-  <script src="core/event-router-v52.js?v=eeacf605ca4a"></script>
-  <script src="core/picture-language.js?v=fc298d7c669d"></script>
-  <script src="core/learning-glossary-fa.js?v=a58cbe13d967"></script>
-  <script src="core/learning-guide.js?v=9f655faf4416"></script>
-  <script src="core/speaking-studio.js?v=97b6e4c3991e"></script>
-  <script src="core/panorama-talk-tour.js?v=7771b3bc976d"></script>
-  <script src="core/talk-studio.js?v=0e2f04955cad"></script>
-  <script src="core/lesson-listening.js?v=5c9cf390db3e"></script>
-  <script src="core/listening-player.js?v=05734a528819"></script>
-  <script src="core/immersive-learn.js?v=c38f6e1bcc5f"></script>
-  <script src="core/scenario-studio.js?v=64f008922529"></script>
-  <script src="core/hotspot-scope.js?v=ae610ceef6b7"></script>
-  <script src="core/scene-preview.js?v=1f2e9517c847"></script>
-  <script src="core/panorama-listening.js?v=71cc4268aee4"></script>
-  <script src="core/scene-canvas.js?v=41de7d5b488b"></script>
-  <script src="core/panorama-core-bridge.js?v=fa0d618af814"></script>
-  <script src="core/home-hero.js?v=62444d525ca9"></script>
-  <script src="core/how-it-works.js?v=9f088995cda6"></script>
-  <script src="core/learning-journey.js?v=50a0cc425c0b"></script>
-  <script src="core/ui-shell-v52.js?v=f3bc0a37c113"></script>
-<script src="core/lesson1-panorama-data.generated.js?v=a4716ade650d"></script>
-<script src="core/lesson1-panorama-bridge.js?v=352609d9416b"></script>
+  <script src="core/app-startup.js?v=ff1a0daf8c35"></script>
+  <script src="core/content-revision.js?v=0ac0a1841313"></script>
+  <script src="core/build-info.js?v=4c5bf4de7037"></script>
+  <script src="core/course-catalog.js?v=4b80a8407383"></script>
+  <script src="core/course-path.js?v=1420e7e5abea"></script>
+  <script src="data.js?v=efaad941fac2"></script>
+  <script src="lesson-pack-index.generated.js?v=8fa2bce4e7ee"></script>
+  <script src="current-content-overrides.js?v=bb695b41666f"></script>
+  <script src="content-v69.js?v=bb695b41666f"></script>
+  <script src="content-v74-audit.js?v=bb695b41666f"></script>
+  <script src="lesson-packs.generated.js?v=49c2c19ea0f4"></script>
+  <script src="core/hotspot-engine.js?v=f501aa4505e6"></script>
+  <script src="core/adaptive-taxonomy-contract.js?v=a32d3168cf22"></script>
+  <script src="core/lesson-validator.js?v=3df408123c57"></script>
+  <script src="core/lesson-repository.js?v=776cb6d8aad9"></script>
+  <script src="core/content-engine.js?v=777e6ee6c8c3"></script>
+  <script src="core/panorama-course.generated.js?v=aee89638d8a1"></script>
+  <script src="core/scene-evidence.js?v=0b2b4b7bd8b8"></script>
+  <script src="core/scene-intelligence.js?v=963a06c01589"></script>
+  <script src="core/privacy-store.js?v=0e11e08d27ce"></script>
+  <script src="core/learner-model.js?v=5d86ec7c2023"></script>
+  <script src="core/action-router.js?v=2636cd190234"></script>
+  <script src="core/speech-core.js?v=d99bd3ac05ee"></script>
+  <script src="core/ui-sounds.js?v=ada7bb52227e"></script>
+  <script src="core/practice-review.js?v=80561e3ca58c"></script>
+  <script src="core/ai-adapter.js?v=1c639c01452b"></script>
+  <script src="core/learning-orchestrator.js?v=4940a524fca1"></script>
+  <script src="core/user-access-config.js?v=496d4cb59644"></script>
+  <script src="core/commercial-shell.js?v=e1f41da2f7ba"></script>
+  <script src="core/sync-tombstones.js?v=5ced436f44d3"></script>
+  <script src="core/local-data-store.js?v=47d795ed2ca7"></script>
+  <script src="core/offline-downloads.js?v=d77589573577"></script>
+  <script src="core/backend-client.js?v=523a5f977ea5"></script>
+  <script src="core/store-catalog-v82.js?v=6c5c8b9699aa"></script>
+  <script src="core/admin-feature-policy-v83.js?v=1883039266df"></script>
+  <script src="core/purchase-entitlements-v82.js?v=204cd6ce6a91"></script>
+  <script src="core/access-model-v82.js?v=6e71546be85a"></script>
+  <script src="core/activity-client.js?v=6a4ac665791f"></script>
+  <script src="core/progress-sync.js?v=753a9ea9c682"></script>
+  <script src="core/device-readiness.js?v=1b1cb54d92d0"></script>
+  <script src="core/security.js?v=e72ce3856358"></script>
+  <script src="core/personal-marks.js?v=4d91d96c9c0a"></script>
+  <script src="core/deep-link-router.js?v=8fde61b8c079"></script>
+  <script src="core/lesson-media-gate.js?v=9f102eef253a"></script>
+  <script src="app.js?v=e1343c256eee"></script>
+  <script src="runtime-v69.js?v=bbb2d017bee1"></script>
+  <script src="runtime-v70.js?v=362c5c4bc25d"></script>
+  <script src="runtime-v71.js?v=e7f462967858"></script>
+  <script src="runtime-v72.js?v=87699175f33f"></script>
+  <script src="runtime-v73.js?v=f8290e099281"></script>
+  <script src="runtime-v75.js?v=52d34a3e53d9"></script>
+  <script src="runtime-v77.js?v=a142a58bcea9"></script>
+  <script src="patch-v76.js?v=36e3d42e4854"></script>
+  <script src="runtime-v78.js?v=4d4bc0f17217"></script>
+  <script src="core/level-aware-language.js?v=a0c55c6a2ce8"></script>
+  <script src="core/imagination-memory-dna.generated.js?v=9821a515bdd9"></script>
+  <script src="core/gold-journey.js?v=f1445d3c2e55"></script>
+  <script src="core/published-overrides.generated.js?v=f597cf42924b"></script>
+  <script src="core/published-overrides.js?v=ec1ce70b49c2"></script>
+  <script src="core/user-panel-v84.js?v=c4f707615aae"></script>
+  <script src="core/event-router-v52.js?v=fa93987a5c21"></script>
+  <script src="core/picture-language.js?v=affdfd1f6e60"></script>
+  <script src="core/learning-glossary-fa.js?v=3678a7e40973"></script>
+  <script src="core/learning-guide.js?v=a8813ac05db5"></script>
+  <script src="core/speaking-studio.js?v=23c1e7af2ea5"></script>
+  <script src="core/panorama-talk-tour.js?v=bf6caf61923a"></script>
+  <script src="core/talk-studio.js?v=853160ef1bb8"></script>
+  <script src="core/lesson-listening.js?v=df7b6476a38f"></script>
+  <script src="core/lesson-links.js?v=0d08afdd363a"></script>
+  <script src="core/listening-player.js?v=b20468f60fbc"></script>
+  <script src="core/immersive-learn.js?v=b0788f349f59"></script>
+  <script src="core/scenario-studio.js?v=1578d2c5e39f"></script>
+  <script src="core/hotspot-scope.js?v=7b078254dd47"></script>
+  <script src="core/scene-preview.js?v=1bb057218b6f"></script>
+  <script src="core/panorama-listening.js?v=d44906e7a518"></script>
+  <script src="core/scene-canvas.js?v=3cc0aee2521b"></script>
+  <script src="core/panorama-view-state.js?v=c724463bb578"></script>
+  <script src="core/panorama-core-bridge.js?v=5d7f0881f3e7"></script>
+  <script src="core/home-hero.js?v=ce73f39a039e"></script>
+  <script src="core/how-it-works.js?v=6eccd0d6a22c"></script>
+  <script src="core/learning-journey.js?v=d200642750fa"></script>
+  <script src="core/ui-shell-v52.js?v=a1d1f0dc8a51"></script>
+<script src="core/lesson1-panorama-data.generated.js?v=9cea6a3fe7a9"></script>
+<script src="core/lesson1-panorama-bridge.js?v=e3c77c31e3be"></script>
+<script src="core/lesson2-panorama-data.generated.js?v=45fe89afd67b"></script>
+<script src="core/lesson2-panorama-bridge.js?v=bfd34a2eaf96"></script>
 </body>
 </html>

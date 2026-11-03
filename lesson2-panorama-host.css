@@ -1,0 +1,13 @@
+#lesson2-panorama-viewport{position:fixed;inset:0;z-index:0;background:#342a20}
+#lesson2-panorama-viewport iframe{width:100%;height:100%;border:0;display:block}
+.cafe-learning-location{display:flex;align-items:center;flex-wrap:wrap;gap:5px 12px;margin:8px 0 0!important;color:#426255;font:500 12px/1.5 system-ui!important;letter-spacing:0!important;text-transform:none!important}
+.cafe-learning-location>span{font:inherit!important;letter-spacing:0!important;text-transform:none!important}
+.cafe-learning-location .cafe-location-fa{color:#536c60}
+
+.cafe-repair-location{display:flex;flex-wrap:wrap;gap:4px 12px;margin:6px 0 10px;color:#426255;font:500 12px/1.5 system-ui}
+.cafe-detail-link-fallback{display:grid;gap:5px;margin-top:10px;font:12px/1.5 system-ui;color:#315c50}
+.cafe-detail-link-fallback input{box-sizing:border-box;width:100%;min-width:0;padding:8px;border:1px solid #94b0a5;border-radius:8px;background:#fff;color:#153e33;font:12px/1.5 system-ui}
+
+.cafe-detail-activities{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cafe-detail-activities button{padding:8px 10px;border:1px solid #a7bdb2;border-radius:9px;background:#e4eee7;color:#194e3d;font:500 12px/1.4 system-ui;cursor:pointer}
+.cafe-detail-activities button:focus-visible{outline:3px solid #227c5e;outline-offset:2px}

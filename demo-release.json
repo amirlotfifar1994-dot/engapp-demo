@@ -1,7 +1,7 @@
 {
-  "release": "demo-five-20261029-babcbc24cf",
-  "updated": "2026-10-29",
-  "sourceCommit": "efab9ff",
+  "release": "demo-five-20261103-008bf8490db3",
+  "updated": "2026-11-03",
+  "sourceCommit": "1394fe5810e7beb847a0ac304a28a89672839961",
   "lessonIds": [
     5,
     2,
@@ -19,33 +19,73 @@
   "lessons": [
     {
       "id": 5,
+      "number": 1,
       "title": "Garden Gathering in 360°",
       "anchors": 324,
-      "image": "assets/images/panorama-garden-lesson1.webp"
+      "image": "assets/images/panorama-garden-lesson1.webp",
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ]
     },
     {
       "id": 2,
-      "title": "Two Women Laughing at a Café Table",
-      "anchors": 46,
-      "image": "assets/images/lesson_02.jpg"
+      "number": 2,
+      "title": "Café Conversation in 360°",
+      "anchors": 127,
+      "image": "assets/images/panorama-cafe-lesson2.webp",
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ]
     },
     {
       "id": 10003,
+      "number": 3,
       "title": "Park in 360°",
       "anchors": 116,
-      "image": "assets/images/panorama-park.png"
+      "image": "assets/images/panorama-park.png",
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ]
     },
     {
       "id": 10004,
+      "number": 4,
       "title": "Home in 360°",
       "anchors": 258,
-      "image": "assets/images/panorama-home.webp"
+      "image": "assets/images/panorama-home.webp",
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ]
     },
     {
       "id": 10010,
+      "number": 5,
       "title": "Museum in 360°",
       "anchors": 211,
-      "image": "assets/images/panorama-museum.webp"
+      "image": "assets/images/panorama-museum.webp",
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ]
     }
   ]
 }

@@ -13,7 +13,7 @@
     if(p.done){if(r.settledAt==null){r.settledAt=time;onPhase?.('preparing');}if(adapter.settled&&!adapter.settled()&&time-r.settledAt<clamp(adapter.settleTimeout??2000,0,4000)){r.raf=root.requestAnimationFrame(step);return;}let image=null;try{image=adapter.capture?adapter.capture():adapter.canvas.toDataURL('image/jpeg',.94);}catch{}parked=r.before;run=null;r.resolve(image);return;}r.raf=root.requestAnimationFrame(step);}
    r.raf=root.requestAnimationFrame(step);
   });}
-  return {start,cancel,ready:adapter.ready};
+  return {start,cancel,ready:adapter.ready,snapshot(){if(!adapter.ready()||run)return null;try{return adapter.capture?adapter.capture():adapter.canvas.toDataURL('image/jpeg',.94);}catch{return null;}}};
  }
  let active=null,serial=0;
  function clear(){if(!active)return;const a=active;active=null;serial++;root.clearTimeout(a.timer);root.clearTimeout(a.timeout);try{a.frame.contentWindow.SceneSpeakTalkCamera?.cancel();}catch{}a.stage.remove();a.controls.remove();root.document.body.classList.remove('talk-touring','talk-still');root.document.querySelector('.talk-page')?.removeAttribute('inert');}
@@ -23,7 +23,7 @@
   stage.className='talk-still-stage';stage.hidden=true;image.alt='A still overview of '+(s.lesson.title||'this lesson');stage.append(image);host.append(stage);
   controls.className='talk-tour-controls';controls.setAttribute('role','status');label.textContent='Take in the scene';skip.type='button';skip.textContent='Skip movement';controls.append(label,skip);d.body.append(controls);
   const token=++serial,a=active={key,frame,stage,controls,timer:0,started:false};d.body.classList.add('talk-touring');d.querySelector('.talk-page')?.setAttribute('inert','');
-  function finish(src){if(active!==a||token!==serial)return;root.clearTimeout(a.timer);d.body.classList.remove('talk-touring');d.querySelector('.talk-page')?.removeAttribute('inert');controls.remove();if(src){image.src=src;stage.hidden=false;d.body.classList.add('talk-still');stage.dataset.ready='true';}d.querySelector('.talk-question')?.focus({preventScroll:true});}
+  function finish(src){if(active!==a||token!==serial)return;root.clearTimeout(a.timer);d.body.classList.remove('talk-touring');const page=d.querySelector('.talk-page');page?.removeAttribute('inert');controls.remove();if(src){image.src=src;stage.hidden=false;d.body.classList.add('talk-still');stage.dataset.ready='true';}if(!root.EngBookTalk?.onModeRendered?.('talk')&&!page?.contains?.(d.activeElement))d.querySelector('.talk-question')?.focus({preventScroll:true});}
   function begin(reduced=false){if(active!==a)return;try{const api=frame.contentWindow.SceneSpeakTalkCamera;if(!api?.ready()){a.timer=root.setTimeout(()=>begin(reduced),120);return;}a.started=true;const request=a.request=(a.request||0)+1;api.start({reduced,onPhase:()=>{if(active===a)label.textContent='Preparing a clear picture';}}).then(src=>{if(request===a.request)finish(src);},()=>{if(request===a.request)finish(null);});}catch{finish(null);}}
   skip.onclick=()=>{root.clearTimeout(a.timer);a.request=(a.request||0)+1;try{frame.contentWindow.SceneSpeakTalkCamera?.cancel();}catch{}begin(true);};
   a.timer=root.setTimeout(()=>begin(Boolean(root.matchMedia?.('(prefers-reduced-motion: reduce)').matches)),80);
@@ -31,5 +31,7 @@
   a.timeout=root.setTimeout(()=>{if(active===a&&d.body.classList.contains('talk-touring')){try{frame.contentWindow.SceneSpeakTalkCamera?.cancel();}catch{}finish(null);}},16000);
  }
  function unmount(frame){if(frame&&active?.frame===frame){if(active)root.clearTimeout(active.timeout);clear();}}
- const api={pose,camera,mount,unmount};root.SceneSpeakTalkTour=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+ function setMoving(frame,value){if(active?.frame!==frame)return;if(value){try{frame.contentWindow.SceneSpeakTalkCamera?.cancel();}catch{}active.stage.hidden=true;}}
+ function refresh(frame){if(active?.frame!==frame)return false;try{const src=frame.contentWindow.SceneSpeakTalkCamera?.snapshot?.();if(!src)return false;active.stage.querySelector('img').src=src;active.stage.hidden=false;active.stage.dataset.ready='true';return true;}catch{return false;}}
+ const api={pose,camera,mount,unmount,setMoving,refresh};root.SceneSpeakTalkTour=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -1,0 +1,83 @@
+{
+  "date": "2026-11-03",
+  "release": "demo-five-20261103-008bf8490db3",
+  "sourceCommit": "1394fe5810e7beb847a0ac304a28a89672839961",
+  "automatedTests": 8,
+  "browser": {
+    "results": [
+      {
+        "name": "desktop",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "checks": "direct Pages-subpath Listening reload"
+      },
+      {
+        "name": "mobile",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "checks": "direct Pages-subpath Listening reload"
+      }
+    ],
+    "errors": [],
+    "missing": []
+  },
+  "offline": {
+    "results": [
+      "service worker installs and controls the Pages subpath",
+      "online visit caches the native HTML, scene scripts and all six detail faces",
+      "offline reload restores the actual native panorama with six high-detail faces, not an app fallback inside the iframe",
+      "offline Listening opens from cached shared controllers"
+    ]
+  },
+  "boundaries": [
+    "Speech mocked for activity-flow checks; device voice and microphone quality are not certified.",
+    "Offline acceptance covers a previously visited Garden with all six detail faces and its Listening interface. Other scene assets cache when visited.",
+    "These checks do not certify every individual anchor pixel or all content in the private application."
+  ]
+}

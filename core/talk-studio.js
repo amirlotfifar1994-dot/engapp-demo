@@ -8,6 +8,23 @@
   const words=t=>(String(t||'').match(/\b[a-z]+(?:'[a-z]+)?\b/gi)||[]).length;
   const labels={listener:'Describe the picture',detective:'Facts & guesses',story:'Imagine the next moment',anchor:'Talk about this detail'};
   let current=null,voice=null,generation=0;
+  let viewReturn=null;
+  function viewKey(){const s=state(),p=root.EngBookContent?.getPack?.(s.lesson?.id)||{lessonId:s.lesson?.id,content:root.activeGold?.()||{}};return JSON.stringify([Number(s.lesson?.id),root.EngAppLevelAware?.levelFor(p,'global')||'A2',current]);}
+  function rememberView(){
+    const s=state();if(s?.screen!=='lesson'||s.mode!=='talk')return false;
+    viewReturn=null;if(!current||current.voiceStatus!=='idle')return false;
+    const section=document.querySelector?.('.talk-studio'),body=document.querySelector?.('.talk-page');
+    if(!body||section?.dataset.talkPhase!==current.phase)return false;
+    viewReturn={session:current,lesson:s.lesson,key:viewKey(),scroll:Math.max(0,Number(body.scrollTop)||0)};return true;
+  }
+  function onModeRendered(mode){
+    const s=state();if(mode!=='talk'||s?.mode!=='talk'||s.screen!=='lesson')return false;
+    const back=viewReturn;if(!back)return false;viewReturn=null;
+    if(current!==back.session||s.lesson!==back.lesson||back.key!==viewKey())return false;
+    const section=document.querySelector?.('.talk-studio'),body=document.querySelector?.('.talk-page');
+    if(!body||section?.dataset.talkPhase!==current.phase)return false;
+    body.scrollTop=back.scroll;if(body.hasAttribute?.('inert')){viewReturn=back;return true;}body.focus?.({preventScroll:true});return true;
+  }
   const fresh=(lesson,anchor='')=>({lesson,anchor,mission:anchor?'anchor':'listener',support:'guided',phase:'answer',turn:0,draft:'',responses:[],hint:false,open:[],voiceStatus:'idle',error:'',credited:false});
   const pack=()=>root.EngBookContent?.getPack?.(Number(state().lesson?.id));
   function pictureMissions(g,hotspots,level='A2',lessonId=null){
@@ -64,8 +81,11 @@
   }
   function session(){
     const s=state(),id=Number(s.lesson?.id),anchor=(s.lesson?.hotspots||[]).some(h=>h.en===s.sceneAnchor)?s.sceneAnchor:'';
-    if(current?.lesson!==id||current.anchor!==anchor){cancel();current=fresh(id,anchor);}
-    const rows=missions();if(!rows[current.mission])current.mission=Object.keys(rows)[0]||'listener';
+    const starting=current?.lesson!==id||current.anchor!==anchor;
+    if(starting){cancel();current=fresh(id,anchor);}
+    const rows=missions(),preferred=pack()?.content?.conversation?.defaultMission;
+    if(starting&&!anchor&&Object.hasOwn(rows,preferred))current.mission=preferred;
+    if(!rows[current.mission])current.mission=Object.keys(rows)[0]||'listener';
     return current;
   }
   function question(){const a=session();return missions()[a.mission]?.prompts[a.turn]||null;}
@@ -82,7 +102,7 @@
     target?.focus?.({preventScroll:true});
     if(target&&(prefer||!position||!control))target.scrollIntoView?.({block:'nearest',inline:'nearest',behavior:'instant'});
   }
-  function reset(mission){cancel();const a=session(),support=a.support;current=fresh(a.lesson,a.anchor);current.support=support;if(missions()[mission])current.mission=mission;render();}
+  function reset(mission){viewReturn=null;cancel();const a=session(),support=a.support;current=fresh(a.lesson,a.anchor);current.support=support;if(missions()[mission])current.mission=mission;render();}
   function feedback(text,q=question()){
     const clues=root.EngBookSpeaking?.feedback?.(text)||{words:words(text),spatial:false,ongoing:false,cautious:false};
     const unknown=/\b(cannot|can't|not clear|uncertain|not visible|do not know|don't know|can't tell|cannot tell)\b/i.test(text);
@@ -138,7 +158,9 @@
   }
   function stopVoice(){if(!voice)return;voice.stop('manual');}
   function hear(text=question()?.prompt){const a=session();if(a.voiceStatus!=='idle'||!text)return;const token=generation;root.EngBookSpeech?.speak?.(text,{rate:.82,voiceRole:a.turn%2?'female':'male',onError:()=>{if(active(token)){a.error='Audio playback is unavailable. The question remains on screen.';render();}}});}
-  const button=(action,text,extra='')=>`<button type="button" data-talk-action="${action}" ${extra}>${text}</button>`;
+  const primaryIcons={"finish":"<path d=\"m5 12 4 4L19 6\"/>","send":"<path d=\"m5 12 14-7-4 14-3-7-7 0Zm7 0 7-7\"/>","next":"<path d=\"m9 5 7 7-7 7\"/>","back":"<path d=\"m10 5-7 7 7 7M3 12h18\"/>"};
+  const primaryLabel=(action,text,extra)=>extra.includes('speaking-primary')?`<svg class="studio-primary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${primaryIcons[action]||primaryIcons.finish}</svg><span>${text}</span>`:text;
+  const button=(action,text,extra='')=>`<button type="button" data-talk-action="${action}" ${extra} ${extra.includes('speaking-primary')?`title="${esc(text)}"`:''}>${primaryLabel(action,text,extra)}</button>`;
   function markup(){
     const a=session(),rows=missions(),m=rows[a.mission],q=question(),busy=a.voiceStatus!=='idle';
     const lessonPack=pack()||{lessonId:state().lesson?.id,content:root.activeGold?.()||{}},level=root.EngAppLevelAware?.levelFor(lessonPack,'global')||'A2',levelTip=lessonPack.content?.hotspotLanguage?.talkByLevel?.[level]?.tip;
@@ -153,8 +175,7 @@
       body=`<div class="speaking-intro"><span class="speaking-kicker">${a.credited?'REVIEW SAVED':'YOU KEPT THE EXCHANGE GOING'}</span><h3 class="talk-step-heading" tabindex="-1">${a.responses.length} answers to review</h3><p>You practised ${esc(labels[a.mission]||m.label).toLowerCase()}.</p></div><div class="talk-summary"><span><b>${a.responses.filter(r=>r.voiceUsed).length}</b> voice turns</span><span><b>${a.responses.filter(r=>r.hintUsed).length}</b> hints used</span></div><p class="speaking-note">Completion records participation and review, not a language level or pronunciation score.</p><details class="speaking-support" data-talk-support="history" ${open('history')}><summary>Review the exchange</summary>${a.responses.map((r,i)=>`<article class="talk-history"><small>QUESTION ${i+1}</small><b>${esc(r.prompt)}</b><p>${esc(r.text)}</p></article>`).join('')}</details><div class="speaking-inline">${button('restart','Try the conversation again')}${button('speak','Describe it in Speak')}</div>`;
       primary=button('finish',a.credited?'Review saved ✓':'Save conversation review',`class="speaking-primary" ${a.credited?'disabled':''}`);
     }else{
-      body=`<div class="talk-question" tabindex="-1"><span class="speaking-kicker">${esc(labels[a.mission]||m.label)} · ${esc(q.label||'YOUR TURN')}</span><h3>${esc(q.prompt)}</h3><div class="speaking-inline">${button('hear','Hear question',busy?'disabled':'')}${button('hint',a.hint?'Hide help':'Need help?',busy?'disabled':'')}</div></div>`;
-      if(a.hint)body+=`<div class="talk-hint"><b>A starting point</b><p>${esc(q.hint||'Name a visible detail and place it in the picture.')}</p><small>Use your own words; more than one accurate answer is possible.</small></div>`;
+      body=`<div class="talk-question" tabindex="-1"><span class="speaking-kicker">${esc(labels[a.mission]||m.label)} · ${esc(q.label||'YOUR TURN')}</span><h3>${esc(q.prompt)}</h3><details class="speaking-support talk-coach" data-talk-support="coach" ${open('coach')}><summary>Question help</summary><div class="speaking-inline">${button('hear','Hear question',busy?'disabled':'')}${button('hint',a.hint?'Hide help':'Need help?',busy?'disabled':'')}</div>${a.hint?`<div class="talk-hint"><b>A starting point</b><p>${esc(q.hint||'Name a visible detail and place it in the picture.')}</p><small>Use your own words; more than one accurate answer is possible.</small></div>`:''}</details></div>`;
       if(a.phase==='answer'){
         const caps=root.EngBookSpeech?.capabilities?.()||{};
         if(levelTip&&a.support==='guided')body+=`<p class="speaking-note talk-level-tip">${esc(level)} · ${esc(levelTip)}</p>`;
@@ -169,7 +190,7 @@
       body+=`<details class="speaking-support" data-talk-support="options" ${open('options')}><summary>Practice options</summary><div class="speaking-inline talk-options">${['guided','independent'].map(k=>button('support',k==='guided'?'Guided':'Independent',`data-support="${k}" aria-pressed="${a.support===k}" ${busy?'disabled':''}`)).join('')}</div><p>Guided adds a short description route. Independent leaves the answer to you.</p></details>`;
     }
     if(a.error)body+=`<p class="speaking-notice" role="status">${esc(a.error)}</p>`;
-    return `<section class="speaking-studio talk-studio" data-talk-phase="${a.phase}" data-talk-turn="${a.turn}" aria-label="Picture conversation">${head}<div class="speaking-page talk-page">${body}</div><div class="speaking-footer">${primary}</div></section>`;
+    return `<section class="speaking-studio talk-studio" data-talk-phase="${a.phase}" data-talk-turn="${a.turn}" aria-label="Picture conversation">${head}<div class="speaking-page talk-page" role="region" tabindex="0" aria-label="Conversation question and answer">${body}</div><div class="speaking-footer">${primary}</div></section>`;
   }
   function act(action,el={dataset:{}}){
     const a=session();if(a.voiceStatus!=='idle'&&!['stop-voice'].includes(action))return;
@@ -190,9 +211,10 @@
   }
   document.addEventListener('click',e=>{const el=e.target.closest?.('[data-talk-action]');if(!el||el.disabled)return;e.preventDefault();act(el.dataset.talkAction,el);});
   document.addEventListener('input',e=>{if(e.target.id==='talk-answer')updateDraft(e.target.value);});
-  document.addEventListener('toggle',e=>{const key=e.target.dataset?.talkSupport;if(!['history','options'].includes(key))return;const a=session();a.open=a.open.filter(x=>x!==key);if(e.target.open)a.open.push(key);},true);
-  for(const name of ['setMode','openLesson','goHome']){const old=root[name];root[name]=function(...args){if(name!=='setMode'||args[0]!=='talk')cancel();return old.apply(this,args);};}
+  document.addEventListener('toggle',e=>{const key=e.target.dataset?.talkSupport;if(!['coach','history','options'].includes(key))return;const a=session();a.open=a.open.filter(x=>x!==key);if(e.target.open)a.open.push(key);},true);
+  for(const name of ['setMode','openLesson','goHome']){const old=root[name];root[name]=function(...args){if(name==='setMode')rememberView();else viewReturn=null;if(name!=='setMode'||args[0]!=='talk')cancel();return old.apply(this,args);};}
   root.startConversationRecognition=startVoice;root.stopConversationRecognition=cancel;root.submitConversation=submit;root.nextConversation=next;root.resetConversation=()=>reset(session().mission);root.playCoachPrompt=()=>hear();root.conversationContent=markup;
-  root.addEventListener?.('pagehide',cancel);
-  root.EngBookTalk=Object.freeze({markup,missions,session,question,feedback,submit,next,finish,reset,updateDraft,startVoice,stopVoice,cancel,act,busy:()=>Boolean(current&&current.voiceStatus!=='idle')});
+  root.addEventListener?.('pagehide',()=>{viewReturn=null;cancel();});
+  root.addEventListener?.('engapp:local-data-cleared',()=>{viewReturn=null;});
+  root.EngBookTalk=Object.freeze({onModeRendered,markup,missions,session,question,feedback,submit,next,finish,reset,updateDraft,startVoice,stopVoice,cancel,act,busy:()=>Boolean(current&&current.voiceStatus!=='idle')});
 })(typeof window!=='undefined'?window:globalThis);

@@ -20,7 +20,7 @@
   let current=null,audioGeneration=0;
   function session(){
     const id=Number(state().lesson?.id??state().lesson?.lessonId);
-    if(current?.lesson!==id){if(current)stopAudio();current={lesson:id,tab:'picture',indices:Object.fromEntries([...tabs,...extras].map(([key])=>[key,0])),peek:false,level:'A2',allForms:false,phraseChoices:{},grammarChoices:{},taskOpen:{},audio:'idle'};}
+    if(current?.lesson!==id){if(current)stopAudio();current={lesson:id,tab:'picture',indices:Object.fromEntries([...tabs,...extras].map(([key])=>[key,0])),peek:false,level:'A2',allForms:false,phraseChoices:{},grammarChoices:{},taskOpen:{},variantsOpen:{},panel:'reader',audio:'idle'};}
     return current;
   }
   function allSteps(tab=session().tab){
@@ -111,6 +111,7 @@
   }
   function availableExtras(){return extras.filter(([key])=>allSteps(key).length);}
   function taskKey(row=topic()){const a=session();return JSON.stringify([a.tab,a.indices[a.tab],level(),row?.formIndex??null,row?.task||'']);}
+  const variantKey=(row=topic())=>JSON.stringify([session().tab,row?.anchorIndex,level()]);
   function paintAudio(){
     const status=current?.audio||'idle',button=document.querySelector('[data-learn-action="listen"]'),notice=document.querySelector('[data-learn-audio-status]');
     if(button){button.innerHTML=`${icon('sound')} ${audioLabel(status)}`;button.setAttribute?.('aria-pressed',String(['loading','playing'].includes(status)));}
@@ -134,7 +135,7 @@
   function selectForm(index){const row=topic(),form=row?.forms?.find(r=>r.formIndex===Number(index));if(!form)return;session().grammarChoices[state().lesson.hotspots[row.anchorIndex].id]=form.formIndex;stopAudio();render('[data-learn-form]');}
   function topic(){const a=session(),rows=steps();a.indices[a.tab]=Math.max(0,Math.min(a.indices[a.tab],rows.length-1));return rows[a.indices[a.tab]];}
   function render(focus){const scroll=focus?document.querySelector('.learn-topic-body')?.scrollTop:0;root.render();if(focus){const body=document.querySelector('.learn-topic-body');if(body)body.scrollTop=scroll||0;document.querySelector(focus)?.focus({preventScroll:true});}}
-  function choose(tab,index=0,focus='.learn-topic'){const a=session();if(!labels[tab])return;stopAudio();a.detailReturn=null;a.tab=tab;a.indices[tab]=Math.max(0,Math.min(Number(index)||0,steps(tab).length-1));a.peek=false;render();document.querySelector(focus)?.focus({preventScroll:true});}
+  function choose(tab,index=0,focus='.learn-topic'){const a=session();if(!labels[tab])return;stopAudio();a.viewReturn=null;a.detailReturn=null;a.tab=tab;a.indices[tab]=Math.max(0,Math.min(Number(index)||0,steps(tab).length-1));a.peek=false;a.panel=['[data-learn-section]','[data-learn-topic]'].includes(focus)?'library':'reader';render();document.querySelector(focus)?.focus({preventScroll:true});}
   function move(delta){const a=session();choose(a.tab,a.indices[a.tab]+delta);}
   function toggle(){const a=session();if(!a.peek)a.peekScroll=document.querySelector('.learn-topic-body')?.scrollTop||0;a.peek=!a.peek;render('[data-learn-action="peek"]');if(!a.peek){const body=document.querySelector('.learn-topic-body');if(body)body.scrollTop=a.peekScroll||0;}}
   function listen(){
@@ -160,45 +161,58 @@
     const body=document.querySelector('.learn-topic-body');if(body)body.scrollTop=back.scroll;
     a.detailReturn=null;opener.focus({preventScroll:true});return true;
   }
+  function showPanel(panel){
+    if(state().mode!=='learn'||!['reader','library','settings'].includes(panel))return false;
+    const a=session(),prior=a.panel||'reader';if(prior==='reader')a.readerScroll=document.querySelector('.learn-topic-body')?.scrollTop||0;
+    stopAudio();a.panel=panel;a.peek=false;
+    const focus=panel==='library'?'[data-learn-section]':panel==='settings'?'[data-learn-level]':`[data-learn-action="${prior==='settings'?'settings':'library'}"]`;
+    render(focus);const body=document.querySelector('.learn-topic-body');if(body)body.scrollTop=panel==='reader'?a.readerScroll||0:0;return true;
+  }
   function markup(){
     if(session().tab==='listening'&&root.EngBookListeningPlayer)return root.EngBookListeningPlayer.markup(pack(),level());
-    const a=session(),rows=steps(),row=topic(),index=a.indices[a.tab];
-    return `<section class="immersive-learn ${a.peek?'is-peeking':''}" aria-label="Learn from the picture">
-      <div class="learn-veil" aria-hidden="true"></div>
-      <div class="learn-workspace" ${a.peek?'hidden':''}>
-        <div class="learn-section-tabs" role="tablist" aria-label="Lesson learning sections">${tabs.map(([key,label])=>`<button role="tab" id="learn-tab-${key}" aria-controls="learn-topic-panel" tabindex="${a.tab===key||!tabs.some(([tab])=>tab===a.tab)&&key==='picture'?0:-1}" aria-selected="${a.tab===key}" data-learn-action="tab" data-learn-tab="${key}">${label}</button>`).join('')}</div>
-        <div class="learn-controls"><label>Level<select aria-label="Lesson language level" data-learn-level>${levels.map(l=>`<option ${l===level()?'selected':''}>${l}</option>`).join('')}</select></label><select aria-label="More learning topics" data-learn-section><option value="">More topics…</option>${availableExtras().map(([key,label])=>`<option value="${key}" ${a.tab===key?'selected':''}>${esc(label)}</option>`).join('')}</select>${root.EngBookListeningPlayer?'<button data-learn-action="tab" data-learn-tab="listening">Listening</button>':''}</div>
-        <div class="learn-topic-body"><article class="learn-topic" id="learn-topic-panel" role="tabpanel" tabindex="-1" ${tabs.some(([key])=>key===a.tab)?`aria-labelledby="learn-tab-${a.tab}"`:`aria-label="${esc(labels[a.tab])}"`}>
-          ${a.tab==='grammar'?`<label class="learn-all-forms"><input type="checkbox" data-learn-all-forms ${a.allForms?'checked':''}> All forms & models</label>`:''}
-          <label class="learn-topic-picker"><span class="sr-only">Choose a learning topic</span><select aria-label="Choose a learning topic" data-learn-topic>${rows.map((r,i)=>`<option value="${i}" ${i===index?'selected':''}>${String(i+1).padStart(2,'0')} / ${rows.length} · ${esc(r.kind)} · ${esc(r.title)}</option>`).join('')}</select></label>
-          ${row?.forms?`<label class="learn-form-picker">Grammar form<select aria-label="Grammar form for this detail" data-learn-form>${row.forms.map(r=>`<option value="${r.formIndex}" ${r.formIndex===row.formIndex?'selected':''}>${esc(r.title)}</option>`).join('')}</select></label>`:''}
-          ${row?`<span class="learn-kicker">${esc(row.kind)}${row.languageLevel?` · ${esc(row.languageLevel)}`:''}</span><h1 aria-label="${esc(row.title)}">${guideWords(row.title)}</h1>${row.phrases?`<div class="learn-phrase-choices" role="group" aria-label="Phrases for this detail">${row.phrases.map((p,i)=>`<button data-learn-action="phrase" data-index="${i}" aria-pressed="${i===row.formIndex}">${esc(p.text)}</button>`).join('')}</div>`:row.detail?`<span class="learn-detail-label">${guideWords(row.detail)}</span>`:''}<p class="learn-main-copy">${guideWords(row.text)}</p>${row.pattern?`<div class="learn-rule"><b>${esc(row.pattern)}</b></div>`:''}${row.example?`<p class="learn-example">${guideWords(row.example)}</p>`:''}${row.note?`<p class="learn-boundary">${esc(row.note)}</p>`:''}${row.task?`<details class="learn-task" data-learn-task ${a.taskOpen[taskKey(row)]?'open':''}><summary>Your turn</summary><p>${esc(row.task)}</p></details>`:''}<div class="learn-topic-actions"><button data-learn-action="listen" aria-pressed="${['loading','playing'].includes(a.audio)}">${icon('sound')} ${audioLabel(a.audio)}</button>${Number.isInteger(row.anchorIndex)||Number.isInteger(row.scenarioIndex)?`<button data-learn-action="detail">${icon('pin')} Open on picture</button>`:''}${root.EngBookGuide?.inlineMarkup(Number.isInteger(row.anchorIndex)?state().lesson.hotspots[row.anchorIndex]:{},a.tab,row)||''}</div><p class="learn-audio-status" data-learn-audio-status role="status" aria-live="polite" ${audioMessages[a.audio]?'':'hidden'}>${esc(audioMessages[a.audio]||'')}</p>`:'<h1>Look at the picture</h1><p class="learn-main-copy">Choose another section to continue.</p>'}
-          ${g().hotspotLanguage?'<p class="learn-level-note">Hotspot descriptions, phrases and picture questions follow your level.</p>':!g().levelAware?`<p class="learn-level-note">${g().pictureOverviewLevels?'Level changes the scene overview, description models and grammar practice. Other detail wording is shared across levels.':'Level selects a description model and grammar practice. Other wording is shared across levels.'}</p>`:''}
-        </article></div>
-        <footer class="learn-reader-footer"><button data-learn-action="prev" aria-label="Previous learning topic" ${index===0?'disabled':''}>${icon('back')}</button><button data-learn-action="peek">${icon('eye')} Show picture</button><button data-learn-action="next" aria-label="Next learning topic" ${index>=rows.length-1?'disabled':''}>${icon('next')}</button></footer>
-        <div class="learn-topic-progress" role="progressbar" aria-label="Learning topic position" aria-valuenow="${rows.length?index+1:0}" aria-valuemin="0" aria-valuemax="${rows.length}"><i style="width:${rows.length?(index+1)/rows.length*100:0}%"></i></div>
-      </div>
-    </section>`;
+    const a=session(),rows=steps(),row=topic(),index=a.indices[a.tab],panel=a.panel||'reader';
+    if(a.detailReturn&&panel==='reader')root.requestAnimationFrame?.(()=>root.requestAnimationFrame?.(()=>{if(current===a&&state().screen==='lesson'&&state().mode==='learn'&&!state().v60CardOpen)restoreDetail();}));
+    const levelNote=`${g().hotspotLanguage?'<p class="learn-level-note">Hotspot descriptions, phrases and picture questions follow your level.</p>':!g().levelAware?`<p class="learn-level-note">${g().pictureOverviewLevels?'Level changes the scene overview, description models and grammar practice. Other detail wording is shared across levels.':'Level selects a description model and grammar practice. Other wording is shared across levels.'}</p>`:''}`;
+    const sectionPicker=`<label class="learn-panel-field">Learning section<select aria-label="Learning section" data-learn-section>${[...tabs,...availableExtras()].map(([key,label])=>`<option value="${key}" ${a.tab===key?'selected':''}>${esc(label)}</option>`).join('')}</select></label>`;
+    const topicPicker=`<label class="learn-panel-field">Topic<select aria-label="Choose a learning topic" data-learn-topic>${rows.map((r,i)=>`<option value="${i}" ${i===index?'selected':''}>${String(i+1).padStart(2,'0')} / ${rows.length} · ${esc(r.title)}</option>`).join('')}</select></label>`;
+    const body=panel==='library'?`<section class="learn-choice-sheet" aria-labelledby="learn-library-title"><h1 id="learn-library-title">Choose what to learn</h1>${sectionPicker}${topicPicker}<button class="learn-sheet-primary" data-learn-action="read" ${rows.length?'':'disabled'}>Read this topic ${icon('next')}</button></section>`:panel==='settings'?`<section class="learn-choice-sheet" aria-labelledby="learn-settings-title"><h1 id="learn-settings-title">Learning settings</h1><label class="learn-panel-field">Language level<select aria-label="Lesson language level" data-learn-level>${levels.map(l=>`<option ${l===level()?'selected':''}>${l}</option>`).join('')}</select></label>${a.tab==='grammar'?`<label class="learn-all-forms"><input type="checkbox" data-learn-all-forms ${a.allForms?'checked':''}> All forms & models</label>`:''}${levelNote}<button class="learn-sheet-primary" data-learn-action="close-panel">Done</button></section>`:`<article class="learn-topic" id="learn-topic-panel" role="region" tabindex="-1" aria-labelledby="learn-topic-title">
+      ${row?.forms?`<label class="learn-form-picker">Grammar form<select aria-label="Grammar form for this detail" data-learn-form>${row.forms.map(r=>`<option value="${r.formIndex}" ${r.formIndex===row.formIndex?'selected':''}>${esc(r.title)}</option>`).join('')}</select></label>`:''}
+      ${row?`<span class="learn-kicker">${esc(row.kind)}${row.languageLevel?` · ${esc(row.languageLevel)}`:''}</span><h1 id="learn-topic-title" aria-label="${esc(row.title)}">${guideWords(row.title)}</h1>${row.phrases?`<span class="learn-detail-label">${guideWords(row.phrases[row.formIndex]?.text||'')}</span>${row.phrases.length>1?`<details class="learn-variants" data-learn-variants ${a.variantsOpen[variantKey(row)]?'open':''}><summary>Other phrases</summary><div class="learn-phrase-choices" role="group" aria-label="Phrases for this detail">${row.phrases.map((p,i)=>`<button data-learn-action="phrase" data-index="${i}" aria-pressed="${i===row.formIndex}">${esc(p.text)}</button>`).join('')}</div></details>`:''}`:row.detail?`<span class="learn-detail-label">${guideWords(row.detail)}</span>`:''}<p class="learn-main-copy">${guideWords(row.text)}</p>${row.pattern?`<div class="learn-rule"><b>${esc(row.pattern)}</b></div>`:''}${row.example?`<p class="learn-example">${guideWords(row.example)}</p>`:''}${row.note?`<p class="learn-boundary">${esc(row.note)}</p>`:''}${row.task?`<details class="learn-task" data-learn-task ${a.taskOpen[taskKey(row)]?'open':''}><summary>Your turn</summary><p>${esc(row.task)}</p></details>`:''}<div class="learn-topic-actions"><button data-learn-action="listen" aria-pressed="${['loading','playing'].includes(a.audio)}">${icon('sound')} ${audioLabel(a.audio)}</button>${Number.isInteger(row.anchorIndex)||Number.isInteger(row.scenarioIndex)?`<button data-learn-action="detail">${icon('pin')} Open on picture</button>`:''}${root.EngBookGuide?.inlineMarkup(Number.isInteger(row.anchorIndex)?state().lesson.hotspots[row.anchorIndex]:{},a.tab,row)||''}</div><p class="learn-audio-status" data-learn-audio-status role="status" aria-live="polite" ${audioMessages[a.audio]?'':'hidden'}>${esc(audioMessages[a.audio]||'')}</p>`:'<h1 id="learn-topic-title">Look at the picture</h1><p class="learn-main-copy">Choose another section to continue.</p>'}
+    </article>`;
+    return `<section class="immersive-learn learn-quiet ${a.peek?'is-peeking':''}" data-learn-panel="${panel}" aria-label="Learn from the picture"><div class="learn-veil" aria-hidden="true"></div><div class="learn-workspace" ${a.peek?'hidden':''}>
+      <header class="learn-quiet-toolbar"><button data-learn-action="library" aria-label="Choose learning topic" aria-expanded="${panel==='library'}"><span>${esc(labels[a.tab])}</span><small>${rows.length?index+1:0} / ${rows.length}</small>${icon('next')}</button><button data-learn-action="settings" aria-label="Learning settings" aria-expanded="${panel==='settings'}"><span>${esc(level())}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="currentColor"/><circle cx="15" cy="17" r="3" fill="currentColor"/></svg></button>${root.EngBookLessonLinks?.markup()||''}</header>
+      <div class="learn-topic-body">${body}</div>
+      ${panel==='reader'?`<footer class="learn-reader-footer"><button data-learn-action="prev" aria-label="Previous learning topic" ${index===0?'disabled':''}>${icon('back')}</button><button data-learn-action="peek">${icon('eye')} Show picture</button><button data-learn-action="next" aria-label="Next learning topic" ${index>=rows.length-1?'disabled':''}>${icon('next')}</button></footer><div class="learn-topic-progress" role="progressbar" aria-label="Learning topic position" aria-valuenow="${rows.length?index+1:0}" aria-valuemin="0" aria-valuemax="${rows.length}"><i style="width:${rows.length?(index+1)/rows.length*100:0}%"></i></div>`:''}
+    </div></section>`;
   }
   document.addEventListener('click',e=>{
     const el=e.target.closest('[data-learn-action]');if(!el||state().mode!=='learn')return;e.preventDefault();
     const action=el.dataset.learnAction;
-    if(action==='tab'){if(el.dataset.learnTab==='listening')root.setMode('listening');else choose(el.dataset.learnTab,session().indices[el.dataset.learnTab]);}
+    if(action==='library'||action==='settings'){showPanel(session().panel===action?'reader':action);}else if(action==='close-panel'){showPanel('reader');}else if(action==='read'){choose(session().tab,session().indices[session().tab]);}else if(action==='tab'){if(el.dataset.learnTab==='listening')root.setMode('listening');else choose(el.dataset.learnTab,session().indices[el.dataset.learnTab]);}
     else if(action==='prev'||action==='next')move(action==='next'?1:-1);
     else if(action==='peek')toggle();else if(action==='listen')listen();else if(action==='detail')openDetail();else if(action==='phrase')selectPhrase(Number(el.dataset.index));
   });
-  document.addEventListener('change',e=>{if(state().mode!=='learn')return;if(e.target.matches('[data-learn-topic]'))choose(session().tab,e.target.value);else if(e.target.matches('[data-learn-form]'))selectForm(e.target.value);else if(e.target.matches('[data-learn-level]'))setLevel(e.target.value);else if(e.target.matches('[data-learn-section]')&&e.target.value){if(e.target.value==='listening')root.setMode('listening');else choose(e.target.value,session().indices[e.target.value]);}else if(e.target.matches('[data-learn-all-forms]'))setAllForms(e.target.checked);});
-  document.addEventListener('toggle',e=>{if(state().mode!=='learn'||e.target.isConnected===false||!e.target.matches?.('[data-learn-task]'))return;const row=topic();if(row?.task)session().taskOpen[taskKey(row)]=Boolean(e.target.open);},true);
+  document.addEventListener('change',e=>{if(state().mode!=='learn')return;if(e.target.matches('[data-learn-topic]'))choose(session().tab,e.target.value,'[data-learn-topic]');else if(e.target.matches('[data-learn-form]'))selectForm(e.target.value);else if(e.target.matches('[data-learn-level]'))setLevel(e.target.value);else if(e.target.matches('[data-learn-section]')&&e.target.value){if(e.target.value==='listening')root.setMode('listening');else choose(e.target.value,session().indices[e.target.value],'[data-learn-section]');}else if(e.target.matches('[data-learn-all-forms]'))setAllForms(e.target.checked);});
+  document.addEventListener('toggle',e=>{if(state().mode!=='learn'||e.target.isConnected===false)return;const row=topic();if(e.target.matches?.('[data-learn-task]')&&row?.task)session().taskOpen[taskKey(row)]=Boolean(e.target.open);else if(e.target.matches?.('[data-learn-variants]')&&row?.phrases)session().variantsOpen[variantKey(row)]=Boolean(e.target.open);},true);
   document.addEventListener('keydown',e=>{
     if(e.defaultPrevented||e.isComposing||document.querySelector('dialog[open],[role="dialog"][aria-modal="true"]')||state().mode!=='learn')return;
     if(e.key==='Escape'&&session().peek){e.preventDefault();e.stopImmediatePropagation();toggle();return;}
-    if(e.altKey||e.ctrlKey||e.metaKey||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
-    const el=e.target.closest?.('[data-learn-tab]'),index=tabs.findIndex(([key])=>key===el?.dataset.learnTab);if(index<0)return;
-    const next=e.key==='Home'?0:e.key==='End'?tabs.length-1:(index+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length,key=tabs[next][0];
-    e.preventDefault();e.stopImmediatePropagation();choose(key,session().indices[key],`[data-learn-tab="${key}"]`);
+    if(e.key==='Escape'&&session().panel&&session().panel!=='reader'){e.preventDefault();e.stopImmediatePropagation();showPanel('reader');}
   });
-  for(const name of ['setMode','openLesson','goHome']){const old=root[name];if(typeof old!=='function')continue;root[name]=function(...args){if(name!=='setMode'||args[0]!=='learn')stopAudio();return old.apply(this,args);};}
+  function readerKey(){const row=topic();return JSON.stringify([current.lesson,current.tab,current.indices[current.tab],level(),row?.kind,row?.title,row?.formIndex??null]);}
+  function rememberReader(){
+    const s=state(),a=current;if(!a||s.screen!=='lesson'||s.mode!=='learn'||Number(s.lesson?.id??s.lesson?.lessonId)!==a.lesson||a.tab==='listening'||a.peek||s.v60CardOpen||(a.panel||'reader')!=='reader')return false;
+    const body=root.document?.querySelector('.immersive-learn:not(.listening-lesson) .learn-topic-body');if(!body)return false;
+    a.viewReturn={key:readerKey(),scroll:Math.max(0,Number(body.scrollTop)||0)};return true;
+  }
+  function onModeRendered(mode){
+    const s=state(),a=current;if(mode!=='learn'||!a||s.screen!=='lesson'||s.mode!=='learn'||Number(s.lesson?.id??s.lesson?.lessonId)!==a.lesson||a.tab==='listening'||a.peek||s.v60CardOpen||a.detailReturn||(a.panel||'reader')!=='reader')return false;
+    const back=a.viewReturn;if(!back)return false;a.viewReturn=null;if(back.key!==readerKey())return false;
+    const body=root.document?.querySelector('.immersive-learn:not(.listening-lesson) .learn-topic-body');if(!body)return false;body.scrollTop=back.scroll;return true;
+  }
+  for(const name of ['setMode','openLesson','goHome']){const old=root[name];if(typeof old!=='function')continue;root[name]=function(...args){rememberReader();if(name!=='setMode'||args[0]!=='learn'){stopAudio();if(current)current.panel='reader';}return old.apply(this,args);};}
   root.addEventListener?.('pagehide',()=>stopAudio());
+  root.addEventListener?.('engapp:local-data-cleared',()=>{if(current)current.viewReturn=null;});
   root.addEventListener?.('scenespeak:sound-change',event=>{if(event.detail?.enabled===false&&current&&['loading','playing'].includes(current.audio))stopAudio('muted');});
-  root.EngBookLearn=Object.freeze({steps,allSteps,session,topic,markup,choose,move,toggle,listen,openDetail,restoreDetail,setLevel,selectPhrase,selectForm,level,availableExtras});
+  root.EngBookLearn=Object.freeze({steps,allSteps,session,topic,markup,choose,move,toggle,listen,openDetail,restoreDetail,setLevel,selectPhrase,selectForm,level,availableExtras,showPanel,onModeRendered});
 })(typeof window!=='undefined'?window:globalThis);

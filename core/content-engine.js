@@ -106,7 +106,7 @@ function validatePack(pack){
 
   if(root.ENGBOOK_COURSE_CATALOG)registerCourseCatalog(root.ENGBOOK_COURSE_CATALOG);
   if(typeof CAT01!=='undefined'){
-    registerCategory({...(getCategory(CAT01.id)||{}),id:CAT01.id,title:CAT01.title,subtitle:CAT01.subtitle,lessonIds:CAT01.lessons.map(x=>x.id),appStatus:'active',totalLessons:2,lessonStart:1,lessonEnd:28,});
+    registerCategory({...(getCategory(CAT01.id)||{}),id:CAT01.id,title:CAT01.title,subtitle:CAT01.subtitle,lessonIds:CAT01.lessons.map(x=>x.id),appStatus:'active',totalLessons:CAT01.lessons.length,lessonStart:1,lessonEnd:28,});
     CAT01.lessons.forEach(l=>registerLessonMeta({...l,categoryId:CAT01.id,status:l.id===1?'reference-ready':'catalog',source:'catalog'}));
     registerManifest(root.ENGBOOK_LESSON_MANIFEST||[]);
     if(typeof GOLD_LESSON_01!=='undefined')registerPack({schemaVersion:PACK_SCHEMA_VERSION,lessonId:1,categoryId:1,title:CAT01.lessons[0].title,image:CAT01.lessons[0].image,status:'ready',source:'embedded-reference',sourceRevision:'legacy-l01',hotspots:CAT01.lessons[0].hotspots,coverageAnchors:(root.ENGBOOK_LESSON_01_ANCHORS||[]),evidenceProfile:(root.ENGBOOK_LESSON_01_EVIDENCE_PROFILE||{}),content:GOLD_LESSON_01,capabilityPolicy:'explicit',capabilities:['explore','learn','practice','describe','conversation','evidence','timeline','grammar','reconstruct','camera','level','fingerprint']});

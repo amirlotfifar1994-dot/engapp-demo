@@ -6,13 +6,28 @@
   const escapeRE=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
   const conversational=s=>clean(s).replace(/\b[Ii] am\b/g,"I'm").replace(/\b[Ii] cannot\b/g,"I can't").replace(/\b[Tt]here is\b/g,"There's").replace(/\b[Dd]o not\b/g,"Don't").replace(/\b[Cc]annot\b/g,"can't");
   const parent=h=>h?.presentation?.parentId??h?.parentId;
-  const kind=text=>/\b(maybe|perhaps|might|may|could|possibly|probably)\b/i.test(text)?'possibility':/\b(seems?|appears?)\b|\blooks? (like|about|relaxed|tired|happy|sad|calm|worried|young|old)\b|\byoung\b|\belderly\b|\bmiddle-aged\b|\b\d{1,3} years old\b/i.test(text)?'appearance':'observation';
+  const kind=(text,h)=>/\b(maybe|perhaps|might|may|could|possibly|probably)\b/i.test(text)?'possibility':/\b(seems?|appears?)\b|\blooks? (?:(?:very|slightly|quite|rather|really|somewhat|so|a little|a bit) )?(like|about|relaxed|tired|happy|sad|calm|worried|angry|nervous|excited|upset|bored|afraid|young|old)\b|\byoung\b|\belderly\b|\bmiddle-aged\b/i.test(text)||h?.ageVerified!==true&&/\b\d{1,3} years old\b/i.test(text)?'appearance':'observation';
   const roles=/\b(the|a|an) (doctor|nurse|teacher|student|traveler|traveller|tourist|customer|worker|chef|pilot|waiter|waitress|patient|parent|mother|father|daughter|son)([’']s)?\b/gi;
+  const moodWords='happy|sad|tired|relaxed|worried|angry|calm|nervous|excited|upset|bored|afraid';
+  const humanSubject="I|he|she|we|they|you|people|children|men|women|(?:the|a|an|this|that) (?:(?:young|young-looking|older|older-looking|elderly|middle-aged|tall|short|seated|standing|smiling|little|small|other|same) ){0,4}(?:man|woman|person|child|boy|girl|adult|people|children|doctor|nurse|teacher|student|traveler|traveller|tourist|customer|worker|chef|pilot|waiter|waitress|patient|parent|mother|father|daughter|son)";
+  const visibleActions='smiling|standing|sitting|walking|holding|wearing|looking|resting|talking|moving|playing|reading|pointing|carrying|leaning|waiting|running|writing|watching|waving';
+  const moodStatement=new RegExp(`\\b(${humanSubject})(?:\\s+(am|is|are|isn['’]t|aren['’]t)|['’](m|s|re))\\s+(not\\s+)?((?:very|slightly|quite|rather|really|somewhat|so|a little|a bit)\\s+)?(${moodWords})\\b(?=[.!?,;:]|$|\\s+(?:and|but)\\b)(\\s+(?:and|but)\\s+(${visibleActions}))?`,'gi');
+  function apparentMood(text,h){
+    if(h?.feelingVerified===true||h?.claimClass&&!['visible-fact','supported-inference'].includes(h.claimClass))return text;
+    return text.replace(moodStatement,(match,subject,verb,contraction,negated,modifier,mood,tail,action,offset)=>{
+      const prefix=text.slice(0,offset).split(/[.!?;]/).pop();
+      if(/\b(if|unless|when|suppose|imagine|maybe|perhaps|practice|example)\b/i.test(prefix))return match;
+      const singular=/^is/i.test(verb||'')||contraction?.toLowerCase()==='s',negative=negated||/n['’]t$/i.test(verb||'');
+      if(negative&&/^\s+and\b/i.test(tail||''))return match;
+      const be=singular?'is':/^am$/i.test(verb||'')||contraction?.toLowerCase()==='m'?'am':'are',repeatedSubject=/^(i|he|she|we|they|you)$/i.test(subject)?(subject.toLowerCase()==='i'?'I':subject.toLowerCase())+' ':'',continuation=tail?tail.slice(0,-action.length)+repeatedSubject+be+' '+action:'';
+      return `${subject.toLowerCase()==='i'?'I':subject} ${negative?(singular?"doesn't look":"don't look"):(singular?'looks':'look')} ${modifier||''}${mood}${continuation}`;
+    });
+  }
   function safeText(text,h){
     // A pictured uniform, bag or relationship does not verify an identity.
     if(h?.identityVerified!==true)text=text.replace(roles,(_,article,role,possessive)=>`${article.replace(/n$/i,'')} person${possessive?"'s":''}`);
-    if(h?.ageVerified!==true)text=text.replace(/\byoung (man|woman|person|adult|boy|girl|child)\b/gi,'young-looking $1').replace(/\belderly (man|woman|person|adult)\b/gi,'older-looking $1').replace(/\b(am|is|are) (?:about )?(\d{1,3}) years old\b/gi,(_,verb,age)=>`${verb.toLowerCase()==='is'?'looks':'look'} about ${age} years old`);
-    return clean(text);
+    if(h?.ageVerified!==true)text=text.replace(/\byoung (man|woman|person|adult|boy|girl|child)\b/gi,'young-looking $1').replace(/\belderly (man|woman|person|adult)\b/gi,'older-looking $1').replace(/\b(am|is|are) (?:about )?(\d{1,3}) years old\b/gi,(_,verb,age)=>`${verb.toLowerCase()==='is'?'looks':'look'} about ${age} years old`).replace(/\b(I['’]m|he['’]s|she['’]s|it['’]s|we['’]re|they['’]re|you['’]re) (?:about )?(\d{1,3}) years old\b/gi,(_,verb,age)=>{const subject=verb.split(/['’]/)[0];return `${subject.toLowerCase()==='i'?'I':subject} ${/^(he|she|it)$/i.test(subject)?'looks':'look'} about ${age} years old`;});
+    return clean(apparentMood(text,h));
   }
   function aliases(person,people){
     const title=clean(person.en).replace(/^(?:the|a|an) /i,'');
@@ -81,7 +96,7 @@
       const source=primary+(extra&&extra!==primary?' '+extra:'');
       if(!source){missing.push(h.id);return null;}
       let text=descriptions(primary,extra).map(s=>conversational(safeText(firstPerson(s,person,people,person&&g.listening?.characters?.[person.id]),h))).join(' ');
-      const claim= h.claimClass==='supported-inference'?'possibility':h.claimClass&&h.claimClass!=='visible-fact'?'boundary':kind(text);
+      const claim= h.claimClass==='supported-inference'?'possibility':h.claimClass&&h.claimClass!=='visible-fact'?'boundary':kind(text,h);
       if(claim==='appearance'&&!/\b(look|seem|appear)/i.test(text))text=`From the picture, ${/^I(?:\b|')/.test(text)?text:text[0].toLowerCase()+text.slice(1)}`;
       return {id:h.id,title:h.en,text,sourceText:source,claimClass:claim,hotspotIds:[h.id],levelReviewed:Boolean(variant)&&(!extra||extra===primary),anchorIndex:hotspots.indexOf(h)};
     }
@@ -90,7 +105,8 @@
       const profile=g.listening?.characters?.[person.id],intro=profile?.introductionsByLevel?.[level];
       if(rows.length){
         const refs=intro?.evidenceHotspotIds||[],valid=intro?.text&&refs.length&&refs.every(id=>owners.get(id)===person.id);
-        rows[0]={...rows[0],text:valid?conversational(intro.text):`Let me show you where I am in the picture. ${rows[0].text}`,...(valid?{evidenceHotspotIds:refs,sourceText:refs.map(id=>g.hotspotLanguage?.hotspotsById?.[id]?.levels?.[level]?.description||byId.get(id).example).join(' ')}:{})};
+        const text=valid?conversational(safeText(intro.text,person)):`Let me show you where I am in the picture. ${rows[0].text}`;
+        rows[0]={...rows[0],text,...(valid?{claimClass:rows[0].claimClass==='boundary'?'boundary':kind(text,person),evidenceHotspotIds:refs,sourceText:refs.map(id=>g.hotspotLanguage?.hotspotsById?.[id]?.levels?.[level]?.description||byId.get(id).example).join(' ')}:{})};
       }
       add(person.id,person.en,person.id,rows,profile);
     }
@@ -114,12 +130,13 @@
     const all=sections.flatMap(s=>s.segments),questions=[];
     for(const section of sections.filter(s=>!['overview','check'].includes(s.id))){
       const row=section.segments.find(s=>s.claimClass==='observation')||section.segments[0];
-      questions.push({id:`detail-${section.id}`,type:'recall',prompt:`What did you hear about ${section.title}? Say one detail before checking.`,answer:row.text,sectionId:section.id,hotspotIds:row.hotspotIds});
+      questions.push({id:`detail-${section.id}`,type:'recall',scope:'section',sourceSegmentId:row.id,prompt:`What did you hear about ${section.title}? Say one detail before checking.`,answer:row.text,sectionId:section.id,hotspotIds:row.hotspotIds});
+      for(const detail of section.segments.filter(s=>s.id!==row.id&&s.hotspotIds.length))questions.push({id:`anchor-${detail.id}`,type:'recall',scope:'detail',sourceSegmentId:detail.id,prompt:'What did you hear about this detail? Describe one thing before checking.',answer:detail.text,sectionId:section.id,hotspotIds:detail.hotspotIds});
     }
     const prompts={'check-observation':all.find(s=>s.claimClass==='observation'&&s.hotspotIds.length)?.text||'Visible objects are shown in the picture.','check-appearance':'Practice sentence: This person looks relaxed.','check-possibility':'Practice sentence: Maybe this place reminds you of somewhere you know.'};
     for(const [id,answer] of [['check-observation','observation'],['check-appearance','appearance'],['check-possibility','possibility']])questions.push({id:`class-${id}`,type:'classification',prompt:prompts[id],practiceOnly:id!=='check-observation',answer,options:['observation','appearance','possibility'],sectionId:'check'});
     questions.push({id:'unknown',type:'recall',prompt:"Can the picture confirm someone's exact age, job or private feelings?",answer:boundary,sectionId:'check'});
-    return {schemaVersion:1,lessonId:pack?.lessonId||pack?.id,level,mode:'audio-only',voiceNotice:'Scripted practice voices based on lesson descriptions. These are not recordings of the pictured people.',coverage:{total:hotspots.length,covered:all.filter(s=>s.hotspotIds.length).length,missing},levelCoverage:{reviewed:all.filter(s=>s.hotspotIds.length&&s.levelReviewed).length,shared:all.filter(s=>s.hotspotIds.length&&!s.levelReviewed).length},sections,questions};
+    return {schemaVersion:1,lessonId:pack?.lessonId||pack?.id,level,mode:'audio-only',imageNotice:pack?.quality?.imageReconstruction?'Reconstructed teaching image. Some details may differ from the original source photo.':'',voiceNotice:'Scripted practice voices based on lesson descriptions. These are not recordings of the pictured people.',coverage:{total:hotspots.length,covered:all.filter(s=>s.hotspotIds.length).length,missing},levelCoverage:{reviewed:all.filter(s=>s.hotspotIds.length&&s.levelReviewed).length,shared:all.filter(s=>s.hotspotIds.length&&!s.levelReviewed).length},sections,questions};
   }
   const api=Object.freeze({build,conversational,firstPerson,kind});
   root.EngBookLessonListening=api;
