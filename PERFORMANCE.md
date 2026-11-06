@@ -54,6 +54,7 @@ node scripts/audit-public.mjs
 node scripts/review-browser.mjs
 node scripts/review-interactions.mjs
 node scripts/review-native-lifecycle.mjs
+node scripts/review-panorama-markers.mjs
 node scripts/review-offline.mjs
 node scripts/review-performance.mjs
 ```
@@ -97,3 +98,44 @@ Five additional unit tests cover GPU ownership and partial cleanup, image succes
 network/decode cancellation, dimension validation and retry. The current suite has
 21 passing tests. Evidence is in
 [native lifecycle review](tests/evidence/native-lifecycle-20261106.json).
+
+## Shared panorama marker rendering
+
+Park, Home and all four Museum viewpoints previously queried each hotspot button,
+projected every hotspot and reset hidden-marker attributes on every frame. The shared
+viewer now caches button/count references and spherical rays, caches candidates when
+the selected branch changes, and projects only that branch. It hides markers when
+they leave the current set and avoids rewriting unchanged positions and labels.
+Candidate ordering, projection math, clustering radius, source coordinates and
+discovery rules stay the same.
+
+The before/after browser review compares actual viewer code against public commit
+`e0795f01eb68f8675e73a7258a92720db849ed66`, using the same assets and a small test
+parent that sends the existing lesson-state protocol. At 390×844, 111 snapshots
+across six native views compare visible IDs, positions, labels, cluster counts,
+selection and practice-hint states. The separate flat-mode run forces WebGL to be
+unavailable and checks 68 additional states in Park, Home and Museum entrance. Normal central-app navigation
+is covered separately by `review-browser.mjs`.
+
+During 12 automated arrow-key movements with 4× CPU throttling, the local single-run
+marker-paint results were:
+
+| Scene | Projected points per paint, before → after | Paint time p95, before → after |
+| --- | ---: | ---: |
+| Park | 116 → 13 | 9 → 2 ms |
+| Home | 258 → 9 | 12 → 3 ms |
+| Museum entrance | 51 → 4 | 4 → 2 ms |
+| Museum painting | 49 → 4 | 7 → 2 ms |
+| Museum history | 57 → 4 | 6 → 2 ms |
+| Museum science | 54 → 4 | 4 → 2 ms |
+
+Repeated selectors within the marker container fell to zero. These timings measure
+the JavaScript marker-paint function, not image loading, GPU rendering or total frame
+rate. They are synthetic local results, not real-phone guarantees. Raw measurements
+and parity acceptance are recorded in
+[marker review](tests/evidence/panorama-markers-20261106.json).
+
+Reproduction requires the baseline commit in local Git history. Optionally set
+`MARKER_BASELINE`; set `MARKER_FLAT=1` for the flat-picture fallback review.
+The source exporter reapplies `scripts/optimize-panorama-markers.mjs` before final
+hash generation, and a full rebuild reproduces the release.

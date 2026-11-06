@@ -34,3 +34,4 @@ s=s.slice(0,a)+`  const shown=new Set((state.practice?state.hintId?[byId.get(sta
 `+s.slice(b);s=s.replaceAll('if(!points.size){drag=null;pinched=false;}','if(!points.size){drag=null;pinched=false;draw();}');await write(f,s);}
 console.log('Demo runtime performance adapters applied');
 await import('./optimize-native-lifecycle.mjs');
+await import('./optimize-panorama-markers.mjs');

@@ -98,3 +98,18 @@ create/delete ownership, rather than real-device memory-byte usage or GC timing.
 Five focused unit tests supplement the existing 16-test suite. Normal lesson-flow
 and offline checks are recorded in the
 [native lifecycle evidence](tests/evidence/native-lifecycle-20261106.json).
+
+## Shared marker rendering — 6 November 2026
+
+Park, Home and the four Museum views now reuse marker references and project only
+the active branch. The same source ordering and clustering/discovery math are retained.
+A real-browser comparison against public commit e0795f0 checks 111 visible-marker
+snapshots across the six views, including nested selections, clearing and practice
+hints. Flat-picture fallback is reviewed separately with WebGL forced unavailable.
+Twenty-one existing Node tests still pass, and a complete source export reproduces
+the reviewed runtime hash. The public-text audit remains 173 files with no leaks.
+
+Single local 4×-CPU runs reduced Home marker-paint p95 from 12 to 3ms and Park from
+9 to 2ms; these are marker-function timings, not total frame-rate measurements.
+Evidence and limitations: [marker review](tests/evidence/panorama-markers-20261106.json)
+and [performance notes](PERFORMANCE.md).

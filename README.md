@@ -44,3 +44,5 @@ The demo uses `demo-glass.css` for translucent lesson surfaces: the photograph r
 Performance follow-up reviewed **6 November 2026**: on-demand packs, shared in-flight loads, cheaper readiness checks, visible-marker projection, temporary mobile rendering resolution and bounded runtime caching. The original source images remain intact. Measurements, reproduction commands and limits are in [PERFORMANCE.md](PERFORMANCE.md).
 
 Native Garden/Cafe retries and context recovery also release their previous GPU resources and cancel obsolete image work. A dedicated browser review checks resource ownership through retries, Cafe Walk, actual context restoration and teardown.
+
+Park, Home and all Museum viewpoints also cache marker references and draw only the active branch. Before/after browser checks retain marker positions, clustering and discovery behavior; source images and lesson content are preserved.

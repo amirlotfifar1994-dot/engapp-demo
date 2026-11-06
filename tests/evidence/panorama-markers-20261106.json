@@ -1,0 +1,315 @@
+{
+  "reviewed": "2026-11-06",
+  "scope": "Public Park, Home and all four Museum viewpoints",
+  "release": "demo-five-20261103-872adab293be",
+  "baselineCommit": "e0795f01eb68f8675e73a7258a92720db849ed66",
+  "sourceCommit": "1394fe5810e7beb847a0ac304a28a89672839961",
+  "nodeTests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "publicTextAudit": {
+    "files": 173,
+    "leaks": []
+  },
+  "webglParityAndMeasurements": {
+    "baseline": "e0795f01eb68f8675e73a7258a92720db849ed66",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "records": [
+      {
+        "scene": "park",
+        "node": null,
+        "paritySnapshots": 30,
+        "samples": 26,
+        "before": {
+          "frames": 91,
+          "paintP95Ms": 9,
+          "paintMeanMs": 3.89010989010989,
+          "projections": 10556,
+          "markerQueries": 10568
+        },
+        "after": {
+          "frames": 94,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.4148936170212766,
+          "projections": 1222,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "home",
+        "node": null,
+        "paritySnapshots": 24,
+        "samples": 20,
+        "before": {
+          "frames": 62,
+          "paintP95Ms": 12,
+          "paintMeanMs": 7.435483870967742,
+          "projections": 15996,
+          "markerQueries": 16019
+        },
+        "after": {
+          "frames": 58,
+          "paintP95Ms": 3,
+          "paintMeanMs": 0.8103448275862069,
+          "projections": 522,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "entrance",
+        "paritySnapshots": 14,
+        "samples": 10,
+        "before": {
+          "frames": 18,
+          "paintP95Ms": 4,
+          "paintMeanMs": 1.6666666666666667,
+          "projections": 918,
+          "markerQueries": 920
+        },
+        "after": {
+          "frames": 18,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.5555555555555556,
+          "projections": 72,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "painting",
+        "paritySnapshots": 14,
+        "samples": 10,
+        "before": {
+          "frames": 20,
+          "paintP95Ms": 7,
+          "paintMeanMs": 2.15,
+          "projections": 980,
+          "markerQueries": 984
+        },
+        "after": {
+          "frames": 18,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.5,
+          "projections": 72,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "history",
+        "paritySnapshots": 15,
+        "samples": 11,
+        "before": {
+          "frames": 20,
+          "paintP95Ms": 6,
+          "paintMeanMs": 2.5,
+          "projections": 1140,
+          "markerQueries": 1151
+        },
+        "after": {
+          "frames": 12,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.8333333333333334,
+          "projections": 48,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "science",
+        "paritySnapshots": 14,
+        "samples": 10,
+        "before": {
+          "frames": 19,
+          "paintP95Ms": 4,
+          "paintMeanMs": 1.736842105263158,
+          "projections": 1026,
+          "markerQueries": 1026
+        },
+        "after": {
+          "frames": 12,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.3333333333333333,
+          "projections": 48,
+          "markerQueries": 0
+        }
+      }
+    ],
+    "errors": []
+  },
+  "flatPictureParity": {
+    "baseline": "e0795f01eb68f8675e73a7258a92720db849ed66",
+    "flat": true,
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "records": [
+      {
+        "scene": "park",
+        "node": null,
+        "paritySnapshots": 30,
+        "samples": 26,
+        "before": {
+          "frames": 0,
+          "paintP95Ms": 0,
+          "paintMeanMs": 0,
+          "projections": 0,
+          "markerQueries": 0
+        },
+        "after": {
+          "frames": 0,
+          "paintP95Ms": 0,
+          "paintMeanMs": 0,
+          "projections": 0,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "home",
+        "node": null,
+        "paritySnapshots": 24,
+        "samples": 20,
+        "before": {
+          "frames": 0,
+          "paintP95Ms": 0,
+          "paintMeanMs": 0,
+          "projections": 0,
+          "markerQueries": 0
+        },
+        "after": {
+          "frames": 0,
+          "paintP95Ms": 0,
+          "paintMeanMs": 0,
+          "projections": 0,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "entrance",
+        "paritySnapshots": 14,
+        "samples": 10,
+        "before": {
+          "frames": 0,
+          "paintP95Ms": 0,
+          "paintMeanMs": 0,
+          "projections": 0,
+          "markerQueries": 0
+        },
+        "after": {
+          "frames": 0,
+          "paintP95Ms": 0,
+          "paintMeanMs": 0,
+          "projections": 0,
+          "markerQueries": 0
+        }
+      }
+    ],
+    "errors": []
+  },
+  "normalCentralAppFlows": {
+    "results": [
+      {
+        "name": "desktop",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "checks": "direct Pages-subpath Listening reload"
+      },
+      {
+        "name": "mobile",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "checks": "direct Pages-subpath Listening reload"
+      }
+    ],
+    "errors": [],
+    "missing": []
+  },
+  "offline": {
+    "results": [
+      "service worker installs and controls the Pages subpath",
+      "online visit caches the native HTML, scene scripts and all six detail faces",
+      "offline reload restores the actual native panorama with six high-detail faces, not an app fallback inside the iframe",
+      "offline Listening opens from cached shared controllers"
+    ]
+  },
+  "conditions": {
+    "browser": "Local headless Chrome",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "cpuThrottleForPaintTiming": 4,
+    "speech": "stubbed in central-app flow checks",
+    "markerSnapshots": "Native iframe in a small same-origin protocol test parent; source images retained",
+    "timing": "Actual marker paint function instrumented identically before and after; 12 automated arrow movements; single runs",
+    "fallback": "WebGL contexts forced unavailable; flat-mode arrow timings are not meaningful"
+  },
+  "testHarnessChange": "Central flow waits for the lesson media loading dialog to close before programmatically choosing a detail, matching actual user availability.",
+  "exportRebuild": "Full build-from-source plus finalize reproduces the same runtime release",
+  "preserved": [
+    "All 1036 hotspot details across five lessons",
+    "Source images, UV coordinates and projection math",
+    "Candidate source ordering, clustering radius and discovery rules",
+    "Visible marker IDs, positions, labels, cluster counts, active and expanded states",
+    "Learning content, scoring, saved progress and glass design"
+  ],
+  "limits": [
+    "Marker-function timings are not image-loading, GPU-render or total frame-rate measurements",
+    "Synthetic single-run results are not real-device guarantees",
+    "Parity covers selected branches and states, not every possible camera pose or editorial image accuracy",
+    "Offline acceptance remains the visited Garden and Listening"
+  ]
+}
