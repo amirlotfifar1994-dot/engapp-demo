@@ -28,7 +28,7 @@
       "imageApiUrl": "",
       "packSha256": "d2d7560b46c36b2e321cd866cb8d422c19b8b9c1aa6da59e63d696b2e00792c6",
       "imageSha256": "e0e7ddbd051a72e710bdbebfc1a9947c6048d52469792a2c7fb40e67dd69aec2",
-      "embedded": true,
+      "embedded": false,
       "staticAvailable": true,
       "accessClass": "free",
       "capabilities": [

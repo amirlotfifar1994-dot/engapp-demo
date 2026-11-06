@@ -1,0 +1,207 @@
+{
+  "reviewed": "2026-11-06",
+  "scope": "Public engapp-demo only; five stable lessons",
+  "sourceCommit": "1394fe5810e7beb847a0ac304a28a89672839961",
+  "release": "demo-five-20261103-8d9277fe64fc",
+  "measurement": {
+    "collected": "2026-11-03",
+    "browser": "Local headless Chrome",
+    "cpuThrottle": 4,
+    "serviceWorkers": "blocked",
+    "contexts": "fresh",
+    "desktop": {
+      "width": 1280,
+      "height": 900,
+      "dpr": 1
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "dpr": 2,
+      "touch": true
+    },
+    "units": "Milliseconds and decoded JS bytes; not compressed network transfer",
+    "baseline": [
+      {
+        "name": "desktop",
+        "homeReadyMs": 16399,
+        "jsBytes": 7549636,
+        "longTasks": 14,
+        "longTaskMs": 13731,
+        "maxLongTaskMs": 7241,
+        "loaded": [
+          2,
+          5
+        ],
+        "gardenReadyMs": 7487,
+        "dragFrames": 113,
+        "dragP95Ms": 200,
+        "dragMaxMs": 283.3000000000029
+      },
+      {
+        "name": "mobile",
+        "homeReadyMs": 17229,
+        "jsBytes": 7549636,
+        "longTasks": 14,
+        "longTaskMs": 14434,
+        "maxLongTaskMs": 7610,
+        "loaded": [
+          2,
+          5
+        ],
+        "gardenReadyMs": 7376,
+        "dragFrames": 96,
+        "dragP95Ms": 183.20000000000073,
+        "dragMaxMs": 316.7000000000007
+      }
+    ],
+    "optimized": [
+      {
+        "name": "desktop",
+        "homeReadyMs": 3428,
+        "jsBytes": 1858097,
+        "longTasks": 3,
+        "longTaskMs": 586,
+        "maxLongTaskMs": 248,
+        "loaded": [],
+        "gardenReadyMs": 6374,
+        "dragFrames": 113,
+        "dragP95Ms": 116.70000000000073,
+        "dragMaxMs": 166.70000000000073
+      },
+      {
+        "name": "mobile",
+        "homeReadyMs": 4226,
+        "jsBytes": 1858097,
+        "longTasks": 5,
+        "longTaskMs": 877,
+        "maxLongTaskMs": 309,
+        "loaded": [],
+        "gardenReadyMs": 6680,
+        "dragFrames": 102,
+        "dragP95Ms": 66.70000000000073,
+        "dragMaxMs": 116.58199999999852
+      }
+    ],
+    "limits": "Single synthetic runs with automated input overhead, collected before final Cafe release redraw and cache-policy correction. Not a real-device FPS guarantee."
+  },
+  "acceptance": {
+    "nodeTests": {
+      "passed": 16,
+      "failed": 0
+    },
+    "publicTextAudit": {
+      "files": 172,
+      "leaks": []
+    },
+    "browser": {
+      "results": [
+        {
+          "name": "desktop",
+          "id": 5,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "desktop",
+          "id": 2,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "desktop",
+          "id": 10003,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "desktop",
+          "id": 10004,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "desktop",
+          "id": 10010,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "desktop",
+          "checks": "direct Pages-subpath Listening reload"
+        },
+        {
+          "name": "mobile",
+          "id": 5,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "mobile",
+          "id": 2,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "mobile",
+          "id": 10003,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "mobile",
+          "id": 10004,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "mobile",
+          "id": 10010,
+          "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+        },
+        {
+          "name": "mobile",
+          "checks": "direct Pages-subpath Listening reload"
+        }
+      ],
+      "errors": [],
+      "missing": []
+    },
+    "interactions": {
+      "results": [
+        {
+          "check": "Garden ancestor paths through DOM controls",
+          "details": 324
+        },
+        {
+          "check": "garden360-lesson1.html mobile render resolution",
+          "during": 1.2512820512820513,
+          "after": 2
+        },
+        {
+          "check": "cafe360-lesson2.html mobile render resolution",
+          "during": 1.2512820512820513,
+          "after": 2
+        },
+        {
+          "check": "Delayed Garden cancelled; Cafe remains active after Garden finishes"
+        },
+        {
+          "check": "Failed pack request can be retried from the home screen",
+          "requests": 2
+        }
+      ],
+      "errors": []
+    },
+    "offline": {
+      "results": [
+        "service worker installs and controls the Pages subpath",
+        "online visit caches the native HTML, scene scripts and all six detail faces",
+        "offline reload restores the actual native panorama with six high-detail faces, not an app fallback inside the iframe",
+        "offline Listening opens from cached shared controllers"
+      ]
+    }
+  },
+  "preserved": [
+    "All five full packs and 1036 details",
+    "Source images and detail textures",
+    "Hotspot coordinates and ancestor paths",
+    "Progress, scoring and activity content"
+  ],
+  "limits": [
+    "Activity speech is stubbed for browser flow checks; actual voice and microphone quality remains device-dependent",
+    "Offline checks cover visited Garden and Listening, not all unvisited lessons",
+    "DOM ancestor traversal checks reachability, not editorial accuracy of all 324 Garden anchors"
+  ]
+}

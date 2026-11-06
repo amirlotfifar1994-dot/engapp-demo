@@ -84,8 +84,19 @@ function validatePack(pack){
   }
   function patchPack(id,patch={}){const current=lessonPacks.get(Number(id));if(!current)throw new Error('LESSON_PACK_NOT_FOUND');return registerPack({...current,...deepClone(patch),content:{...current.content,...obj(patch.content)}});}
   async function loadPack(url,{replace=true}={}){if(typeof root.fetch!=='function')throw new Error('FETCH_UNAVAILABLE');const res=await root.fetch(String(url),{credentials:'same-origin'});if(!res.ok)throw new Error(`LESSON_PACK_HTTP_${res.status}`);return registerPack(await res.json(),{replace});}
-  async function ensurePack(id){const n=Number(id);if(lessonPacks.has(n))return getPack(n);const manifest=packManifest.get(n);if(!manifest||manifest.status!=='ready')throw new Error('LESSON_PACK_NOT_READY');if(root.EngBookLessonRepository){root.EngBookLessonRepository.register([manifest]);const loaded=await root.EngBookLessonRepository.load(n);return registerPack(loaded.pack);}return loadPack(manifest.url);}
+  const pendingPacks=new Map();
+  async function ensurePack(id){
+    const n=Number(id);if(lessonPacks.has(n))return getPack(n);
+    const manifest=packManifest.get(n);if(!manifest||manifest.status!=='ready')throw new Error('LESSON_PACK_NOT_READY');
+    if(!pendingPacks.has(n)){
+      const job=(async()=>{if(root.EngBookLessonRepository){root.EngBookLessonRepository.register([manifest]);const loaded=await root.EngBookLessonRepository.load(n);registerPack(loaded.pack);}else await loadPack(manifest.url);})().finally(()=>pendingPacks.delete(n));
+      pendingPacks.set(n,job);
+    }
+    await pendingPacks.get(n);return getPack(n);
+  }
+
   function getPack(id){const p=lessonPacks.get(Number(id));return p?deepClone(p):null;}
+  function getPresentation(id){const p=lessonPacks.get(Number(id));return p?deepClone(p.presentation||{}):null;}
   function getMeta(id){const n=Number(id),m=lessonMeta.get(n);if(!m)return null;const p=lessonPacks.get(n),mf=packManifest.get(n);return {...deepClone(m),title:p?.title||mf?.title||m.title,image:p?.image||mf?.image||m.image};}
   function getCategory(id){const c=categories.get(Number(id));return c?deepClone(c):null;}
   function manifestFor(id){const m=packManifest.get(Number(id));return m?deepClone(m):null;}
@@ -96,7 +107,7 @@ function validatePack(pack){
   function lessonCountForCategory(categoryId){const c=categories.get(Number(categoryId));const known=listLessons(categoryId).length;return numOrNull(c?.totalLessons)??(known||null);}
   function categorySnapshot(categoryId){const c=getCategory(categoryId);if(!c)return null;const lessons=listLessons(categoryId),ready=lessons.filter(x=>x.ready);return {...c,knownLessons:lessons.length,readyLessons:ready.length,loadedLessons:ready.filter(x=>x.loaded).length,lessonCount:lessonCountForCategory(categoryId),appAvailable:ready.length>0};}
   function resolve(id){const m=getMeta(id),p=lessonPacks.get(Number(id)),mf=packManifest.get(Number(id));if(!m)return null;return {lesson:{...m,hotspots:deepClone(p?.hotspots?.length?p.hotspots:m.hotspots||[])},category:getCategory(m.categoryId),pack:p?deepClone(p):null,ready:Boolean((p&&p.status==='ready')||mf?.status==='ready'),loaded:Boolean(p),capabilities:p?.capabilities||mf?.capabilities||[]};}
-  function canOpen(id){return Boolean(resolve(id)?.ready);}
+  function canOpen(id){const n=Number(id);return lessonMeta.has(n)&&Boolean(lessonPacks.get(n)?.status==='ready'||packManifest.get(n)?.status==='ready');}
   function canOpenCategory(id){return readyLessonCountForCategory(id)>0;}
   function snapshot(){const ready=new Set([...packManifest.values()].filter(x=>x.status==='ready').map(x=>x.lessonId));[...lessonPacks.values()].filter(x=>x.status==='ready').forEach(x=>ready.add(x.lessonId));return {schemaVersion:PACK_SCHEMA_VERSION,courseCatalogSchemaVersion:Number(BUILD.courseCatalogSchemaVersion||1),build:BUILD.tag||BUILD.version,categories:listCategories().map(c=>categorySnapshot(c.id)),lessons:[...lessonMeta.values()].sort((a,b)=>a.id-b.id).map(deepClone),readyLessons:[...ready].sort((a,b)=>a-b),loadedLessons:[...lessonPacks.keys()].sort((a,b)=>a-b)};}
   function createTemplate(meta={}){
@@ -117,5 +128,5 @@ function validatePack(pack){
     CAT02.lessons.forEach(l=>registerLessonMeta({...l,categoryId:CAT02.id,status:'catalog',source:'catalog'}));
   }
 
-  root.EngBookContent={version:BUILD.version||'0.54',packSchemaVersion:PACK_SCHEMA_VERSION,registerCategory,registerCourseCatalog,registerLessonMeta,registerManifest,registerPack,loadPack,ensurePack,patchPack,getPack,getMeta,getCategory,manifestFor,listCategories,listLessons,readyLessonIds,readyLessonCountForCategory,lessonCountForCategory,categorySnapshot,resolve,canOpen,canOpenCategory,validatePack,createTemplate,snapshot};
+  root.EngBookContent={version:BUILD.version||'0.54',packSchemaVersion:PACK_SCHEMA_VERSION,registerCategory,registerCourseCatalog,registerLessonMeta,registerManifest,registerPack,loadPack,ensurePack,patchPack,getPack,getPresentation,getMeta,getCategory,manifestFor,listCategories,listLessons,readyLessonIds,readyLessonCountForCategory,lessonCountForCategory,categorySnapshot,resolve,canOpen,canOpenCategory,validatePack,createTemplate,snapshot};
 })(typeof window!=='undefined'?window:globalThis);

@@ -10,6 +10,7 @@
   function isPanorama(lesson){
     const id=Number(lesson?.id??lesson?.lessonId??lesson);
     if(!Number.isInteger(id)||id<=0||lesson?.ready===false)return false;
+    if(root.SceneSpeakDemo?.lessons?.some(l=>Number(l.id)===id))return true;
     const available=[root.SceneSpeakLesson1GardenPack,root.SceneSpeakLesson2CafePack];
     return Boolean(lesson?.presentation?.panorama||available.some(p=>Number(p?.lessonId)===id&&p?.presentation?.panorama)||root.SceneSpeakPanoramaCourse?.entries?.some(e=>Number(e.id)===id)||content()?.getPack?.(id)?.presentation?.panorama);
   }

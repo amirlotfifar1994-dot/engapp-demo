@@ -16,7 +16,7 @@ The garden is the featured first lesson. The other four were retained because th
 
 All five include **Explore, Learn, Practice, Speak, Talk and Listening**, with A1–C1 content. Learning uses the current shared glass cards: a small initial view, then separate learning pages, child details and inline audio. The current listening preview/resume fix is included.
 
-The entrance is specific to this small collection; lesson controllers come from the application. Stable lesson IDs and progress semantics are preserved. Packs for the three Panorama Worlds lessons load on demand. No account, payment, server, source books or unselected lesson content is included. Online account/AI features are unavailable; browser speech and recording depend on the device and microphone permission. Images include AI reconstructions whose fine details can differ from the overview.
+The entrance is specific to this small collection; lesson controllers come from the application. Stable lesson IDs and progress semantics are preserved. All five learning packs load on demand; the entrance does not parse full lesson or native scene data. No account, payment, server, source books or unselected lesson content is included. Online account/AI features are unavailable; browser speech and recording depend on the device and microphone permission. Images include AI reconstructions whose fine details can differ from the overview.
 
 Serve the folder with any static HTTP server, or use **Node 24**:
 
@@ -40,3 +40,5 @@ The export selects five packs, projects their catalog, preserves the demo entran
 © Amirmohammad Lotfifar. All rights reserved. Published for demonstration only; no license to copy, reuse or redistribute is granted.
 
 The demo uses `demo-glass.css` for translucent lesson surfaces: the photograph remains visible behind a softly blurred background, while text and icons stay fully opaque. A reduced-transparency preference and a fallback for browsers without background blur are included.
+
+Performance follow-up reviewed **6 November 2026**: on-demand packs, shared in-flight loads, cheaper readiness checks, visible-marker projection, temporary mobile rendering resolution and bounded runtime caching. The original source images remain intact. Measurements, reproduction commands and limits are in [PERFORMANCE.md](PERFORMANCE.md).

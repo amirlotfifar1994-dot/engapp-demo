@@ -58,3 +58,28 @@ Chrome reduced-transparency media preference was emulated: the detail card becam
 97% opaque with no blur, and foreground opacity remained1. Readable-background
 fallback is implemented for unsupported blur, but older engines were not certified.
 Evidence: [glass surfaces](tests/evidence/glass-surfaces-20261103.json).
+
+
+## Performance follow-up — 6 November 2026
+
+All five packs now load on demand, native Garden/Cafe frames use scene-only data,
+and concurrent requests share one load. Readiness checks avoid full-pack cloning.
+Only the active marker family is projected. Mobile drag temporarily lowers render
+resolution, restoring it on release/cancel/lost capture; Cafe's final release
+redraw was corrected during acceptance. Mobile blur is 8px. Runtime caching is
+bounded and storage failures preserve successful online responses.
+
+Sixteen Node tests pass; the public runtime audit covers 172 files with no detected
+leaks. Twelve fresh browser flows pass across all five lessons, both viewports and
+six modes, including actual Cafe Walk and exact Listening. Garden's 324 ancestor
+paths remain reachable through DOM controls. Garden and Cafe restore mobile render
+ratio from 1.25 to 2 on gesture end/cancel. Cancelling a delayed Garden load and
+opening Cafe keeps Cafe active when the old request finishes. A 503 pack failure
+can be retried successfully. Four worker/offline checks pass after a Garden visit.
+No JavaScript errors or missing resources occurred in the 12 normal browser flows.
+
+Retained measurements show approximately 75% less initial decoded JavaScript and
+shorter startup/drag pauses under 4x CPU throttling. Measurement conditions and
+limits, including the earlier trace date, are in [PERFORMANCE.md](PERFORMANCE.md).
+Machine-readable evidence: [performance review](tests/evidence/performance-20261106.json).
+The source exporter reapplies the narrow runtime adapters and rebuilds hashes.

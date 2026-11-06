@@ -60,4 +60,5 @@ let index=(await fs.readFile(path.join(root,'index.html'),'utf8')).replace(/<lin
 const web=JSON.parse(await fs.readFile(path.join(root,'manifest.webmanifest'),'utf8'));Object.assign(web,{name:'SceneSpeak — Five picture worlds',description:'Explore five immersive English lessons. See details, learn phrases and find your voice.'});web.shortcuts=[{name:'Explore the garden',url:'./?lesson=5&mode=explore'},{name:'Listen in the garden',url:'./?lesson=5&mode=listening'},{name:'Five picture worlds',url:'./#lessons'}];await write('manifest.webmanifest',JSON.stringify(web,null,2)+'\n');
 await write('.nojekyll','');
 for(const f of await fs.readdir(path.join(root,'core')))if(excluded.test('core/'+f))await fs.unlink(path.join(root,'core',f));
+await import('./optimize-runtime.mjs');
 console.log(JSON.stringify({release,sourceCommit,lessons,assetPaths:assetPaths.size}));

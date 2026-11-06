@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import vm from 'node:vm';import crypto from 'node:crypto';import {createRequire} from 'node:module';
 const root=path.resolve(import.meta.dirname,'..'),read=f=>fs.readFileSync(path.join(root,f),'utf8'),json=f=>JSON.parse(read(f)),ids=[2,5,10003,10004,10010];
-function context(){const ctx=vm.createContext({URLSearchParams,console,document:{addEventListener(){}}});ctx.window=ctx;for(const f of ['core/build-info.js','core/course-catalog.js','core/course-path.js','data.js','lesson-pack-index.generated.js','lesson-packs.generated.js','core/lesson-validator.js','core/content-engine.js','core/panorama-course.generated.js','core/lesson1-panorama-data.generated.js','core/lesson2-panorama-data.generated.js'])vm.runInContext(read(f),ctx,{filename:f});for(const id of ids)ctx.EngBookContent.registerPack(json(`lesson-packs/lesson_${String(id).padStart(2,'0')}.json`));return ctx;}
+function context({cold=false}={}){const ctx=vm.createContext({URLSearchParams,console,document:{addEventListener(){}}});ctx.window=ctx;for(const f of ['core/build-info.js','core/course-catalog.js','core/course-path.js','data.js','lesson-pack-index.generated.js','lesson-packs.generated.js','core/lesson-validator.js','core/content-engine.js','core/panorama-course.generated.js','core/lesson1-panorama-data.generated.js','core/lesson2-panorama-data.generated.js']){if(cold&&/^core\/lesson[12]-panorama-data/.test(f))continue;vm.runInContext(read(f),ctx,{filename:f});}if(!cold)for(const id of ids)ctx.EngBookContent.registerPack(json(`lesson-packs/lesson_${String(id).padStart(2,'0')}.json`));return ctx;}
 test('the real registry exposes exactly the five selected lessons, with displayed lesson one first',()=>{
  const ctx=context(),api=ctx.EngBookContent;assert.deepEqual(Array.from(api.snapshot().readyLessons),ids);assert.deepEqual(Array.from(api.listLessons(1),l=>l.id),[5,2]);assert.equal(ctx.EngBookCoursePath.localNumber({id:5,categoryId:1}),1);
  assert.deepEqual(Array.from(ctx.SceneSpeakPanoramaCourse.entries,e=>e.scene),['park','home','museum']);for(const id of [1,3,4,6,10001,10002,10005,10013])assert.equal(api.canOpen(id),false);
@@ -45,4 +45,22 @@ test('the public catalog, release record and worker agree on one content-derived
 
 test('Back and direct guide routes restore the guide section instead of jumping to the hero',()=>{
  const handlers={},scroll=[];const doc={querySelector:selector=>({scrollIntoView:()=>scroll.push(selector)})};const root={location:{hash:'#how-it-works',search:''},addEventListener:(name,fn)=>handlers[name]=fn,matchMedia:()=>({matches:true})};const ctx=vm.createContext({window:root,document:doc});vm.runInContext(read('core/home-hero.js'),ctx);handlers.popstate();assert.equal(scroll.at(-1),'.demo-method');root.location.hash='#lessons';handlers.popstate();assert.equal(scroll.at(-1),'.demo-library');root.location.hash='#app';handlers.popstate();assert.equal(scroll.at(-1),'.demo-showcase');
+});
+
+
+test('cold home exposes all five lessons without eagerly parsing any full pack or native lesson data',()=>{
+ const c=context({cold:true}),api=c.EngBookContent;assert.deepEqual(Array.from(api.snapshot().loadedLessons),[]);assert.deepEqual(Array.from(api.snapshot().readyLessons),ids);assert.equal(api.canOpen(5),true);assert.equal(api.canOpen(10010),true);assert.equal(api.canOpen(1),false);assert.doesNotMatch(read('index.html'),/src="core\/lesson[12]-panorama-data/);
+ let copies=0;c.JSON={parse:JSON.parse,stringify:v=>{copies++;return JSON.stringify(v)}};for(let i=0;i<50;i++){api.canOpen(5);api.canOpen(10010);}assert.equal(copies,0,'availability checks do not deep-copy lesson data');
+});
+
+test('parallel lesson loads coalesce one request while retaining independent returned data and presentation metadata',async()=>{
+ const c=context({cold:true}),api=c.EngBookContent;let calls=0,finish;c.EngBookLessonRepository={register(){},load(){calls++;return new Promise(r=>finish=r)}};const one=api.ensurePack(5),two=api.ensurePack(5);assert.equal(calls,1);finish({pack:json('lesson-packs/lesson_05.json')});const[a,b]=await Promise.all([one,two]);assert.notEqual(a,b);a.hotspots[0].en='changed';assert.notEqual(b.hotspots[0].en,'changed');assert.notEqual(api.getPack(5).hotspots[0].en,'changed');const info=api.getPresentation(5);info.panorama.scene='changed';assert.equal(api.getPresentation(5).panorama.scene,'garden-lesson1');
+});
+
+test('failed coalesced requests clear pending state so a lesson can be retried',async()=>{
+ const c=context({cold:true}),api=c.EngBookContent;let calls=0;c.EngBookLessonRepository={register(){},load(){calls++;return Promise.reject(Error('offline'))}};await assert.rejects(Promise.all([api.ensurePack(2),api.ensurePack(2)]),/offline/);assert.equal(calls,1);c.EngBookLessonRepository.load=()=>{calls++;return Promise.resolve({pack:json('lesson-packs/lesson_02.json')})};assert.equal((await api.ensurePack(2)).lessonId,2);assert.equal(calls,2);await api.ensurePack(2);assert.equal(calls,2);
+});
+
+test('native scene-only files preserve every visual anchor and asset without duplicating the host learning pack',()=>{
+ for(const n of [1,2]){const key=n===1?'SceneSpeakLesson1Garden':'SceneSpeakLesson2Cafe',full={window:{}},native={window:{}};vm.runInNewContext(read(`core/lesson${n}-panorama-data.generated.js`),{...full,URLSearchParams});vm.runInNewContext(read(`core/lesson${n}-panorama-scene.generated.js`),native);assert.equal(JSON.stringify(native.window[key]),JSON.stringify(full.window[key]));assert.equal(native.window[key+'Pack'],undefined);}
 });

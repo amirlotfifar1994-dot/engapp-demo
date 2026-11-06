@@ -31,3 +31,7 @@
 
 /* Mobile Talk keeps its clear overview above; the stationary native photo also stays behind the glass below. */
 .talk-still-stage{background:transparent}
+
+/* Smaller blur kernels keep the same translucent design lighter on small screens. */
+@media(max-width:600px){:root{--demo-glass-blur:blur(8px) saturate(112%)}.scene-canvas :is(.canvas-dock,.canvas-dark-glass){backdrop-filter:blur(8px) saturate(112%)!important;-webkit-backdrop-filter:blur(8px) saturate(112%)!important}}
+@media(prefers-reduced-transparency:reduce){.scene-canvas :is(.canvas-dock,.canvas-dark-glass){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
