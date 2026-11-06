@@ -83,3 +83,18 @@ shorter startup/drag pauses under 4x CPU throttling. Measurement conditions and
 limits, including the earlier trace date, are in [PERFORMANCE.md](PERFORMANCE.md).
 Machine-readable evidence: [performance review](tests/evidence/performance-20261106.json).
 The source exporter reapplies the narrow runtime adapters and rebuilds hashes.
+
+## Native retry and context recovery — 6 November 2026
+
+Native Garden/Cafe retries now release their old GPU programs, shaders, buffers and
+textures, cancel pending image callbacks and reject obsolete results. Garden detail
+workers participate in teardown. Cafe's image cache and transitions are scoped to
+the current load epoch. The export applies this as a separate guarded adapter.
+
+The real Chrome lifecycle check keeps resource counts constant after overlapping
+retries and WebGL context loss/restoration, visits all five Cafe locations, and
+checks zero owned resources after an explicit pagehide teardown. This verifies
+create/delete ownership, rather than real-device memory-byte usage or GC timing.
+Five focused unit tests supplement the existing 16-test suite. Normal lesson-flow
+and offline checks are recorded in the
+[native lifecycle evidence](tests/evidence/native-lifecycle-20261106.json).

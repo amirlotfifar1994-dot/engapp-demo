@@ -53,6 +53,7 @@ node --test tests/*.test.mjs
 node scripts/audit-public.mjs
 node scripts/review-browser.mjs
 node scripts/review-interactions.mjs
+node scripts/review-native-lifecycle.mjs
 node scripts/review-offline.mjs
 node scripts/review-performance.mjs
 ```
@@ -69,3 +70,30 @@ remain device-dependent. Screenshots and raw traces stay in ignored `review-outp
 The exporter invokes `scripts/optimize-runtime.mjs` after projecting source content,
 so a later source export retains these optimizations. Finalize after exporting to
 refresh content hashes and the worker release. The public scope remains five lessons.
+
+## Native-view lifecycle follow-up
+
+Garden and Cafe previously left programs, shaders and vertex buffers from earlier
+retry attempts alive until their document was destroyed. Cafe could also finish an
+obsolete image load after context recovery. Each native-view load now owns a GPU
+resource scope and a cancellable image scope. Retry, context loss, failed loading
+and pagehide release the scope; stale results cannot upload into a newer renderer.
+Garden detail workers cancel pending image handlers on disposal. Cafe clears its
+four-entry image cache on a new load, without allowing an old failure to remove a
+new cache entry for the same URL. A cancelled browser image request may still be
+shared internally with another image requesting that URL; stale callbacks are
+suppressed regardless of the browser's network coalescing.
+
+The native lifecycle browser review instruments real WebGL create/delete calls,
+replays overlapping retries, uses `WEBGL_lose_context` to lose and restore each
+context, and explicitly dispatches pagehide to test teardown. It also checks live
+resources across all five Cafe locations. The ready Garden has seven textures,
+one buffer, two shaders and one program; Cafe has three textures and the same
+buffer/shader/program counts. Counts remain constant after retries/recovery and
+are zero after teardown. These are owned-resource checks, not heap or GPU-byte
+measurements and not a promise about the browser's garbage-collection timing.
+
+Five additional unit tests cover GPU ownership and partial cleanup, image success,
+network/decode cancellation, dimension validation and retry. The current suite has
+21 passing tests. Evidence is in
+[native lifecycle review](tests/evidence/native-lifecycle-20261106.json).

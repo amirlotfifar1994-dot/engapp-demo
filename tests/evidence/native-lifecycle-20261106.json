@@ -1,0 +1,223 @@
+{
+  "reviewed": "2026-11-06",
+  "release": "demo-five-20261103-2ce30fbc3ae5",
+  "scope": "Public five-lesson demo; native Garden and Cafe resource lifecycle",
+  "sourceCommit": "1394fe5810e7beb847a0ac304a28a89672839961",
+  "nodeTests": {
+    "passed": 21,
+    "failed": 0
+  },
+  "publicTextAudit": {
+    "files": 173,
+    "leaks": []
+  },
+  "nativeLifecycle": {
+    "results": [
+      {
+        "file": "garden360-lesson1.html",
+        "initial": {
+          "Texture": 7,
+          "Buffer": 1,
+          "Shader": 2,
+          "Program": 1
+        },
+        "walk": [],
+        "afterRetries": {
+          "Texture": 7,
+          "Buffer": 1,
+          "Shader": 2,
+          "Program": 1
+        },
+        "afterRestore": {
+          "Texture": 7,
+          "Buffer": 1,
+          "Shader": 2,
+          "Program": 1
+        },
+        "afterDispose": {
+          "Texture": 0,
+          "Buffer": 0,
+          "Shader": 0,
+          "Program": 0
+        },
+        "checks": [
+          "superseded image load",
+          "constant live GPU resources after retries",
+          "real WebGL context loss/restoration",
+          "pagehide cleanup"
+        ]
+      },
+      {
+        "file": "cafe360-lesson2.html",
+        "initial": {
+          "Texture": 3,
+          "Buffer": 1,
+          "Shader": 2,
+          "Program": 1
+        },
+        "walk": [
+          {
+            "node": "window",
+            "resources": {
+              "Texture": 3,
+              "Buffer": 1,
+              "Shader": 2,
+              "Program": 1
+            }
+          },
+          {
+            "node": "rear-center",
+            "resources": {
+              "Texture": 3,
+              "Buffer": 1,
+              "Shader": 2,
+              "Program": 1
+            }
+          },
+          {
+            "node": "rear-right",
+            "resources": {
+              "Texture": 3,
+              "Buffer": 1,
+              "Shader": 2,
+              "Program": 1
+            }
+          },
+          {
+            "node": "counter",
+            "resources": {
+              "Texture": 3,
+              "Buffer": 1,
+              "Shader": 2,
+              "Program": 1
+            }
+          },
+          {
+            "node": "main",
+            "resources": {
+              "Texture": 3,
+              "Buffer": 1,
+              "Shader": 2,
+              "Program": 1
+            }
+          }
+        ],
+        "afterRetries": {
+          "Texture": 3,
+          "Buffer": 1,
+          "Shader": 2,
+          "Program": 1
+        },
+        "afterRestore": {
+          "Texture": 3,
+          "Buffer": 1,
+          "Shader": 2,
+          "Program": 1
+        },
+        "afterDispose": {
+          "Texture": 0,
+          "Buffer": 0,
+          "Shader": 0,
+          "Program": 0
+        },
+        "checks": [
+          "superseded image load",
+          "constant live GPU resources after retries",
+          "real WebGL context loss/restoration",
+          "pagehide cleanup"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "normalLessonFlows": {
+    "results": [
+      {
+        "name": "desktop",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "checks": "direct Pages-subpath Listening reload"
+      },
+      {
+        "name": "mobile",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "checks": "direct Pages-subpath Listening reload"
+      }
+    ],
+    "errors": [],
+    "missing": []
+  },
+  "offline": {
+    "results": [
+      "service worker installs and controls the Pages subpath",
+      "online visit caches the native HTML, scene scripts and all six detail faces",
+      "offline reload restores the actual native panorama with six high-detail faces, not an app fallback inside the iframe",
+      "offline Listening opens from cached shared controllers"
+    ]
+  },
+  "export": {
+    "fullRebuild": "same release hash after build-from-source and finalize",
+    "adapter": "scripts/optimize-native-lifecycle.mjs"
+  },
+  "preserved": [
+    "All five stable lesson IDs",
+    "All 1036 details",
+    "Images, detail textures and hotspot coordinates",
+    "Scoring, saved progress and learning content",
+    "Existing translucent UI"
+  ],
+  "limits": [
+    "Resource counts instrument real WebGL create/delete calls, not GPU bytes or browser heap/GC timing",
+    "Pagehide is explicitly dispatched for the teardown assertion",
+    "Browser may coalesce image network requests; cancellation guarantees suppressing obsolete image callbacks, not termination of every shared TCP request",
+    "Offline coverage is visited Garden and Listening",
+    "Activity-flow speech is stubbed; device microphone and voice quality remains device-dependent"
+  ]
+}

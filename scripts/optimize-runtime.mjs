@@ -33,3 +33,4 @@ s=s.slice(0,a)+`  const shown=new Set((state.practice?state.hintId?[byId.get(sta
   for(const id of shown){const h=byId.get(id),b=dotButtons.get(id);if(!h||!b)continue;projectedDots.add(id);const p=M.project(rays.get(id),cam,w,height);b.hidden=${hidden}!p||p.x<12||p.x>w-12||p.y<80||p.y>height-160;if(p){const left=p.x+'px',top=p.y+'px';if(b.style.left!==left)b.style.left=left;if(b.style.top!==top)b.style.top=top;}b.classList.toggle('is-selected',id===selected);const pressed=String(id===selected);if(b.getAttribute('aria-pressed')!==pressed)b.setAttribute('aria-pressed',pressed);${extra}}
 `+s.slice(b);s=s.replaceAll('if(!points.size){drag=null;pinched=false;}','if(!points.size){drag=null;pinched=false;draw();}');await write(f,s);}
 console.log('Demo runtime performance adapters applied');
+await import('./optimize-native-lifecycle.mjs');

@@ -42,3 +42,5 @@ The export selects five packs, projects their catalog, preserves the demo entran
 The demo uses `demo-glass.css` for translucent lesson surfaces: the photograph remains visible behind a softly blurred background, while text and icons stay fully opaque. A reduced-transparency preference and a fallback for browsers without background blur are included.
 
 Performance follow-up reviewed **6 November 2026**: on-demand packs, shared in-flight loads, cheaper readiness checks, visible-marker projection, temporary mobile rendering resolution and bounded runtime caching. The original source images remain intact. Measurements, reproduction commands and limits are in [PERFORMANCE.md](PERFORMANCE.md).
+
+Native Garden/Cafe retries and context recovery also release their previous GPU resources and cancel obsolete image work. A dedicated browser review checks resource ownership through retries, Cafe Walk, actual context restoration and teardown.
