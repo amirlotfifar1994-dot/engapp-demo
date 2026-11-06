@@ -1,0 +1,461 @@
+{
+  "reviewed": "2026-11-06",
+  "release": "demo-five-20261103-852dd48c4e27",
+  "scope": "Selected native scene data for public Park/Home/Museum",
+  "baselineCommit": "b4a5e0c686f86a0ba1535a130092a6c97d0201a8",
+  "sourceCommit": "1394fe5810e7beb847a0ac304a28a89672839961",
+  "nodeTests": {
+    "passed": 30,
+    "failed": 0
+  },
+  "publicTextAudit": {
+    "files": 174,
+    "leaks": []
+  },
+  "dataStartupBefore": {
+    "phase": "before",
+    "conditions": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "cpuThrottle": 4,
+      "images": "blocked to isolate data startup",
+      "serviceWorkers": "blocked",
+      "contexts": "fresh"
+    },
+    "rows": [
+      {
+        "scene": "park",
+        "dataReadyMs": 870,
+        "decodedJsBytes": 1087025,
+        "sceneDataBytes": 961900,
+        "files": [
+          {
+            "name": "panorama-museum-data.js",
+            "bytes": 817446
+          },
+          {
+            "name": "panorama-home-manifest.js",
+            "bytes": 5314
+          },
+          {
+            "name": "panorama-home-data.js",
+            "bytes": 16161
+          },
+          {
+            "name": "panorama-home-granular.js",
+            "bytes": 63079
+          },
+          {
+            "name": "panorama-park-data.js",
+            "bytes": 59900
+          }
+        ],
+        "globals": {
+          "park": true,
+          "home": true,
+          "museum": true
+        },
+        "fingerprint": "0ca223af3b73d33b48f59e777757db266d4dede4363a8c1ae8cd8fc0cb9fcf45"
+      },
+      {
+        "scene": "home",
+        "dataReadyMs": 836,
+        "decodedJsBytes": 1087025,
+        "sceneDataBytes": 961900,
+        "files": [
+          {
+            "name": "panorama-museum-data.js",
+            "bytes": 817446
+          },
+          {
+            "name": "panorama-home-manifest.js",
+            "bytes": 5314
+          },
+          {
+            "name": "panorama-home-data.js",
+            "bytes": 16161
+          },
+          {
+            "name": "panorama-home-granular.js",
+            "bytes": 63079
+          },
+          {
+            "name": "panorama-park-data.js",
+            "bytes": 59900
+          }
+        ],
+        "globals": {
+          "park": true,
+          "home": true,
+          "museum": true
+        },
+        "fingerprint": "13896bb1a8174db76377015d4f306b361c079c4e7cdbe1e0b27b0aacd2d2421f"
+      },
+      {
+        "scene": "museum",
+        "dataReadyMs": 779,
+        "decodedJsBytes": 1087025,
+        "sceneDataBytes": 961900,
+        "files": [
+          {
+            "name": "panorama-home-manifest.js",
+            "bytes": 5314
+          },
+          {
+            "name": "panorama-museum-data.js",
+            "bytes": 817446
+          },
+          {
+            "name": "panorama-home-granular.js",
+            "bytes": 63079
+          },
+          {
+            "name": "panorama-home-data.js",
+            "bytes": 16161
+          },
+          {
+            "name": "panorama-park-data.js",
+            "bytes": 59900
+          }
+        ],
+        "globals": {
+          "park": true,
+          "home": true,
+          "museum": true
+        },
+        "fingerprint": "fbc8b53eea333d0fda21c16b0774caae7a88d949b5007e5a35747edd61f3d454"
+      }
+    ],
+    "errors": []
+  },
+  "dataStartupAfter": {
+    "phase": "after",
+    "conditions": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "cpuThrottle": 4,
+      "images": "blocked to isolate data startup",
+      "serviceWorkers": "blocked",
+      "contexts": "fresh"
+    },
+    "rows": [
+      {
+        "scene": "park",
+        "dataReadyMs": 869,
+        "decodedJsBytes": 187553,
+        "sceneDataBytes": 59900,
+        "files": [
+          {
+            "name": "panorama-park-data.js",
+            "bytes": 59900
+          }
+        ],
+        "globals": {
+          "park": true,
+          "home": false,
+          "museum": false
+        },
+        "fingerprint": "0ca223af3b73d33b48f59e777757db266d4dede4363a8c1ae8cd8fc0cb9fcf45"
+      },
+      {
+        "scene": "home",
+        "dataReadyMs": 773,
+        "decodedJsBytes": 212207,
+        "sceneDataBytes": 84554,
+        "files": [
+          {
+            "name": "panorama-home-manifest.js",
+            "bytes": 5314
+          },
+          {
+            "name": "panorama-home-granular.js",
+            "bytes": 63079
+          },
+          {
+            "name": "panorama-home-data.js",
+            "bytes": 16161
+          }
+        ],
+        "globals": {
+          "park": false,
+          "home": true,
+          "museum": false
+        },
+        "fingerprint": "13896bb1a8174db76377015d4f306b361c079c4e7cdbe1e0b27b0aacd2d2421f"
+      },
+      {
+        "scene": "museum",
+        "dataReadyMs": 762,
+        "decodedJsBytes": 945099,
+        "sceneDataBytes": 817446,
+        "files": [
+          {
+            "name": "panorama-museum-data.js",
+            "bytes": 817446
+          }
+        ],
+        "globals": {
+          "park": false,
+          "home": false,
+          "museum": true
+        },
+        "fingerprint": "fbc8b53eea333d0fda21c16b0774caae7a88d949b5007e5a35747edd61f3d454"
+      }
+    ],
+    "errors": []
+  },
+  "selectedSceneAcceptance": {
+    "results": [
+      {
+        "check": "Home data 503 shows Retry; native frame reload recovers",
+        "attempts": 2
+      },
+      {
+        "check": "Museum native navigation loads only Museum data",
+        "node": "painting"
+      },
+      {
+        "check": "Museum native navigation loads only Museum data",
+        "node": "history"
+      },
+      {
+        "check": "Museum native navigation loads only Museum data",
+        "node": "science"
+      },
+      {
+        "check": "Museum native navigation loads only Museum data",
+        "node": "entrance"
+      },
+      {
+        "id": 10003,
+        "scene": "park",
+        "check": "Visited native scene, shared detail card and Listening restore offline with selected data only"
+      },
+      {
+        "id": 10004,
+        "scene": "home",
+        "check": "Visited native scene, shared detail card and Listening restore offline with selected data only"
+      },
+      {
+        "id": 10010,
+        "scene": "museum",
+        "check": "Visited native scene, shared detail card and Listening restore offline with selected data only"
+      }
+    ],
+    "errors": []
+  },
+  "normalCentralAppFlows": {
+    "results": [
+      {
+        "name": "desktop",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "desktop",
+        "checks": "direct Pages-subpath Listening reload"
+      },
+      {
+        "name": "mobile",
+        "id": 5,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 2,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10003,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10004,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "id": 10010,
+        "checks": "card -> Pattern -> exact Listening; six mode transitions; viewport; cafe tour where applicable"
+      },
+      {
+        "name": "mobile",
+        "checks": "direct Pages-subpath Listening reload"
+      }
+    ],
+    "errors": [],
+    "missing": []
+  },
+  "markerParityCompatibility": {
+    "baseline": "e0795f01eb68f8675e73a7258a92720db849ed66",
+    "flat": false,
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "records": [
+      {
+        "scene": "park",
+        "node": null,
+        "paritySnapshots": 30,
+        "samples": 26,
+        "before": {
+          "frames": 99,
+          "paintP95Ms": 4,
+          "paintMeanMs": 2.2222222222222223,
+          "projections": 11484,
+          "markerQueries": 11496
+        },
+        "after": {
+          "frames": 119,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.47058823529411764,
+          "projections": 1547,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "home",
+        "node": null,
+        "paritySnapshots": 24,
+        "samples": 20,
+        "before": {
+          "frames": 55,
+          "paintP95Ms": 10,
+          "paintMeanMs": 7.818181818181818,
+          "projections": 14190,
+          "markerQueries": 14210
+        },
+        "after": {
+          "frames": 62,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.4838709677419355,
+          "projections": 558,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "entrance",
+        "paritySnapshots": 14,
+        "samples": 10,
+        "before": {
+          "frames": 12,
+          "paintP95Ms": 8,
+          "paintMeanMs": 1.25,
+          "projections": 612,
+          "markerQueries": 614
+        },
+        "after": {
+          "frames": 17,
+          "paintP95Ms": 3,
+          "paintMeanMs": 0.5294117647058824,
+          "projections": 68,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "painting",
+        "paritySnapshots": 14,
+        "samples": 10,
+        "before": {
+          "frames": 12,
+          "paintP95Ms": 3,
+          "paintMeanMs": 1.5,
+          "projections": 588,
+          "markerQueries": 592
+        },
+        "after": {
+          "frames": 14,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.7142857142857143,
+          "projections": 56,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "history",
+        "paritySnapshots": 15,
+        "samples": 11,
+        "before": {
+          "frames": 17,
+          "paintP95Ms": 3,
+          "paintMeanMs": 1.411764705882353,
+          "projections": 969,
+          "markerQueries": 977
+        },
+        "after": {
+          "frames": 12,
+          "paintP95Ms": 2,
+          "paintMeanMs": 0.3333333333333333,
+          "projections": 48,
+          "markerQueries": 0
+        }
+      },
+      {
+        "scene": "museum",
+        "node": "science",
+        "paritySnapshots": 14,
+        "samples": 10,
+        "before": {
+          "frames": 16,
+          "paintP95Ms": 4,
+          "paintMeanMs": 1.5625,
+          "projections": 864,
+          "markerQueries": 864
+        },
+        "after": {
+          "frames": 21,
+          "paintP95Ms": 1,
+          "paintMeanMs": 0.23809523809523808,
+          "projections": 84,
+          "markerQueries": 0
+        }
+      }
+    ],
+    "errors": []
+  },
+  "exportRebuild": "Full source export and finalize reproduce release demo-five-20261103-852dd48c4e27; line endings normalized before the guarded async boot adapter",
+  "preserved": [
+    "Exact native scene JSON fingerprints",
+    "All five lessons and 1036 details",
+    "Original images, UV coordinates, learning content, progress and scoring",
+    "Four Museum viewpoints and existing mobile detail-card layout"
+  ],
+  "limits": [
+    "Decoded JS bytes are not compressed network transfer",
+    "Isolated data startup blocks images and service workers; UI setup and shader compilation remain included",
+    "Single local 4x-CPU runs do not establish an end-to-end visual startup or real-device frame-rate improvement",
+    "Offline covers previously visited Park, Home and Museum entrance, not media for unvisited viewpoints",
+    "Speech is stubbed in the normal activity-flow review; device microphone and voice quality remain device-dependent",
+    "Marker baseline code is given the current data-readiness gate for comparison; projection/clustering logic remains the original baseline code"
+  ]
+}

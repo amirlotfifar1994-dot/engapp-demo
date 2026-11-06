@@ -1,6 +1,7 @@
 /* An opt-in fixed-viewpoint picture lesson. No lesson IDs, scores or app progress are written. */
-(function(root){
+(async function(root){
  'use strict';
+ if(root.SceneSpeakDemoSceneLoader&&!(await root.SceneSpeakDemoSceneLoader.ready).ok)return;
  const tourQuery=new URLSearchParams(root.location.search),tourSceneName=tourQuery.get('scene'),tourData=tourSceneName==='hospital'?root.SceneSpeakPanoramaHospital:tourSceneName==='airport'?root.SceneSpeakPanoramaAirport:tourSceneName==='hotel'?root.SceneSpeakPanoramaHotel:tourSceneName==='museum'?root.SceneSpeakPanoramaMuseum:null,tourDefault=tourSceneName==='museum'?'entrance':tourSceneName==='hotel'?'lobby':tourSceneName==='airport'?'checkin':'reception',requestedNode=tourQuery.get('node')||tourDefault,tourNode=tourData&&Object.hasOwn(tourData.nodes,requestedNode)?requestedNode:tourDefault;
  const scenes={museum:root.SceneSpeakPanoramaMuseum?.nodes[tourNode]||root.SceneSpeakPanoramaMuseum?.nodes.entrance,hotel:root.SceneSpeakPanoramaHotel?.nodes[tourNode]||root.SceneSpeakPanoramaHotel?.nodes.lobby,airport:root.SceneSpeakPanoramaAirport?.nodes[tourNode]||root.SceneSpeakPanoramaAirport?.nodes.checkin,hospital:root.SceneSpeakPanoramaHospital?.nodes[tourNode]||root.SceneSpeakPanoramaHospital?.nodes.reception,station:root.SceneSpeakPanoramaStation,market:root.SceneSpeakPanoramaMarket,garden:root.SceneSpeakPanoramaGarden,school:root.SceneSpeakPanoramaSchool,home:root.SceneSpeakPanoramaHome,park:root.SceneSpeakPanoramaPark,'park-next':root.SceneSpeakPanoramaParkNear};
  const doc=root.document,M=root.SceneSpeakPanoramaMath,sceneName=new URLSearchParams(root.location.search).get('scene'),data=scenes[sceneName]||scenes.park;

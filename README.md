@@ -46,3 +46,5 @@ Performance follow-up reviewed **6 November 2026**: on-demand packs, shared in-f
 Native Garden/Cafe retries and context recovery also release their previous GPU resources and cancel obsolete image work. A dedicated browser review checks resource ownership through retries, Cafe Walk, actual context restoration and teardown.
 
 Park, Home and all Museum viewpoints also cache marker references and draw only the active branch. Before/after browser checks retain marker positions, clustering and discovery behavior; source images and lesson content are preserved.
+
+Each shared panorama frame now downloads only its selected world's data. Home keeps its dependency order, Museum keeps four connected viewpoints, and failed data loading offers Retry. Selected scene files remain available offline after a visit.

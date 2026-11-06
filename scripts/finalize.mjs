@@ -3,6 +3,7 @@ const root=path.resolve(import.meta.dirname,'..'),source=path.resolve(process.ar
 const read=f=>fs.readFile(path.join(root,f),'utf8'),write=(f,s)=>fs.writeFile(path.join(root,f),s);
 for(const dir of ['', 'core'])for(const name of await fs.readdir(path.join(root,dir)))if(/\.(?:js|css|html)$/.test(name)){const f=path.join(dir,name);await write(f,(await read(f)).replace(/^\uFEFF/,'').replace(/\r\n/g,'\n'));}
 const info=JSON.parse(await read('demo-release.json'));
+await import('./optimize-scene-loading.mjs');
 const fingerprint=[];for(const dir of ['', 'core'])for(const name of (await fs.readdir(path.join(root,dir))).sort())if(/\.(?:js|css)$/.test(name)&&!['sw.js','demo-catalog.js'].includes(name)){const f=path.join(dir,name);fingerprint.push(f+':'+hash((await read(f)).replace(/([?&]v=)[a-f0-9]{12}/g,'$1CACHE')));}
 const stableStamp='demo-five-20261103-'+hash(info.sourceCommit+fingerprint.join('\n')+hash(await fs.readFile(import.meta.filename)));
 await write('core/demo-catalog.js',(await read('core/demo-catalog.js')).replace(/"release":"[^"]*"/,'"release":"'+stableStamp+'"'));

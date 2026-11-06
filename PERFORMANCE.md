@@ -55,6 +55,7 @@ node scripts/review-browser.mjs
 node scripts/review-interactions.mjs
 node scripts/review-native-lifecycle.mjs
 node scripts/review-panorama-markers.mjs
+node scripts/review-selected-scenes.mjs
 node scripts/review-offline.mjs
 node scripts/review-performance.mjs
 ```
@@ -96,7 +97,7 @@ measurements and not a promise about the browser's garbage-collection timing.
 
 Five additional unit tests cover GPU ownership and partial cleanup, image success,
 network/decode cancellation, dimension validation and retry. The current suite has
-21 passing tests. Evidence is in
+21 passing tests at that checkpoint. Evidence is in
 [native lifecycle review](tests/evidence/native-lifecycle-20261106.json).
 
 ## Shared panorama marker rendering
@@ -139,3 +140,45 @@ Reproduction requires the baseline commit in local Git history. Optionally set
 `MARKER_BASELINE`; set `MARKER_FLAT=1` for the flat-picture fallback review.
 The source exporter reapplies `scripts/optimize-panorama-markers.mjs` before final
 hash generation, and a full rebuild reproduces the release.
+
+## Load only the selected native scene
+
+The shared panorama entry previously downloaded all five Park/Home/Museum data
+scripts, even when opening only one world. `demo-panorama-scene-loader.js` now selects
+one public scene from a fixed mapping. Home's manifest, granular details and final
+data module execute in dependency order; Museum retains all four viewpoints in its
+one data file. Other shared viewer modules remain available.
+
+The viewer awaits scene registration before building its UI. A failed, invalid or
+stalled data script exposes the existing Retry and Back controls; Retry reloads only
+the native frame. The host lesson, progress and activity remain in place. The timeout
+is 30 seconds per dependency. Dynamic script URLs use content hashes refreshed by
+the source export and finalizer, so offline visits cache the same selected files.
+
+Isolated native-data checks used fresh headless Chrome contexts at 390×844 and 4× CPU
+throttling, with service workers and image downloads blocked. Actual scene JSON
+fingerprints matched the previous eager entry exactly.
+
+| Native scene | Decoded JavaScript, before → after | Scene data files, before → after |
+| --- | ---: | ---: |
+| Park | 1,087,025 → 187,553 bytes | 5 → 1 |
+| Home | 1,087,025 → 212,207 bytes | 5 → 3 |
+| Museum | 1,087,025 → 945,099 bytes | 5 → 1 |
+
+That is about 83%, 80% and 13% less decoded native-view JavaScript respectively.
+This is not compressed wire transfer. Local data-ready timings changed only modestly
+(Park 870→869ms, Home 836→773ms, Museum 779→762ms); images were excluded and shader/UI
+setup remained included. These single runs do not establish an end-to-end visual
+startup improvement or a real-device frame rate.
+
+Nine loader unit tests bring the suite to 30 tests. Browser acceptance injects a
+Home data failure and recovers through the real Retry button, navigates the four
+Museum viewpoints, and reloads visited Park/Home/Museum offline with shared detail
+cards and Listening. Evidence is in
+[scene-loading review](tests/evidence/scene-loading-20261106.json).
+
+To capture the isolated baseline, run `review-scene-loading.mjs` before applying the
+scene loader with `SCENE_LOADING_PHASE=before`, then run it normally after the change.
+It writes local before/after reports and checks that only the chosen scene exists.
+The marker-parity harness gives old baseline viewer code the same scene-readiness
+gate when using the current HTML; projection and clustering code remain untouched.

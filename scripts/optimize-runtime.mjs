@@ -35,3 +35,4 @@ s=s.slice(0,a)+`  const shown=new Set((state.practice?state.hintId?[byId.get(sta
 console.log('Demo runtime performance adapters applied');
 await import('./optimize-native-lifecycle.mjs');
 await import('./optimize-panorama-markers.mjs');
+await import('./optimize-scene-loading.mjs');

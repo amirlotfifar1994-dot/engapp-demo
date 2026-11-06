@@ -113,3 +113,22 @@ Single local 4×-CPU runs reduced Home marker-paint p95 from 12 to 3ms and Park 
 9 to 2ms; these are marker-function timings, not total frame-rate measurements.
 Evidence and limitations: [marker review](tests/evidence/panorama-markers-20261106.json)
 and [performance notes](PERFORMANCE.md).
+
+## Selected scene data — 6 November 2026
+
+The native panorama frame now loads only its selected scene's data. Home dependencies
+retain their order, and all Museum locations remain available. The viewer waits for
+data registration; failed or stalled script loading offers the existing Retry and
+Back controls. The finalizer refreshes the dynamic dependency hashes.
+
+Thirty Node tests pass, including nine new selected-loader tests. The public-text
+audit checks 174 runtime files with no detected leaks. Fresh native-data checks
+preserve exact scene fingerprints while removing unused scene globals. Park/Home
+decoded native JavaScript falls by about 83%/80%; modest local data-ready differences
+and the image-blocked measurement limits are documented in PERFORMANCE.md.
+
+Real-browser checks cover an intentional Home data failure and successful native
+frame retry, all four Museum destinations and offline restoration of visited Park,
+Home and Museum with detail cards and Listening. The normal five-lesson activity
+matrix is recorded separately in the same
+[scene-loading evidence](tests/evidence/scene-loading-20261106.json).
